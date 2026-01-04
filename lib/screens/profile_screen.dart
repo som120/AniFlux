@@ -255,9 +255,12 @@ class ProfileScreen extends StatelessWidget {
                 .snapshots(),
             builder: (context, snapshot) {
               int completedCount = 0;
+              int totalAnimes = 0;
               double totalHours = 0;
 
               if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                totalAnimes = snapshot.data!.docs.length;
+
                 for (var doc in snapshot.data!.docs) {
                   final data = doc.data() as Map<String, dynamic>;
                   final status = data['status'] ?? '';
@@ -298,7 +301,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       _buildStatItem(totalHours.toStringAsFixed(1), "Hours"),
                       _buildStatItem(completedCount.toString(), "Completed"),
-                      _buildStatItem("0", "Reviews"),
+                      _buildStatItem(totalAnimes.toString(), "Total Animes"),
                     ],
                   ),
                 ),
