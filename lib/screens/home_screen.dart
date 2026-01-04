@@ -5,6 +5,7 @@ import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -181,159 +182,180 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // 2. Content Layer
           SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  // Greeting
-                  ValueListenableBuilder<Color>(
-                    valueListenable: _bgColorNotifier,
-                    builder: (_, bgColor, __) {
-                      final textColor = _isDark(bgColor)
-                          ? Colors.white
-                          : Colors.black87;
-
-                      return RepaintBoundary(
-                        child: GreetingSection(textColor: textColor),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  // Carousel
-                  if (_isLoading)
-                    _buildLoadingShimmer()
-                  else if (_airingAnimeList.isEmpty)
-                    const Center(child: Text("No airing anime found"))
-                  else
-                    Column(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: 120), // nav bar height
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight, // 🔥 KEY FIX
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          height: 220,
-                          child: NotificationListener<ScrollNotification>(
-                            onNotification: (notification) {
-                              if (notification is ScrollStartNotification) {
-                                _timer?.cancel();
-                              } else if (notification
-                                  is ScrollEndNotification) {
-                                _startAutoScroll();
-                              }
-                              return false; // allow notification to bubble
-                            },
-                            child: PageView.builder(
-                              controller: _pageController,
-                              itemCount: _airingAnimeList.length,
-                              onPageChanged: (index) {
-                                _pageIndexNotifier.value = index;
-                                _bgColorNotifier.value = _getProcessedColor(
-                                  index,
-                                );
-                              },
-                              itemBuilder: (context, index) {
-                                final anime = _airingAnimeList[index];
-                                return _buildAnimeCard(anime);
-                              },
-                            ),
-                          ),
-                        ),
+                        const SizedBox(height: 20),
+                        // Greeting
+                        ValueListenableBuilder<Color>(
+                          valueListenable: _bgColorNotifier,
+                          builder: (_, bgColor, __) {
+                            final textColor = _isDark(bgColor)
+                                ? Colors.white
+                                : Colors.black87;
 
-                        const SizedBox(height: 16),
-                        // Indicators
-                        ValueListenableBuilder<int>(
-                          valueListenable: _pageIndexNotifier,
-                          builder: (_, current, __) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(_airingAnimeList.length, (
-                                index,
-                              ) {
-                                return AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  height: 8,
-                                  width: current == index ? 24 : 8,
-                                  decoration: BoxDecoration(
-                                    color: current == index
-                                        ? AppTheme.primary
-                                        : AppTheme.accent.withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                );
-                              }),
+                            return RepaintBoundary(
+                              child: GreetingSection(textColor: textColor),
                             );
                           },
                         ),
-                      ],
-                    ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "My List",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+
+                        const SizedBox(height: 30),
+
+                        // Carousel
+                        if (_isLoading)
+                          _buildLoadingShimmer()
+                        else if (_airingAnimeList.isEmpty)
+                          const Center(child: Text("No airing anime found"))
+                        else
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 220,
+                                child: NotificationListener<ScrollNotification>(
+                                  onNotification: (notification) {
+                                    if (notification
+                                        is ScrollStartNotification) {
+                                      _timer?.cancel();
+                                    } else if (notification
+                                        is ScrollEndNotification) {
+                                      _startAutoScroll();
+                                    }
+                                    return false; // allow notification to bubble
+                                  },
+                                  child: PageView.builder(
+                                    controller: _pageController,
+                                    itemCount: _airingAnimeList.length,
+                                    onPageChanged: (index) {
+                                      _pageIndexNotifier.value = index;
+                                      _bgColorNotifier.value =
+                                          _getProcessedColor(index);
+                                    },
+                                    itemBuilder: (context, index) {
+                                      final anime = _airingAnimeList[index];
+                                      return _buildAnimeCard(anime);
+                                    },
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 16),
+                              // Indicators
+                              ValueListenableBuilder<int>(
+                                valueListenable: _pageIndexNotifier,
+                                builder: (_, current, __) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List.generate(
+                                      _airingAnimeList.length,
+                                      (index) {
+                                        return AnimatedContainer(
+                                          duration: const Duration(
+                                            milliseconds: 300,
+                                          ),
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 4,
+                                          ),
+                                          height: 8,
+                                          width: current == index ? 24 : 8,
+                                          decoration: BoxDecoration(
+                                            color: current == index
+                                                ? AppTheme.primary
+                                                : AppTheme.accent.withOpacity(
+                                                    0.5,
+                                                  ),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "My List",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      _isGridView
+                                          ? Icons.view_list_rounded
+                                          : Icons.grid_view_rounded,
+                                    ),
+                                    style: IconButton.styleFrom(
+                                      foregroundColor: AppTheme.primary,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isGridView = !_isGridView;
+                                      });
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.filter_list_rounded),
+                                    style: IconButton.styleFrom(
+                                      foregroundColor: AppTheme.primary,
+                                    ),
+                                    onPressed: () {
+                                      // TODO: open filter bottom sheet
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                _isGridView
-                                    ? Icons.view_list_rounded
-                                    : Icons.grid_view_rounded,
-                              ),
-                              style: IconButton.styleFrom(
-                                foregroundColor: AppTheme.primary,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _isGridView = !_isGridView;
-                                });
-                              },
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24.0,
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.filter_list_rounded),
-                              style: IconButton.styleFrom(
-                                foregroundColor: AppTheme.primary,
-                              ),
-                              onPressed: () {
-                                // TODO: open filter bottom sheet
-                              },
+                            child: Row(
+                              children: [
+                                _statusChip("Completed"),
+                                const SizedBox(width: 12),
+                                _statusChip("Planning"),
+                                const SizedBox(width: 12),
+                                _statusChip("Watching"),
+                              ],
                             ),
-                          ],
+                          ),
+                        ),
+
+                        MyAnimeList(
+                          status: _selectedStatus,
+                          isGridView: _isGridView,
                         ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Row(
-                        children: [
-                          _statusChip("Completed"),
-                          const SizedBox(width: 12),
-                          _statusChip("Planning"),
-                          const SizedBox(width: 12),
-                          _statusChip("Watching"),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  MyAnimeList(status: _selectedStatus, isGridView: _isGridView),
-                  const SizedBox(height: 100), // Bottom padding for nav bar
-                ],
-              ),
+                );
+              },
             ),
           ),
         ],
@@ -549,10 +571,29 @@ class MyAnimeList extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: Text(
-              "No $status anime found 😢",
-              style: const TextStyle(color: Colors.black54),
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.35, // 🔥 key fix
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.inbox_rounded,
+                    size: 56,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "No $status anime found 😢",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }
@@ -564,24 +605,26 @@ class MyAnimeList extends StatelessWidget {
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.fromLTRB(
+              16,
+              0,
+              16,
+              120, // 🔥 space for bottom nav
+            ),
+
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.65,
+              crossAxisCount: 3, // 🔥 3 cards per row
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
+              childAspectRatio: 0.70, // Better poster ratio
             ),
+
             itemCount: animeList.length,
             itemBuilder: (context, index) {
               final doc = animeList[index];
               final data = doc.data() as Map<String, dynamic>;
 
               final title = data['title'] ?? 'Unknown';
-              final rating = data['averageScore'] != null
-                  ? (data['averageScore'] / 10).toStringAsFixed(1)
-                  : '?';
-              final progress = data['progress'] ?? 0;
-              final totalEpisodes = data['totalEpisodes'] ?? '?';
 
               // Reconstruct anime object from Firestore data
               final anime = {
@@ -601,108 +644,51 @@ class MyAnimeList extends StatelessWidget {
                     ),
                   );
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Stack(
                     children: [
-                      // Poster
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
-                              ),
-                              child: data['coverImage'] != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: data['coverImage'],
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      fit: BoxFit.cover,
-                                      errorWidget: (context, url, error) =>
-                                          Container(
-                                            color: Colors.grey[300],
-                                            child: const Icon(Icons.error),
-                                          ),
-                                    )
-                                  : Container(
-                                      color: Colors.grey[300],
-                                      child: const Icon(Icons.image),
-                                    ),
-                            ),
-                            // Rating badge
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.star_rounded,
-                                      size: 14,
-                                      color: Colors.amber,
-                                    ),
-                                    const SizedBox(width: 2),
-                                    Text(
-                                      rating,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                      // Poster image
+                      Positioned.fill(
+                        child: CachedNetworkImage(
+                          imageUrl: data['coverImage'],
+                          fit: BoxFit.cover,
+                          errorWidget: (_, __, ___) =>
+                              Container(color: Colors.grey[300]),
                         ),
                       ),
-                      // Info
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              title,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+
+                      // Bottom gradient shadow
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.center,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.85),
+                              ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "Ep: $progress / $totalEpisodes",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
+                          ),
+                        ),
+                      ),
+
+                      // Title text inside card
+                      Positioned(
+                        left: 8,
+                        right: 8,
+                        bottom: 8,
+                        child: Text(
+                          title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                          ),
                         ),
                       ),
                     ],
@@ -717,18 +703,25 @@ class MyAnimeList extends StatelessWidget {
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.fromLTRB(
+            16,
+            0,
+            16,
+            120, // 🔥 same bottom space
+          ),
+
           itemCount: animeList.length,
           itemBuilder: (context, index) {
             final doc = animeList[index];
             final data = doc.data() as Map<String, dynamic>;
 
             final title = data['title'] ?? 'Unknown';
-            final rating = data['averageScore'] != null
-                ? (data['averageScore'] / 10).toStringAsFixed(1)
-                : '?';
+
             final progress = data['progress'] ?? 0;
             final totalEpisodes = data['totalEpisodes'] ?? '?';
+
+            final format = data['format']; // e.g. TV, MOVIE, ONA
+            final year = data['seasonYear'] ?? data['startDate']?['year'];
 
             // Reconstruct anime object from Firestore data
             final anime = {
@@ -739,78 +732,176 @@ class MyAnimeList extends StatelessWidget {
               'episodes': data['totalEpisodes'],
             };
 
-            return Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: Tween<double>(
+                      begin: 0.97,
+                      end: 1.0,
+                    ).animate(animation),
+                    child: child,
                   ),
-                ],
-              ),
-              child: ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AnimeDetailScreen(anime: anime),
+                );
+              },
+              child: Container(
+                key: ValueKey('${doc.id}_${data['status']}_${progress}'),
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
                     ),
-                  );
-                },
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+                  ],
                 ),
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: data['coverImage'] != null
-                      ? CachedNetworkImage(
-                          imageUrl: data['coverImage'],
-                          width: 50,
-                          height: 70,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                        )
-                      : Container(width: 50, height: 70, color: Colors.grey),
-                ),
-                title: Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text("Ep: $progress / $totalEpisodes"),
-                trailing: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.amber.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.star_rounded,
-                        size: 16,
-                        color: Colors.amber,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AnimeDetailScreen(anime: anime),
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "$rating",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.amber,
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // 🔥 BIGGER POSTER
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedNetworkImage(
+                            imageUrl: data['coverImage'],
+                            width: 80, // ⬅️ increased
+                            height: 115, // ⬅️ increased
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) =>
+                                Container(color: Colors.grey[300]),
+                          ),
                         ),
-                      ),
-                    ],
+
+                        const SizedBox(width: 14),
+
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // TITLE
+                                Text(
+                                  title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.25,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 4),
+
+                                // 🔥 FORMAT + YEAR
+                                if (format != null || year != null)
+                                  Text(
+                                    [
+                                      if (format != null) format,
+                                      if (year != null) year.toString(),
+                                    ].join(' • '),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+
+                                const SizedBox(height: 8),
+
+                                // EPISODE TEXT
+                                Text(
+                                  "Ep: $progress / $totalEpisodes",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+
+                                // PROGRESS BAR
+                                if (data['status'] != 'Completed') ...[
+                                  const SizedBox(height: 10),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: LinearProgressIndicator(
+                                      value: totalEpisodes == 0
+                                          ? 0
+                                          : progress / totalEpisodes,
+                                      minHeight: 3,
+                                      backgroundColor: Colors.grey.shade200,
+                                      valueColor: AlwaysStoppedAnimation(
+                                        AppTheme.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        // ACTION / STATUS
+                        SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeIn,
+                            child: data['status'] == 'Completed'
+                                ? const Center(
+                                    key: ValueKey('completed'),
+                                    child: Icon(
+                                      Icons.check_circle_rounded,
+                                      color: Colors.green,
+                                      size: 28,
+                                    ),
+                                  )
+                                : IconButton(
+                                    key: const ValueKey('add'),
+                                    icon: const Icon(
+                                      Icons.add_circle_outline_rounded,
+                                      size: 28,
+                                    ),
+                                    padding: EdgeInsets.zero, // 🔥 important
+                                    constraints:
+                                        const BoxConstraints(), // 🔥 important
+                                    color: AppTheme.primary,
+                                    onPressed: () {
+                                      HapticFeedback.lightImpact();
+                                      _onAddEpisode(
+                                        context: context,
+                                        docId: doc.id,
+                                        data: data,
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -820,6 +911,53 @@ class MyAnimeList extends StatelessWidget {
       },
     );
   }
+}
+
+Future<void> _onAddEpisode({
+  required BuildContext context,
+  required String docId,
+  required Map<String, dynamic> data,
+}) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final int progress = data['progress'] ?? 0;
+  final int totalEpisodes = data['totalEpisodes'] ?? 0;
+  final String status = data['status'];
+
+  if (totalEpisodes != 0 && progress >= totalEpisodes) return;
+
+  final Map<String, dynamic> updateData = {};
+
+  // 🟡 PLANNING
+  if (status == 'Planning') {
+    if (totalEpisodes == 1) {
+      // 🎬 Movie / single-episode anime
+      updateData['status'] = 'Completed';
+      updateData['progress'] = 1;
+    } else {
+      updateData['status'] = 'Watching';
+      updateData['progress'] = 1;
+    }
+  }
+  // 🔵 WATCHING → COMPLETED
+  else if (status == 'Watching' &&
+      totalEpisodes != 0 &&
+      progress + 1 >= totalEpisodes) {
+    updateData['status'] = 'Completed';
+    updateData['progress'] = totalEpisodes;
+  }
+  // ▶️ NORMAL INCREMENT
+  else {
+    updateData['progress'] = progress + 1;
+  }
+
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('anime')
+      .doc(docId)
+      .update(updateData);
 }
 
 class GreetingSection extends StatelessWidget {

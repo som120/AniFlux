@@ -20,12 +20,13 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
   int _progress = 0;
   DateTime? _startDate;
   DateTime? _finishDate;
-  late int _totalEpisodes;
+  int _totalEpisodes = 0;
   bool _hasChanges = false;
   late bool _isNewEntry;
   bool get _episodesUnknown => widget.anime['episodes'] == null;
 
   bool _episodesLoading = true;
+  bool _animeDetailsLoaded = false;
 
   final List<String> _statuses = ["Watching", "Completed", "Planning"];
 
@@ -74,25 +75,35 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
   Future<void> _loadEpisodes() async {
     final episodes = widget.anime['episodes'];
 
-    // Episodes already available
-    if (episodes != null && episodes > 0) {
+    // Episodes already available AND metadata exists
+    if (episodes != null &&
+        episodes > 0 &&
+        widget.anime['format'] != null &&
+        widget.anime['seasonYear'] != null) {
       setState(() {
         _totalEpisodes = episodes;
         _episodesLoading = false;
+        _animeDetailsLoaded = true;
       });
       return;
     }
 
     try {
-      // Fetch full anime details
       final fullAnime = await AniListService.getAnimeDetails(
         widget.anime['id'],
       );
-      if (!mounted) return;
+      if (!mounted || fullAnime == null) return;
 
       setState(() {
-        _totalEpisodes = fullAnime?['episodes'] ?? 0;
+        _totalEpisodes = fullAnime['episodes'] ?? 0;
+
+        // 🔥 Hydrate missing fields
+        widget.anime['format'] = fullAnime['format'];
+        widget.anime['seasonYear'] =
+            fullAnime['seasonYear'] ?? fullAnime['startDate']?['year'];
+
         _episodesLoading = false;
+        _animeDetailsLoaded = true;
       });
     } catch (e) {
       if (!mounted) return;
@@ -100,6 +111,7 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
       setState(() {
         _totalEpisodes = 0;
         _episodesLoading = false;
+        _animeDetailsLoaded = false;
       });
 
       debugPrint("Episode fetch failed: $e");
@@ -133,6 +145,8 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
         'averageScore':
             widget.anime['averageScore'], // Store anime's actual rating
         'updatedAt': FieldValue.serverTimestamp(),
+        'format': widget.anime['format'], // TV, MOVIE, ONA
+        'seasonYear': widget.anime['seasonYear'], // 2019
       };
 
       if (_startDate != null) {
@@ -174,6 +188,10 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
     final int maxEps = _episodesUnknown
         ? 100
         : (_totalEpisodes > 0 ? _totalEpisodes : 100);
+    final canSave =
+        !_episodesLoading &&
+        _animeDetailsLoaded &&
+        (_isNewEntry || _hasChanges);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
@@ -204,7 +222,7 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                   ).textTheme.titleLarge?.copyWith(fontSize: 18),
                 ),
                 TextButton(
-                  onPressed: (!_episodesLoading && (_isNewEntry || _hasChanges))
+                  onPressed: canSave
                       ? () async {
                           HapticFeedback.lightImpact();
                           await _saveEntry();
@@ -212,13 +230,13 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                         }
                       : null,
                   child: Text(
-                    "Save",
+                    _episodesLoading || !_animeDetailsLoaded
+                        ? "Loading…"
+                        : "Save",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: (_isNewEntry || _hasChanges)
-                          ? AppTheme.primary
-                          : Colors.grey,
+                      color: canSave ? AppTheme.primary : Colors.grey,
                     ),
                   ),
                 ),
