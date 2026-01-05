@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:ainme_vault/screens/anime_detail_screen.dart';
 import 'package:ainme_vault/services/anilist_service.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
@@ -56,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     final hex = _airingAnimeList[index]['coverImage']?['color'];
-    if (hex == null) return Colors.white;
+    if (hex == null) return AppTheme.accent;
 
     return _processCoverColor(_hexToColor(hex));
   }
@@ -79,6 +80,28 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  List<T> pickWeightedRandom<T>(
+    List<T> list,
+    int count, {
+    int weightTop = 3, // higher = more bias toward top
+  }) {
+    final weighted = <T>[];
+
+    for (int i = 0; i < list.length; i++) {
+      final weight =
+          (i < 10) // top 10 get higher weight
+          ? weightTop
+          : 1;
+
+      for (int w = 0; w < weight; w++) {
+        weighted.add(list[i]);
+      }
+    }
+
+    weighted.shuffle(Random(DateTime.now().millisecondsSinceEpoch));
+    return weighted.take(count).toList();
+  }
+
   // ---------------- DATA FETCHING ----------------
   Future<void> _fetchAiringAnime({bool retry = true}) async {
     try {
@@ -96,26 +119,27 @@ class _HomeScreenState extends State<HomeScreen> {
       final upcomingData = results[2];
 
       setState(() {
-        // Take 4 from airing, 3 from popular, 3 from upcoming
-        final List<dynamic> combinedList = [
-          ...airingData.take(4),
-          ...popularData.take(3),
-          ...upcomingData.take(3),
+        // ✅ USE WEIGHTED RANDOM HERE
+        final combinedList = [
+          ...pickWeightedRandom(airingData, 4),
+          ...pickWeightedRandom(popularData, 3),
+          ...pickWeightedRandom(upcomingData, 3),
         ];
 
         // Remove duplicates based on anime ID
         final Set<int> seenIds = {};
         final List<dynamic> uniqueList = [];
+
         for (final anime in combinedList) {
           final id = anime['id'] as int?;
-          if (id != null && !seenIds.contains(id)) {
-            seenIds.add(id);
+          if (id != null && seenIds.add(id)) {
             uniqueList.add(anime);
           }
         }
 
-        // Shuffle for random order
+        // Optional: shuffle final list for display randomness
         uniqueList.shuffle();
+
         _airingAnimeList = uniqueList;
         _isLoading = false;
 

@@ -1384,10 +1384,7 @@ class _CalendarViewState extends State<_CalendarView> {
                   gradient: LinearGradient(
                     begin: Alignment.center,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.85),
-                    ],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.9)],
                   ),
                 ),
               ),
@@ -1418,7 +1415,7 @@ class _CalendarViewState extends State<_CalendarView> {
                     "Ep $episode at ${_formatTime(airingAt)}",
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
