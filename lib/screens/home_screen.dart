@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:ainme_vault/screens/anime_detail_screen.dart';
 import 'package:ainme_vault/services/anilist_service.dart';
 import 'package:ainme_vault/services/notification_service.dart';
@@ -28,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Timer? _timer;
   static const double _cardHorizontalMargin = 16.0;
+  static const int _visibleDotCount = 5; // Number of dots to display
 
   late final ValueNotifier<Color> _bgColorNotifier;
   late final ValueNotifier<int> _pageIndexNotifier;
@@ -56,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     final hex = _airingAnimeList[index]['coverImage']?['color'];
-    if (hex == null) return Colors.white;
+    if (hex == null) return AppTheme.accent;
 
     return _processCoverColor(_hexToColor(hex));
   }
@@ -80,15 +82,67 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  List<T> pickWeightedRandom<T>(
+    List<T> list,
+    int count, {
+    int weightTop = 3, // higher = more bias toward top
+  }) {
+    final weighted = <T>[];
+
+    for (int i = 0; i < list.length; i++) {
+      final weight =
+          (i < 10) // top 10 get higher weight
+          ? weightTop
+          : 1;
+
+      for (int w = 0; w < weight; w++) {
+        weighted.add(list[i]);
+      }
+    }
+
+    weighted.shuffle(Random(DateTime.now().millisecondsSinceEpoch));
+    return weighted.take(count).toList();
+  }
+
   // ---------------- DATA FETCHING ----------------
   Future<void> _fetchAiringAnime({bool retry = true}) async {
     try {
-      final data = await AniListService.getAiringAnime();
+      // Fetch from all three sources in parallel
+      final results = await Future.wait([
+        AniListService.getAiringAnime(),
+        AniListService.getPopularAnime(),
+        AniListService.getUpcomingAnime(),
+      ]);
 
       if (!mounted) return;
 
+      final airingData = results[0];
+      final popularData = results[1];
+      final upcomingData = results[2];
+
       setState(() {
-        _airingAnimeList = data.take(5).toList();
+        // ✅ USE WEIGHTED RANDOM HERE
+        final combinedList = [
+          ...pickWeightedRandom(airingData, 4),
+          ...pickWeightedRandom(popularData, 3),
+          ...pickWeightedRandom(upcomingData, 3),
+        ];
+
+        // Remove duplicates based on anime ID
+        final Set<int> seenIds = {};
+        final List<dynamic> uniqueList = [];
+
+        for (final anime in combinedList) {
+          final id = anime['id'] as int?;
+          if (id != null && seenIds.add(id)) {
+            uniqueList.add(anime);
+          }
+        }
+
+        // Optional: shuffle final list for display randomness
+        uniqueList.shuffle();
+
+        _airingAnimeList = uniqueList;
         _isLoading = false;
 
         if (_airingAnimeList.isNotEmpty) {
@@ -111,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _airingAnimeList = [];
       });
 
-      debugPrint("Error fetching airing anime: $e");
+      debugPrint("Error fetching anime for carousel: $e");
     }
   }
 
@@ -250,37 +304,39 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
 
                               const SizedBox(height: 16),
-                              // Indicators
+                              // Indicators - Fixed at 5 dots regardless of anime count
                               ValueListenableBuilder<int>(
                                 valueListenable: _pageIndexNotifier,
                                 builder: (_, current, __) {
+                                  // Map current page to dot index (modular)
+                                  final activeDotIndex =
+                                      current % _visibleDotCount;
                                   return Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: List.generate(
-                                      _airingAnimeList.length,
-                                      (index) {
-                                        return AnimatedContainer(
-                                          duration: const Duration(
-                                            milliseconds: 300,
+                                    children: List.generate(_visibleDotCount, (
+                                      index,
+                                    ) {
+                                      return AnimatedContainer(
+                                        duration: const Duration(
+                                          milliseconds: 300,
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                        ),
+                                        height: 8,
+                                        width: activeDotIndex == index ? 24 : 8,
+                                        decoration: BoxDecoration(
+                                          color: activeDotIndex == index
+                                              ? AppTheme.primary
+                                              : AppTheme.accent.withOpacity(
+                                                  0.5,
+                                                ),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
                                           ),
-                                          margin: const EdgeInsets.symmetric(
-                                            horizontal: 4,
-                                          ),
-                                          height: 8,
-                                          width: current == index ? 24 : 8,
-                                          decoration: BoxDecoration(
-                                            color: current == index
-                                                ? AppTheme.primary
-                                                : AppTheme.accent.withOpacity(
-                                                    0.5,
-                                                  ),
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                        ),
+                                      );
+                                    }),
                                   );
                                 },
                               ),
@@ -474,25 +530,45 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.black.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.star_rounded,
-                        color: Colors.amber,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        score.toStringAsFixed(1),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                  child: score > 0
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              color: Colors.amber,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              score.toStringAsFixed(1),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.upcoming_rounded,
+                              color: Colors.lightBlueAccent,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              "Upcoming",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],
