@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Timer? _timer;
   static const double _cardHorizontalMargin = 24.0;
+  static const int _visibleDotCount = 5; // Number of dots to display
 
   late final ValueNotifier<Color> _bgColorNotifier;
   late final ValueNotifier<int> _pageIndexNotifier;
@@ -81,12 +82,41 @@ class _HomeScreenState extends State<HomeScreen> {
   // ---------------- DATA FETCHING ----------------
   Future<void> _fetchAiringAnime({bool retry = true}) async {
     try {
-      final data = await AniListService.getAiringAnime();
+      // Fetch from all three sources in parallel
+      final results = await Future.wait([
+        AniListService.getAiringAnime(),
+        AniListService.getPopularAnime(),
+        AniListService.getUpcomingAnime(),
+      ]);
 
       if (!mounted) return;
 
+      final airingData = results[0];
+      final popularData = results[1];
+      final upcomingData = results[2];
+
       setState(() {
-        _airingAnimeList = data.take(5).toList();
+        // Take 4 from airing, 3 from popular, 3 from upcoming
+        final List<dynamic> combinedList = [
+          ...airingData.take(4),
+          ...popularData.take(3),
+          ...upcomingData.take(3),
+        ];
+
+        // Remove duplicates based on anime ID
+        final Set<int> seenIds = {};
+        final List<dynamic> uniqueList = [];
+        for (final anime in combinedList) {
+          final id = anime['id'] as int?;
+          if (id != null && !seenIds.contains(id)) {
+            seenIds.add(id);
+            uniqueList.add(anime);
+          }
+        }
+
+        // Shuffle for random order
+        uniqueList.shuffle();
+        _airingAnimeList = uniqueList;
         _isLoading = false;
 
         if (_airingAnimeList.isNotEmpty) {
@@ -109,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _airingAnimeList = [];
       });
 
-      debugPrint("Error fetching airing anime: $e");
+      debugPrint("Error fetching anime for carousel: $e");
     }
   }
 
@@ -188,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(bottom: 120), // nav bar height
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight, // 🔥 KEY FIX
+                      minHeight: constraints.maxHeight, //  KEY FIX
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,37 +278,39 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
 
                               const SizedBox(height: 16),
-                              // Indicators
+                              // Indicators - Fixed at 5 dots regardless of anime count
                               ValueListenableBuilder<int>(
                                 valueListenable: _pageIndexNotifier,
                                 builder: (_, current, __) {
+                                  // Map current page to dot index (modular)
+                                  final activeDotIndex =
+                                      current % _visibleDotCount;
                                   return Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: List.generate(
-                                      _airingAnimeList.length,
-                                      (index) {
-                                        return AnimatedContainer(
-                                          duration: const Duration(
-                                            milliseconds: 300,
+                                    children: List.generate(_visibleDotCount, (
+                                      index,
+                                    ) {
+                                      return AnimatedContainer(
+                                        duration: const Duration(
+                                          milliseconds: 300,
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                        ),
+                                        height: 8,
+                                        width: activeDotIndex == index ? 24 : 8,
+                                        decoration: BoxDecoration(
+                                          color: activeDotIndex == index
+                                              ? AppTheme.primary
+                                              : AppTheme.accent.withOpacity(
+                                                  0.5,
+                                                ),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
                                           ),
-                                          margin: const EdgeInsets.symmetric(
-                                            horizontal: 4,
-                                          ),
-                                          height: 8,
-                                          width: current == index ? 24 : 8,
-                                          decoration: BoxDecoration(
-                                            color: current == index
-                                                ? AppTheme.primary
-                                                : AppTheme.accent.withOpacity(
-                                                    0.5,
-                                                  ),
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                        ),
+                                      );
+                                    }),
                                   );
                                 },
                               ),
@@ -471,25 +503,45 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.black.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.star_rounded,
-                        color: Colors.amber,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        score.toStringAsFixed(1),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                  child: score > 0
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              color: Colors.amber,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              score.toStringAsFixed(1),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.upcoming_rounded,
+                              color: Colors.lightBlueAccent,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              "Upcoming",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],
@@ -572,7 +624,7 @@ class MyAnimeList extends StatelessWidget {
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35, // 🔥 key fix
+            height: MediaQuery.of(context).size.height * 0.35, //  key fix
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -609,11 +661,11 @@ class MyAnimeList extends StatelessWidget {
               16,
               0,
               16,
-              120, // 🔥 space for bottom nav
+              120, //  space for bottom nav
             ),
 
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, // 🔥 3 cards per row
+              crossAxisCount: 3, //  3 cards per row
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               childAspectRatio: 0.70, // Better poster ratio
@@ -707,7 +759,7 @@ class MyAnimeList extends StatelessWidget {
             16,
             0,
             16,
-            120, // 🔥 same bottom space
+            120, //  same bottom space
           ),
 
           itemCount: animeList.length,
@@ -813,7 +865,7 @@ class MyAnimeList extends StatelessWidget {
 
                                 const SizedBox(height: 4),
 
-                                // 🔥 FORMAT + YEAR
+                                //  FORMAT + YEAR
                                 if (format != null || year != null)
                                   Text(
                                     [
@@ -885,9 +937,9 @@ class MyAnimeList extends StatelessWidget {
                                       Icons.add_circle_outline_rounded,
                                       size: 28,
                                     ),
-                                    padding: EdgeInsets.zero, // 🔥 important
+                                    padding: EdgeInsets.zero, //  important
                                     constraints:
-                                        const BoxConstraints(), // 🔥 important
+                                        const BoxConstraints(), //  important
                                     color: AppTheme.primary,
                                     onPressed: () {
                                       HapticFeedback.lightImpact();

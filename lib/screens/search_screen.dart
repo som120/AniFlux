@@ -750,6 +750,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     : ListView.builder(
                         controller: _scrollController,
                         physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.only(bottom: 100),
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
                         cacheExtent: 100,
@@ -1293,12 +1294,12 @@ class _CalendarViewState extends State<_CalendarView> {
               }
 
               return GridView.builder(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 100),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
-                  childAspectRatio: 0.55,
+                  childAspectRatio: 0.65,
                   crossAxisSpacing: 12,
-                  mainAxisSpacing: 20,
+                  mainAxisSpacing: 12,
                 ),
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
@@ -1327,36 +1328,11 @@ class _CalendarViewState extends State<_CalendarView> {
   }
 
   Widget _buildSkeletonCard() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          height: 14,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          height: 12,
-          width: 80,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(12),
+      ),
     );
   }
 
@@ -1381,17 +1357,16 @@ class _CalendarViewState extends State<_CalendarView> {
           ),
         );
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          children: [
+            // Poster image (full size)
+            Positioned.fill(
               child: image != null
                   ? CachedNetworkImage(
                       imageUrl: image,
                       fit: BoxFit.cover,
-                      width: double.infinity,
                       placeholder: (context, url) =>
                           Container(color: Colors.grey[200]),
                       errorWidget: (context, url, error) => Container(
@@ -1401,29 +1376,57 @@ class _CalendarViewState extends State<_CalendarView> {
                     )
                   : Container(color: Colors.grey[200]),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              height: 1.2,
+
+            // Gradient overlay at bottom
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.center,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.85),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            "Ep $episode at ${_formatTime(airingAt)}",
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
+
+            // Title and episode info ON the poster
+            Positioned(
+              left: 8,
+              right: 8,
+              bottom: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Ep $episode at ${_formatTime(airingAt)}",
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1821,7 +1824,7 @@ class _SeasonalViewState extends State<_SeasonalView> {
               }
 
               return GridView.builder(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 100),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   childAspectRatio: 0.55,
