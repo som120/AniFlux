@@ -27,6 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedStatus = 'Completed';
   bool _isGridView = false; // Track view mode
 
+  // Sort options
+  String _sortBy = 'lastUpdated'; // title, progress, lastUpdated, score
+  bool _sortAscending = false; // false = descending (default)
+
   Timer? _timer;
   static const double _cardHorizontalMargin = 16.0;
   static const int _visibleDotCount = 5; // Number of dots to display
@@ -372,14 +376,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                       });
                                     },
                                   ),
-                                  IconButton(
-                                    icon: const Icon(Icons.filter_list_rounded),
-                                    style: IconButton.styleFrom(
-                                      foregroundColor: AppTheme.primary,
+                                  PopupMenuButton<String>(
+                                    icon: Icon(
+                                      Icons.tune_rounded,
+                                      color: AppTheme.primary,
                                     ),
-                                    onPressed: () {
-                                      // TODO: open filter bottom sheet
+                                    offset: const Offset(0, 52),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    color: Colors.white,
+                                    elevation: 12,
+                                    onSelected: (value) {
+                                      setState(() {
+                                        if (_sortBy == value) {
+                                          _sortAscending = !_sortAscending;
+                                        } else {
+                                          _sortBy = value;
+                                          _sortAscending = value == 'title';
+                                        }
+                                      });
                                     },
+                                    itemBuilder: (context) => [
+                                      _filterItem(
+                                        value: 'title',
+                                        label: 'Title',
+                                        icon: Icons.sort_by_alpha_rounded,
+                                      ),
+                                      _filterItem(
+                                        value: 'score',
+                                        label: 'Score',
+                                        icon: Icons.star_rounded,
+                                      ),
+                                      _filterItem(
+                                        value: 'progress',
+                                        label: 'Progress',
+                                        icon: Icons.trending_up_rounded,
+                                      ),
+                                      _filterItem(
+                                        value: 'lastUpdated',
+                                        label: 'Updated',
+                                        icon: Icons.update_rounded,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -408,6 +447,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         MyAnimeList(
                           status: _selectedStatus,
                           isGridView: _isGridView,
+                          sortBy: _sortBy,
+                          sortAscending: _sortAscending,
                         ),
                       ],
                     ),
@@ -444,6 +485,61 @@ class _HomeScreenState extends State<HomeScreen> {
             color: isSelected ? Colors.white : Colors.black87,
             fontWeight: FontWeight.w600,
           ),
+        ),
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _filterItem({
+    required String value,
+    required String label,
+    required IconData icon,
+  }) {
+    final isSelected = _sortBy == value;
+
+    return PopupMenuItem<String>(
+      value: value,
+      height: 52,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.primary.withOpacity(0.08)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            // Icon
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected ? AppTheme.primary : Colors.grey.shade600,
+            ),
+            const SizedBox(width: 12),
+
+            // Label
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? AppTheme.primary : Colors.black87,
+                ),
+              ),
+            ),
+
+            // Sort direction arrow
+            if (isSelected)
+              Icon(
+                _sortAscending
+                    ? Icons.arrow_upward_rounded
+                    : Icons.arrow_downward_rounded,
+                size: 16,
+                color: AppTheme.primary,
+              ),
+          ],
         ),
       ),
     );
@@ -607,11 +703,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class MyAnimeList extends StatelessWidget {
+class MyAnimeList extends StatefulWidget {
   final String status;
   final bool isGridView;
+  final String sortBy;
+  final bool sortAscending;
 
-  const MyAnimeList({super.key, required this.status, this.isGridView = false});
+  const MyAnimeList({
+    super.key,
+    required this.status,
+    this.isGridView = false,
+    this.sortBy = 'lastUpdated',
+    this.sortAscending = false,
+  });
+
+  @override
+  State<MyAnimeList> createState() => _MyAnimeListState();
+}
+
+class _MyAnimeListState extends State<MyAnimeList> {
+  List<QueryDocumentSnapshot>? _cachedSortedList;
+  String? _lastSortKey;
 
   @override
   Widget build(BuildContext context) {
@@ -642,7 +754,7 @@ class MyAnimeList extends StatelessWidget {
           .collection('users')
           .doc(user.uid)
           .collection('anime')
-          .where('status', isEqualTo: status)
+          .where('status', isEqualTo: widget.status)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -663,7 +775,7 @@ class MyAnimeList extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    "No $status anime found 😢",
+                    "No ${widget.status} anime found 😢",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
@@ -679,8 +791,30 @@ class MyAnimeList extends StatelessWidget {
 
         final animeList = snapshot.data!.docs;
 
+        // Client-side sorting for fields that need special handling
+        final sortKey = '${widget.sortBy}_${widget.sortAscending}';
+
+        if (_cachedSortedList == null || _lastSortKey != sortKey) {
+          _cachedSortedList = _sortAnimeList(
+            animeList,
+            widget.sortBy,
+            widget.sortAscending,
+          );
+          _lastSortKey = sortKey;
+        }
+
+        // 🔥 Keep order but refresh document data
+        final Map<String, QueryDocumentSnapshot> latestDocsMap = {
+          for (final doc in animeList) doc.id: doc,
+        };
+
+        final sortedList = _cachedSortedList!
+            .where((doc) => latestDocsMap.containsKey(doc.id))
+            .map((doc) => latestDocsMap[doc.id]!)
+            .toList();
+
         // Grid View
-        if (isGridView) {
+        if (widget.isGridView) {
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -698,9 +832,9 @@ class MyAnimeList extends StatelessWidget {
               childAspectRatio: 0.70, // Better poster ratio
             ),
 
-            itemCount: animeList.length,
+            itemCount: sortedList.length,
             itemBuilder: (context, index) {
-              final doc = animeList[index];
+              final doc = sortedList[index];
               final data = doc.data() as Map<String, dynamic>;
 
               final title = data['title'] ?? 'Unknown';
@@ -789,9 +923,9 @@ class MyAnimeList extends StatelessWidget {
             120, // 🔥 same bottom space
           ),
 
-          itemCount: animeList.length,
+          itemCount: sortedList.length,
           itemBuilder: (context, index) {
-            final doc = animeList[index];
+            final doc = sortedList[index];
             final data = doc.data() as Map<String, dynamic>;
 
             final title = data['title'] ?? 'Unknown';
@@ -990,6 +1124,67 @@ class MyAnimeList extends StatelessWidget {
       },
     );
   }
+
+  @override
+  void didUpdateWidget(covariant MyAnimeList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.status != widget.status) {
+      _cachedSortedList = null;
+      _lastSortKey = null;
+    }
+  }
+
+  List<QueryDocumentSnapshot> _sortAnimeList(
+    List<QueryDocumentSnapshot> docs,
+    String sortBy,
+    bool ascending,
+  ) {
+    final list = List<QueryDocumentSnapshot>.from(docs);
+
+    list.sort((a, b) {
+      final dataA = a.data() as Map<String, dynamic>;
+      final dataB = b.data() as Map<String, dynamic>;
+
+      int result;
+
+      switch (sortBy) {
+        case 'title':
+          final titleA = (dataA['title'] ?? '').toString().toLowerCase();
+          final titleB = (dataB['title'] ?? '').toString().toLowerCase();
+          result = titleA.compareTo(titleB);
+          break;
+        case 'progress':
+          final progressA = dataA['progress'] ?? 0;
+          final progressB = dataB['progress'] ?? 0;
+          result = (progressA as int).compareTo(progressB as int);
+          break;
+        case 'lastUpdated':
+          final updatedA = dataA['lastUpdated'] as Timestamp?;
+          final updatedB = dataB['lastUpdated'] as Timestamp?;
+          if (updatedA == null && updatedB == null)
+            result = 0;
+          else if (updatedA == null)
+            result = 1;
+          else if (updatedB == null)
+            result = -1;
+          else
+            result = updatedA.compareTo(updatedB);
+          break;
+        case 'score':
+          final scoreA = dataA['averageScore'] ?? 0;
+          final scoreB = dataB['averageScore'] ?? 0;
+          result = (scoreA as num).compareTo(scoreB as num);
+          break;
+        default:
+          result = 0;
+      }
+
+      return ascending ? result : -result;
+    });
+
+    return list;
+  }
 }
 
 Future<void> _onAddEpisode({
@@ -1030,6 +1225,8 @@ Future<void> _onAddEpisode({
   else {
     updateData['progress'] = progress + 1;
   }
+
+  updateData['lastUpdated'] = FieldValue.serverTimestamp();
 
   await FirebaseFirestore.instance
       .collection('users')
