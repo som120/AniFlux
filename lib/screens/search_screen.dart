@@ -27,6 +27,9 @@ class _SearchScreenState extends State<SearchScreen> {
   bool hasError = false;
   bool isFocused = false;
   bool _isScrolled = false;
+  bool _showFilters = true;
+  double _lastScrollOffset = 0;
+  double _cumulativeScroll = 0; // Track cumulative scroll for slow scrolling
   final ScrollController _scrollController = ScrollController();
   Timer? _debounce;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
@@ -112,7 +115,48 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onScroll() {
     if (_scrollController.hasClients) {
-      final scrolled = _scrollController.offset > 20;
+      final currentOffset = _scrollController.offset;
+      final scrolled = currentOffset > 20;
+      final scrollDelta = currentOffset - _lastScrollOffset;
+
+      // Always show filters when near the top
+      if (currentOffset < 50 && !_showFilters) {
+        setState(() {
+          _showFilters = true;
+        });
+        _cumulativeScroll = 0;
+        _lastScrollOffset = currentOffset;
+        return;
+      }
+
+      // Track cumulative scroll in the same direction
+      if ((scrollDelta > 0 && _cumulativeScroll > 0) ||
+          (scrollDelta < 0 && _cumulativeScroll < 0)) {
+        // Same direction - accumulate
+        _cumulativeScroll += scrollDelta;
+      } else {
+        // Direction changed - reset
+        _cumulativeScroll = scrollDelta;
+      }
+
+      // Hide filters when scrolled down enough (cumulative 80px down)
+      if (_cumulativeScroll > 80 && _showFilters && currentOffset > 120) {
+        setState(() {
+          _showFilters = false;
+        });
+        _cumulativeScroll = 0;
+      }
+      // Show filters when scrolled up enough (cumulative 60px up)
+      else if (_cumulativeScroll < -60 && !_showFilters) {
+        setState(() {
+          _showFilters = true;
+        });
+        _cumulativeScroll = 0;
+      }
+
+      _lastScrollOffset = currentOffset;
+
+      // Update scrolled state for search bar animation
       if (scrolled != _isScrolled) {
         setState(() {
           _isScrolled = scrolled;
@@ -292,6 +336,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 280),
       curve: Curves.easeOut,
+      clipBehavior: Clip.hardEdge,
       transform: _isScrolled && !isFocused
           ? Matrix4.diagonal3Values(0.95, 0.9, 1.0)
           : Matrix4.identity(),
@@ -588,150 +633,179 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 10),
 
               // ------------------ Filter Buttons ------------------
-              SizedBox(
-                height: 40,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      // Show genre filter if active and not a standard filter
-                      if (selectedFilter != "Top 100" &&
-                          selectedFilter != "Popular" &&
-                          selectedFilter != "Upcoming" &&
-                          selectedFilter != "Airing" &&
-                          selectedFilter != "Movies" &&
-                          selectedFilter != "Calendar" &&
-                          selectedFilter != "Seasonal" &&
-                          selectedFilter != "Search")
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6, right: 6),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF714FDC),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  selectedFilter,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOutCubic,
+                height: _showFilters ? 50 : 0,
+                child: ClipRect(
+                  child: AnimatedSlide(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeInOutCubic,
+                    offset: _showFilters ? Offset.zero : const Offset(0, -0.5),
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: _showFilters ? 1.0 : 0.0,
+                      child: SizedBox(
+                        height: 40,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              // Show genre filter if active and not a standard filter
+                              if (selectedFilter != "Top 100" &&
+                                  selectedFilter != "Popular" &&
+                                  selectedFilter != "Upcoming" &&
+                                  selectedFilter != "Airing" &&
+                                  selectedFilter != "Movies" &&
+                                  selectedFilter != "Calendar" &&
+                                  selectedFilter != "Seasonal" &&
+                                  selectedFilter != "Search")
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 6,
+                                    right: 6,
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF714FDC),
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          selectedFilter,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        GestureDetector(
+                                          onTap: () {
+                                            _fetchAnimeByCategory(
+                                              "Top 100",
+                                              AniListService.getTopAnime,
+                                            );
+                                          },
+                                          child: const Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                            size: 18,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(width: 6),
-                                GestureDetector(
+                              buildFilterButton(
+                                "Top 100",
+                                AniListService.getTopAnime,
+                              ),
+                              // Calendar Button
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                child: GestureDetector(
                                   onTap: () {
-                                    _fetchAnimeByCategory(
-                                      "Top 100",
-                                      AniListService.getTopAnime,
-                                    );
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    _searchFocus.unfocus();
+                                    isFocused = false;
+                                    setState(() {
+                                      selectedFilter = "Calendar";
+                                    });
                                   },
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                    size: 18,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: selectedFilter == "Calendar"
+                                          ? const Color(0xFF714FDC)
+                                          : Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Text(
+                                      "Calendar",
+                                      style: TextStyle(
+                                        color: selectedFilter == "Calendar"
+                                            ? Colors.white
+                                            : Colors.black87,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      buildFilterButton("Top 100", AniListService.getTopAnime),
-                      // Calendar Button
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            _searchFocus.unfocus();
-                            isFocused = false;
-                            setState(() {
-                              selectedFilter = "Calendar";
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: selectedFilter == "Calendar"
-                                  ? const Color(0xFF714FDC)
-                                  : Colors.grey[300],
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Text(
-                              "Calendar",
-                              style: TextStyle(
-                                color: selectedFilter == "Calendar"
-                                    ? Colors.white
-                                    : Colors.black87,
-                                fontWeight: FontWeight.w600,
                               ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Seasonal Button
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            _searchFocus.unfocus();
-                            isFocused = false;
-                            setState(() {
-                              selectedFilter = "Seasonal";
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: selectedFilter == "Seasonal"
-                                  ? const Color(0xFF714FDC)
-                                  : Colors.grey[300],
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Text(
-                              "Seasonal",
-                              style: TextStyle(
-                                color: selectedFilter == "Seasonal"
-                                    ? Colors.white
-                                    : Colors.black87,
-                                fontWeight: FontWeight.w600,
+                              // Seasonal Button
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    _searchFocus.unfocus();
+                                    isFocused = false;
+                                    setState(() {
+                                      selectedFilter = "Seasonal";
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: selectedFilter == "Seasonal"
+                                          ? const Color(0xFF714FDC)
+                                          : Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Text(
+                                      "Seasonal",
+                                      style: TextStyle(
+                                        color: selectedFilter == "Seasonal"
+                                            ? Colors.white
+                                            : Colors.black87,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              buildFilterButton(
+                                "Popular",
+                                AniListService.getPopularAnime,
+                              ),
+                              buildFilterButton(
+                                "Upcoming",
+                                AniListService.getUpcomingAnime,
+                              ),
+                              buildFilterButton(
+                                "Airing",
+                                AniListService.getAiringAnime,
+                              ),
+                              buildFilterButton(
+                                "Movies",
+                                AniListService.getTopMovies,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      buildFilterButton(
-                        "Popular",
-                        AniListService.getPopularAnime,
-                      ),
-                      buildFilterButton(
-                        "Upcoming",
-                        AniListService.getUpcomingAnime,
-                      ),
-                      buildFilterButton(
-                        "Airing",
-                        AniListService.getAiringAnime,
-                      ),
-                      buildFilterButton("Movies", AniListService.getTopMovies),
-                    ],
+                    ),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 10),
 
               // ------------------ List View / History ------------------
               Expanded(

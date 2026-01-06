@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ainme_vault/widgets/avatar_picker_bottom_sheet.dart';
 import 'package:ainme_vault/widgets/edit_profile_bottom_sheet.dart';
+import 'package:ainme_vault/widgets/account_settings_bottom_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart'; // import to access MainScreen
 
@@ -281,7 +282,7 @@ class ProfileScreen extends StatelessWidget {
 
               return Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 35,
+                  horizontal: 16,
                 ), // Smaller card width
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -301,7 +302,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       _buildStatItem(totalHours.toStringAsFixed(1), "Hours"),
                       _buildStatItem(completedCount.toString(), "Completed"),
-                      _buildStatItem(totalAnimes.toString(), "Total Animes"),
+                      _buildStatItem(totalAnimes.toString(), "Anime"),
                     ],
                   ),
                 ),
@@ -315,7 +316,7 @@ class ProfileScreen extends StatelessWidget {
           // SETTINGS LIST
           // ---------------------------
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15), // Wider card
+            padding: const EdgeInsets.symmetric(horizontal: 16), // Wider card
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               decoration: BoxDecoration(
@@ -359,13 +360,20 @@ class ProfileScreen extends StatelessWidget {
                     false,
                   ),
                   const SizedBox(height: 20),
+                  _buildSettingsTile(
+                    Icons.info_outline,
+                    "About",
+                    context,
+                    false,
+                  ),
+                  const SizedBox(height: 20),
                   _buildSettingsTile(Icons.logout, "Logout", context, true),
                 ],
               ),
             ),
           ),
 
-          const SizedBox(height: 35), // Same space as above the card
+          const SizedBox(height: 100), // Extra space for bottom navigation
         ],
       ),
     );
@@ -505,6 +513,14 @@ class ProfileScreen extends StatelessWidget {
               ),
             );
           }
+        } else if (title == "Account Settings") {
+          // Show account settings bottom sheet
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => const AccountSettingsBottomSheet(),
+          );
         } else {
           ScaffoldMessenger.of(
             context,
