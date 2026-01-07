@@ -135,6 +135,12 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
           'Unknown';
       final coverImage = widget.anime['coverImage']['large'] ?? "";
 
+      // 🔥 Fix: Ensure Completed entries have max progress
+      // (Handles race condition where user clicked Completed before episodes loaded)
+      if (_status == "Completed" && _totalEpisodes > 0) {
+        _progress = _totalEpisodes;
+      }
+
       final data = {
         'id': widget.anime['id'],
         'title': title,
@@ -144,7 +150,7 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
         'totalEpisodes': _totalEpisodes,
         'averageScore':
             widget.anime['averageScore'], // Store anime's actual rating
-        'updatedAt': FieldValue.serverTimestamp(),
+        'lastUpdated': FieldValue.serverTimestamp(),
         'format': widget.anime['format'], // TV, MOVIE, ONA
         'seasonYear': widget.anime['seasonYear'], // 2019
       };
@@ -162,25 +168,33 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
           .collection('anime')
           .doc(animeId)
           .set(data, SetOptions(merge: true));
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_isNewEntry ? 'Added to list' : 'Entry updated'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error saving: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        showErrorSnackbar(context, 'Error saving: $e');
       }
     }
+  }
+
+  void showErrorSnackbar(BuildContext context, String message) {
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: Colors.redAccent,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -224,7 +238,7 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                 TextButton(
                   onPressed: canSave
                       ? () async {
-                          HapticFeedback.lightImpact();
+                          HapticFeedback.mediumImpact();
                           await _saveEntry();
                           if (context.mounted) Navigator.pop(context);
                         }
@@ -534,17 +548,12 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                               if (context.mounted) {
                                 Navigator.pop(context); // Close dialog
                                 Navigator.pop(context); // Close bottom sheet
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Removed from list'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error removing: $e')),
+                                showErrorSnackbar(
+                                  context,
+                                  'Error removing anime',
                                 );
                               }
                             }

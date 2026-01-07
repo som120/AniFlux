@@ -799,10 +799,31 @@ class _MyAnimeListState extends State<MyAnimeList> {
 
         final animeList = snapshot.data!.docs;
 
-        // Client-side sorting for fields that need special handling
-        final sortKey = '${widget.sortBy}_${widget.sortAscending}';
+        // Smart Caching:
+        // 1. Include status in key so tab switching invalidates cache
+        // 2. Only re-sort if:
+        //    a) Sort criteria/status changed
+        //    b) First load (cache null)
+        //    c) List structure changed (items added/removed)
+        //    This prevents items from "jumping" when you just update progress (lastUpdated changes).
 
-        if (_cachedSortedList == null || _lastSortKey != sortKey) {
+        final sortKey =
+            '${widget.sortBy}_${widget.sortAscending}_${widget.status}';
+        bool shouldResort =
+            _cachedSortedList == null || _lastSortKey != sortKey;
+
+        if (!shouldResort && _cachedSortedList != null) {
+          final currentIds = animeList.map((d) => d.id).toSet();
+          final cachedIds = _cachedSortedList!.map((d) => d.id).toSet();
+
+          // If sets differ, items were added or removed -> must re-sort
+          if (currentIds.length != cachedIds.length ||
+              !currentIds.containsAll(cachedIds)) {
+            shouldResort = true;
+          }
+        }
+
+        if (shouldResort) {
           _cachedSortedList = _sortAnimeList(
             animeList,
             widget.sortBy,
@@ -1168,16 +1189,22 @@ class _MyAnimeListState extends State<MyAnimeList> {
           result = (progressA as int).compareTo(progressB as int);
           break;
         case 'lastUpdated':
-          final updatedA = dataA['lastUpdated'] as Timestamp?;
-          final updatedB = dataB['lastUpdated'] as Timestamp?;
-          if (updatedA == null && updatedB == null)
+          // Support both field names for backward compatibility
+          final updatedA =
+              (dataA['lastUpdated'] ?? dataA['updatedAt']) as Timestamp?;
+          final updatedB =
+              (dataB['lastUpdated'] ?? dataB['updatedAt']) as Timestamp?;
+
+          // Always push null values to the end (don't invert by ascending flag)
+          if (updatedA == null && updatedB == null) {
             result = 0;
-          else if (updatedA == null)
-            result = 1;
-          else if (updatedB == null)
-            result = -1;
-          else
+          } else if (updatedA == null) {
+            return 1; // A goes to end (regardless of sort direction)
+          } else if (updatedB == null) {
+            return -1; // B goes to end (regardless of sort direction)
+          } else {
             result = updatedA.compareTo(updatedB);
+          }
           break;
         case 'score':
           final scoreA = dataA['averageScore'] ?? 0;
