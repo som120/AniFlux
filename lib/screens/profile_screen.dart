@@ -145,6 +145,15 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Map<String, String> formatWatchTime(double totalHours) {
+    if (totalHours < 48) {
+      return {"value": totalHours.toStringAsFixed(1), "label": "Hours"};
+    } else {
+      final days = totalHours / 24;
+      return {"value": days.toStringAsFixed(2), "label": "Days"};
+    }
+  }
+
   // Authenticated view - Show full profile
   Widget _buildAuthenticatedView(BuildContext context, User user) {
     return SingleChildScrollView(
@@ -271,14 +280,12 @@ class ProfileScreen extends StatelessWidget {
                     completedCount++;
                   }
 
-                  // Calculate hours watched - only for Watching and Completed
-                  if (status == 'Watching' || status == 'Completed') {
-                    final progress = data['progress'] ?? 0;
-                    // Assuming average episode is 24 minutes
-                    totalHours += (progress * 24) / 60;
-                  }
+                  // 🔥 Use watchMinutes directly (accurate for movies + TV)
+                  final minutes = data['watchMinutes'] ?? 0;
+                  totalHours += minutes / 60;
                 }
               }
+              final watchTime = formatWatchTime(totalHours);
 
               return Padding(
                 padding: const EdgeInsets.symmetric(
@@ -300,7 +307,7 @@ class ProfileScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildStatItem(totalHours.toStringAsFixed(1), "Hours"),
+                      _buildStatItem(watchTime["value"]!, watchTime["label"]!),
                       _buildStatItem(completedCount.toString(), "Completed"),
                       _buildStatItem(totalAnimes.toString(), "Anime"),
                     ],

@@ -893,7 +893,7 @@ class _MyAnimeListState extends State<MyAnimeList> {
                       // Poster image
                       Positioned.fill(
                         child: CachedNetworkImage(
-                          imageUrl: data['coverImage'],
+                          imageUrl: data['coverImage'] ?? '',
                           fit: BoxFit.cover,
                           errorWidget: (_, __, ___) =>
                               Container(color: Colors.grey[300]),
@@ -963,7 +963,11 @@ class _MyAnimeListState extends State<MyAnimeList> {
             final totalEpisodes = data['totalEpisodes'] ?? '?';
 
             final format = data['format']; // e.g. TV, MOVIE, ONA
-            final year = data['seasonYear'] ?? data['startDate']?['year'];
+            final int? year =
+                data['seasonYear'] ??
+                (data['startDate'] is Timestamp
+                    ? (data['startDate'] as Timestamp).toDate().year
+                    : null);
 
             // Reconstruct anime object from Firestore data
             final anime = {
@@ -1023,7 +1027,7 @@ class _MyAnimeListState extends State<MyAnimeList> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: CachedNetworkImage(
-                            imageUrl: data['coverImage'],
+                            imageUrl: data['coverImage'] ?? '',
                             width: 80, // ⬅️ increased
                             height: 115, // ⬅️ increased
                             fit: BoxFit.cover,
@@ -1233,6 +1237,9 @@ Future<void> _onAddEpisode({
   final int progress = data['progress'] ?? 0;
   final int totalEpisodes = data['totalEpisodes'] ?? 0;
   final String status = data['status'];
+  // 🔥 Read episode duration (movies have full runtime, TV has ~24 min)
+  final int episodeMinutes = data['episodeDuration'] ?? 24;
+  final int currentWatchMinutes = data['watchMinutes'] ?? 0;
 
   if (totalEpisodes != 0 && progress >= totalEpisodes) return;
 
@@ -1244,9 +1251,14 @@ Future<void> _onAddEpisode({
       // 🎬 Movie / single-episode anime
       updateData['status'] = 'Completed';
       updateData['progress'] = 1;
+      updateData['watchMinutes'] = episodeMinutes;
+      updateData['startDate'] = Timestamp.now();
+      updateData['finishDate'] = Timestamp.now();
     } else {
       updateData['status'] = 'Watching';
       updateData['progress'] = 1;
+      updateData['watchMinutes'] = episodeMinutes;
+      updateData['startDate'] = Timestamp.now();
     }
   }
   // 🔵 WATCHING → COMPLETED
@@ -1255,10 +1267,13 @@ Future<void> _onAddEpisode({
       progress + 1 >= totalEpisodes) {
     updateData['status'] = 'Completed';
     updateData['progress'] = totalEpisodes;
+    updateData['watchMinutes'] = currentWatchMinutes + episodeMinutes;
+    updateData['finishDate'] = Timestamp.now();
   }
   // ▶️ NORMAL INCREMENT
   else {
     updateData['progress'] = progress + 1;
+    updateData['watchMinutes'] = currentWatchMinutes + episodeMinutes;
   }
 
   updateData['lastUpdated'] = FieldValue.serverTimestamp();

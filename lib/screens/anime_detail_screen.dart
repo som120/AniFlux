@@ -1841,7 +1841,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
 
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 14),
       decoration: BoxDecoration(
         color: AppTheme.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(18),
@@ -1849,32 +1849,38 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
       ),
       child: Row(
         children: [
-          // LEFT: timer + text
-          Row(
-            children: [
-              Icon(Icons.timer_rounded, color: AppTheme.primary, size: 22),
-              const SizedBox(width: 10),
-              Text(
-                "Ep ${nextEp['episode']} Airing In",
-                style: TextStyle(
-                  fontSize: 13,
-                  color: AppTheme.primary.withOpacity(0.85),
-                  fontWeight: FontWeight.w600,
-                ),
+          // LEFT: timer icon
+          Icon(Icons.timer_rounded, color: AppTheme.primary, size: 20),
+          const SizedBox(width: 8),
+          // Text content - FittedBox keeps it on one line and scales down if needed
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  Text(
+                    "Ep ${nextEp['episode']} Airing In ",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppTheme.primary.withOpacity(0.85),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    "${days}d ${hours}h ${minutes}m",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: AppTheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Text(
-                "${days}d ${hours}h ${minutes}m",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: AppTheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+            ),
           ),
 
-          const Spacer(),
+          const SizedBox(width: 8),
 
           // RIGHT: bell
           StreamBuilder<bool>(

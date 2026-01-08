@@ -101,6 +101,8 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
         widget.anime['format'] = fullAnime['format'];
         widget.anime['seasonYear'] =
             fullAnime['seasonYear'] ?? fullAnime['startDate']?['year'];
+        widget.anime['duration'] =
+            fullAnime['duration']; // 🔥 Episode duration in minutes
 
         _episodesLoading = false;
         _animeDetailsLoaded = true;
@@ -141,6 +143,21 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
         _progress = _totalEpisodes;
       }
 
+      // 🔥 Calculate episode duration (movies have full runtime, TV has per-episode)
+      final format = widget.anime['format'];
+      final int episodeDuration;
+      if (format == 'MOVIE') {
+        // Movies: use full runtime (e.g., 130 min for A Silent Voice)
+        episodeDuration = widget.anime['duration'] ?? 90;
+      } else {
+        // TV/ONA/OVA: use per-episode duration (default 24 min)
+        episodeDuration = widget.anime['duration'] ?? 24;
+      }
+
+      // 🔥 Calculate watchMinutes based on progress
+      // This handles: direct progress changes, marking Completed, decreasing episodes
+      final int watchMinutes = _progress * episodeDuration;
+
       final data = {
         'id': widget.anime['id'],
         'title': title,
@@ -151,8 +168,12 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
         'averageScore':
             widget.anime['averageScore'], // Store anime's actual rating
         'lastUpdated': FieldValue.serverTimestamp(),
-        'format': widget.anime['format'], // TV, MOVIE, ONA
+        'format': format, // TV, MOVIE, ONA
         'seasonYear': widget.anime['seasonYear'], // 2019
+        'episodeDuration':
+            episodeDuration, // 🔥 For accurate watch time tracking
+        'watchMinutes':
+            watchMinutes, // 🔥 Track total watch time for this anime
       };
 
       if (_startDate != null) {
