@@ -38,7 +38,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 
 ---
 
-## 📈 Development Activity
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Chart%20Increasing.webp" alt="Chart Increasing" width="25" height="25" /> Development Activity
 
 <p align="center">
   <img
@@ -52,9 +52,9 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 ---
 
 
-## 🚀 Features
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Travel%20and%20Places/Rocket.webp" alt="Rocket" width="25" height="25" /> Features
 
-### 🔍 Anime Search
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Magnifying%20Glass%20Tilted%20Left.webp" alt="Magnifying Glass Tilted Left" width="25" height="25" /> Anime Search
 - Search anime using **AniList GraphQL API**
 - Clean and modern UI
 - Displays poster, rating, release year
@@ -72,7 +72,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 - Clean white theme
 - Fully responsive for **Android & iOS**
 
-### ⭐ Anime Details
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Star.webp" alt="Star" width="25" height="25" /> Anime Details
 - High-quality cover image
 - Description & synopsis
 - Genres
@@ -99,7 +99,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 
 ---
 
-## 📁 Project Structure
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Card%20Index%20Dividers.webp" alt="Card Index Dividers" width="25" height="25" /> Project Structure
 
 ```text
 AniFlux/
