@@ -45,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      TextInput.finishAutofillContext();
 
       final user = FirebaseAuth.instance.currentUser;
 
@@ -258,203 +259,208 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  child: Form(
-                    key: _formKey,
-                    autovalidateMode: _submitted
-                        ? AutovalidateMode.onUserInteraction
-                        : AutovalidateMode.disabled,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Title
-                        const Text(
-                          "Welcome to",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16, // Reduced size
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                  child: AutofillGroup(
+                    child: Form(
+                      key: _formKey,
+                      autovalidateMode: _submitted
+                          ? AutovalidateMode.onUserInteraction
+                          : AutovalidateMode.disabled,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Title
+                          const Text(
+                            "Welcome to",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16, // Reduced size
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          "AniFlux Login Now!",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 22, // Reduced size
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                          const SizedBox(height: 4),
+                          const Text(
+                            "AniFlux Login Now!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 22, // Reduced size
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 24), // Reduced spacing
-                        // Email Field
-                        _buildLabel("Email"),
-                        const SizedBox(height: 6),
-                        _buildTextField(
-                          controller: _emailController,
-                          hintText: "example@gmail.com",
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return "Email is required";
-                            }
-                            if (!RegExp(
-                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                            ).hasMatch(value.trim())) {
-                              return "Enter a valid email";
-                            }
-                            return null;
-                          },
-                        ),
-
-                        const SizedBox(height: 16), // Reduced spacing
-                        // Password Field
-                        _buildLabel("Password"),
-                        const SizedBox(height: 8),
-                        _buildTextField(
-                          controller: _passwordController,
-                          hintText: "• • • • • • • •",
-                          obscureText: _obscurePassword,
-                          showToggle: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Password is required";
-                            }
-                            if (value.length < 8) {
-                              return "Password must be at least 8 characters";
-                            }
-                            return null;
-                          },
-                        ),
-
-                        // Forgot Password
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const ForgotPasswordScreen(),
-                                ),
-                              );
+                          const SizedBox(height: 24), // Reduced spacing
+                          // Email Field
+                          _buildLabel("Email"),
+                          const SizedBox(height: 6),
+                          _buildTextField(
+                            controller: _emailController,
+                            hintText: "example@gmail.com",
+                            autofillHints: const [AutofillHints.email],
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return "Email is required";
+                              }
+                              if (!RegExp(
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                              ).hasMatch(value.trim())) {
+                                return "Enter a valid email";
+                              }
+                              return null;
                             },
-
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              "Forgot Password?",
-                              style: TextStyle(
-                                color: AppTheme.primary.withOpacity(0.9),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13, // Reduced size
-                              ),
-                            ),
                           ),
-                        ),
 
-                        const SizedBox(height: 20), // Reduced spacing
-                        // Login Button
-                        ElevatedButton(
-                          onPressed: _isLoading ? null : _login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primary,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                          const SizedBox(height: 16), // Reduced spacing
+                          // Password Field
+                          _buildLabel("Password"),
+                          const SizedBox(height: 8),
+                          _buildTextField(
+                            controller: _passwordController,
+                            hintText: "• • • • • • • •",
+                            autofillHints: const [AutofillHints.password],
+                            obscureText: _obscurePassword,
+                            showToggle: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Password is required";
+                              }
+                              if (value.length < 8) {
+                                return "Password must be at least 8 characters";
+                              }
+                              return null;
+                            },
                           ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                        ),
-                        const SizedBox(height: 24),
 
-                        // "Or Sign in with"
-                        const Text(
-                          "Or Sign in with",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 13, // Reduced size
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-
-                        const SizedBox(height: 20), // Reduced spacing
-                        // Social Buttons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildSocialButton(
-                              label: "Google",
-                              image: "assets/Google__G__logo.png",
-                              onTap: _isLoading
-                                  ? () {
-                                      HapticFeedback.lightImpact();
-                                    }
-                                  : _signInWithGoogle,
-                            ),
-                            const SizedBox(width: 20),
-                            _buildSocialButton(
-                              label: "Apple",
-                              image: "assets/Apple_logo_black.png",
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Don't have a Account ",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
+                          // Forgot Password
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SignupScreen(),
+                                    builder: (_) =>
+                                        const ForgotPasswordScreen(),
                                   ),
                                 );
                               },
-                              child: const Text(
-                                "Signup",
+
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                "Forgot Password?",
                                 style: TextStyle(
-                                  color: AppTheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.primary.withOpacity(0.9),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13, // Reduced size
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+
+                          const SizedBox(height: 20), // Reduced spacing
+                          // Login Button
+                          ElevatedButton(
+                            onPressed: _isLoading ? null : _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    "Login",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // "Or Sign in with"
+                          const Text(
+                            "Or Sign in with",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 13, // Reduced size
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+
+                          const SizedBox(height: 20), // Reduced spacing
+                          // Social Buttons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildSocialButton(
+                                label: "Google",
+                                image: "assets/Google__G__logo.png",
+                                onTap: _isLoading
+                                    ? () {
+                                        HapticFeedback.lightImpact();
+                                      }
+                                    : _signInWithGoogle,
+                              ),
+                              const SizedBox(width: 20),
+                              _buildSocialButton(
+                                label: "Apple",
+                                image: "assets/Apple_logo_black.png",
+                                onTap: () {
+                                  HapticFeedback.lightImpact();
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Don't have a Account ",
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const SignupScreen(),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  "Signup",
+                                  style: TextStyle(
+                                    color: AppTheme.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -483,13 +489,18 @@ class _LoginScreenState extends State<LoginScreen> {
     bool obscureText = false,
     bool showToggle = false,
     TextInputType keyboardType = TextInputType.text,
+    List<String>? autofillHints,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      autofillHints: autofillHints,
       validator: validator,
+      autocorrect: false,
+      enableSuggestions: false,
+
       onChanged: (_) {
         if (_submitted && _formKey.currentState != null) {
           _formKey.currentState!.validate();
