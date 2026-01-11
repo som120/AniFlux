@@ -1,9 +1,11 @@
+import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:ainme_vault/screens/contributors_screen.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -97,6 +99,19 @@ class _AboutScreenState extends State<AboutScreen> {
           _isCheckingUpdate = false;
         });
       }
+    }
+  }
+
+  Future<List<dynamic>> _fetchGitHubReleases() async {
+    final response = await http.get(
+      Uri.parse('https://api.github.com/repos/som120/AniFlux/releases'),
+      headers: {'Accept': 'application/vnd.github+json'},
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body) as List<dynamic>;
+    } else {
+      throw Exception('Failed to load releases');
     }
   }
 
@@ -263,7 +278,6 @@ class _AboutScreenState extends State<AboutScreen> {
                               _checkForUpdates();
                             },
                     ),
-                    _buildDivider(),
                     _buildListTile(
                       icon: Icons.history,
                       title: "Changelog",
@@ -271,7 +285,6 @@ class _AboutScreenState extends State<AboutScreen> {
                         _showChangelog(context);
                       },
                     ),
-                    _buildDivider(),
                     _buildListTile(
                       icon: Icons.bug_report_outlined,
                       title: "Report a Bug",
@@ -309,7 +322,6 @@ class _AboutScreenState extends State<AboutScreen> {
                       onTap: () =>
                           _launchUrl("https://github.com/som120/AniFlux"),
                     ),
-                    _buildDivider(),
                     _buildListTile(
                       icon: Icons.people_outline,
                       title: "Contributors",
@@ -322,15 +334,13 @@ class _AboutScreenState extends State<AboutScreen> {
                         );
                       },
                     ),
-                    _buildDivider(),
                     _buildListTile(
                       icon: Icons.coffee,
                       title: "Buy Me a Coffee",
                       iconColor: Colors.orange,
                       onTap: () =>
-                          _launchUrl("https://www.buymeacoffee.com/start0dev"),
+                          _launchUrl("https://buymeacoffee.com/sompaul"),
                     ),
-                    _buildDivider(),
                     _buildListTile(
                       icon: Icons.article_outlined,
                       title: "License",
@@ -399,38 +409,152 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-  Widget _buildDivider() {
-    return const Divider(height: 1, indent: 64, color: Colors.black12);
-  }
-
-  void _showChangelog(BuildContext context) {
+  void _showChangelog(BuildContext context) async {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Changelog"),
-        content: const SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final releases = await _fetchGitHubReleases();
+
+      if (!mounted) return;
+      Navigator.pop(context); // close loading dialog
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.65,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Title
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(24, 20, 24, 12),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Changelog",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Content - Flexible allows it to shrink when content is small
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      itemCount: releases.length,
+                      itemBuilder: (context, index) {
+                        final release = releases[index];
+                        final String tag = release['tag_name'] ?? '';
+                        final String body =
+                            release['body'] ?? 'No release notes provided.';
+                        final bool isCurrent =
+                            tag.replaceAll('v', '') == _version;
+
+                        return _buildReleaseItem(tag, body, isCurrent);
+                      },
+                    ),
+                  ),
+
+                  // Actions
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Close"),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context); // close loading dialog
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to load changelog"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Widget _buildReleaseItem(String tag, String body, bool isCurrent) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
               Text(
-                "Version 1.0.0",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                tag,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: isCurrent ? AppTheme.primary : Colors.black,
+                ),
               ),
-              SizedBox(height: 8),
-              Text(
-                "• Initial release of AniFlux\n• Track your favorite anime\n• Discover new series\n• Sync across devices",
-              ),
-              Divider(height: 30),
-              // Add more changelog items here
+              if (isCurrent)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      "Current",
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.primary,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Close"),
+          const SizedBox(height: 6),
+
+          /// ✅ THIS is where Markdown goes
+          MarkdownBody(
+            data: body,
+            styleSheet: MarkdownStyleSheet(
+              h2: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              h3: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              p: const TextStyle(fontSize: 13, height: 1.5),
+              listIndent: 24,
+              blockSpacing: 10,
+            ),
           ),
+
+          const Divider(height: 24),
         ],
       ),
     );
