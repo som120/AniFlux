@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SearchScreen extends StatefulWidget {
   final String? initialGenre;
@@ -37,6 +39,8 @@ class _SearchScreenState extends State<SearchScreen> {
   String selectedFilter = "Top 100";
 
   List<String> searchHistory = [];
+  Set<String> _userAnimeIds = {};
+  StreamSubscription? _userListSubscription;
 
   @override
   void initState() {
@@ -51,9 +55,30 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     _init();
+    _subscribeToUserList();
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
       _updateConnectionStatus,
     );
+  }
+
+  void _subscribeToUserList() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _userAnimeIds = {};
+      return;
+    }
+    _userListSubscription = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('anime')
+        .snapshots()
+        .listen((snapshot) {
+          if (mounted) {
+            setState(() {
+              _userAnimeIds = snapshot.docs.map((doc) => doc.id).toSet();
+            });
+          }
+        });
   }
 
   void _updateConnectionStatus(List<ConnectivityResult> result) {
@@ -852,6 +877,9 @@ class _SearchScreenState extends State<SearchScreen> {
                               rank: selectedFilter == "Top 100"
                                   ? index + 1
                                   : null,
+                              isInList: _userAnimeIds.contains(
+                                anime['id'].toString(),
+                              ),
                               onTap: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 _searchFocus.unfocus();
@@ -879,6 +907,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
+    _userListSubscription?.cancel();
     _connectivitySubscription?.cancel();
     _searchFocus.removeListener(_onFocusChange);
     _searchFocus.dispose();
@@ -893,12 +922,14 @@ class _SearchScreenState extends State<SearchScreen> {
 class AnimeListCard extends StatelessWidget {
   final dynamic anime;
   final int? rank;
+  final bool isInList;
   final VoidCallback onTap;
 
   const AnimeListCard({
     super.key,
     required this.anime,
     this.rank,
+    this.isInList = false,
     required this.onTap,
   });
 
@@ -1030,6 +1061,17 @@ class AnimeListCard extends StatelessWidget {
               ],
             ),
           ),
+
+          if (isInList)
+            Positioned(
+              top: 10,
+              right: 12,
+              child: Icon(
+                Icons.bookmark_rounded,
+                color: const Color(0xFF714FDC).withOpacity(0.6),
+                size: 24,
+              ),
+            ),
 
           if (rank != null)
             Positioned(
