@@ -1064,11 +1064,11 @@ class AnimeListCard extends StatelessWidget {
 
           if (isInList)
             Positioned(
-              top: 10,
+              top: 12,
               right: 12,
               child: Icon(
                 Icons.bookmark_rounded,
-                color: const Color(0xFF714FDC).withOpacity(0.6),
+                color: const Color(0xFF714FDC).withOpacity(0.25),
                 size: 24,
               ),
             ),
