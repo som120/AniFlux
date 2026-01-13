@@ -34,6 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Timer? _timer;
 
+  // Carousel error retry
+  Timer? _carouselRetryTimer;
+  late final ValueNotifier<int> _carouselRetryCountdown;
+
   // Auth state listener for immediate UI updates on login/logout
   StreamSubscription<User?>? _authSubscription;
   User? _currentUser;
@@ -78,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _bgColorNotifier = ValueNotifier(Colors.white);
     _pageIndexNotifier = ValueNotifier(0);
+    _carouselRetryCountdown = ValueNotifier(0);
 
     // Initialize current user and listen for auth state changes
     _currentUser = FirebaseAuth.instance.currentUser;
@@ -100,8 +105,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _authSubscription?.cancel();
     _timer?.cancel();
+    _carouselRetryTimer?.cancel();
     _bgColorNotifier.dispose();
     _pageIndexNotifier.dispose();
+    _carouselRetryCountdown.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -168,6 +175,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
         _airingAnimeList = uniqueList;
         _isLoading = false;
+
+        // Cancel retry timer on success
+        _carouselRetryTimer?.cancel();
+        _carouselRetryTimer = null;
+        _carouselRetryCountdown.value = 0;
 
         if (_airingAnimeList.isNotEmpty) {
           _bgColorNotifier.value = _getProcessedColor(0);
@@ -294,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (_isLoading)
                           _buildLoadingShimmer()
                         else if (_airingAnimeList.isEmpty)
-                          const Center(child: Text("No airing anime found"))
+                          _buildCarouselError()
                         else
                           Column(
                             children: [
@@ -722,6 +734,128 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _startCarouselRetryCountdown() {
+    _carouselRetryTimer?.cancel();
+    _carouselRetryCountdown.value = 10;
+
+    _carouselRetryTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      _carouselRetryCountdown.value--;
+
+      if (_carouselRetryCountdown.value <= 0) {
+        timer.cancel();
+        _retryCarouselFetch();
+      }
+    });
+  }
+
+  void _retryCarouselFetch() {
+    _carouselRetryTimer?.cancel();
+    _carouselRetryCountdown.value = 0;
+    setState(() {
+      _isLoading = true;
+    });
+    _fetchAiringAnime();
+  }
+
+  Widget _buildCarouselError() {
+    // Start countdown if not already running
+    if (_carouselRetryCountdown.value == 0 && _carouselRetryTimer == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _airingAnimeList.isEmpty && !_isLoading) {
+          _startCarouselRetryCountdown();
+        }
+      });
+    }
+
+    return Container(
+      height: 220,
+      margin: const EdgeInsets.symmetric(horizontal: _cardHorizontalMargin),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: _retryCarouselFetch,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.cloud_off_rounded,
+                  size: 48,
+                  color: Colors.grey.shade400,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Couldn't load anime",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                ValueListenableBuilder<int>(
+                  valueListenable: _carouselRetryCountdown,
+                  builder: (context, countdown, _) {
+                    return Text(
+                      countdown > 0
+                          ? "Retrying in $countdown seconds..."
+                          : "Tap to retry",
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade500,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.refresh_rounded,
+                        size: 18,
+                        color: AppTheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Retry Now",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

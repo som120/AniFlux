@@ -971,13 +971,16 @@ class AnimeListCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                      Padding(
+                        padding: EdgeInsets.only(right: isInList ? 30 : 0),
+                        child: Text(
+                          title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -1064,7 +1067,7 @@ class AnimeListCard extends StatelessWidget {
 
           if (isInList)
             Positioned(
-              top: 12,
+              top: 15,
               right: 12,
               child: Icon(
                 Icons.bookmark_rounded,
