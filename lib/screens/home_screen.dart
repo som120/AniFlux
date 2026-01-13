@@ -33,6 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _sortAscending = false; // false = descending (default)
 
   Timer? _timer;
+
+  // Auth state listener for immediate UI updates on login/logout
+  StreamSubscription<User?>? _authSubscription;
+  User? _currentUser;
   static const double _cardHorizontalMargin = 16.0;
   static const int _visibleDotCount = 5; // Number of dots to display
 
@@ -74,6 +78,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _bgColorNotifier = ValueNotifier(Colors.white);
     _pageIndexNotifier = ValueNotifier(0);
+
+    // Initialize current user and listen for auth state changes
+    _currentUser = FirebaseAuth.instance.currentUser;
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (mounted) {
+        setState(() {
+          _currentUser = user;
+        });
+      }
+    });
+
     _fetchAiringAnime();
     NotificationService.init();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -83,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _authSubscription?.cancel();
     _timer?.cancel();
     _bgColorNotifier.dispose();
     _pageIndexNotifier.dispose();
@@ -364,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               // Only show controls when logged in
-                              if (FirebaseAuth.instance.currentUser != null)
+                              if (_currentUser != null)
                                 Row(
                                   children: [
                                     IconButton(
@@ -432,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         // Only show status chips when logged in
-                        if (FirebaseAuth.instance.currentUser != null)
+                        if (_currentUser != null)
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             child: SingleChildScrollView(
