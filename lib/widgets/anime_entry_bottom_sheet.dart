@@ -525,81 +525,86 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
 
                   const SizedBox(height: 30),
 
-                  // 6. Remove Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        HapticFeedback.lightImpact();
-                        final confirmed = await showDialog<bool>(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            title: const Text("Remove anime?"),
-                            content: const Text(
-                              "This will remove it from your list.",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text("Cancel"),
+                  // 6. Remove Button (only visible for existing entries)
+                  if (!_isNewEntry)
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton.icon(
+                        onPressed: () async {
+                          HapticFeedback.lightImpact();
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: const Text("Remove anime?"),
+                              content: const Text(
+                                "This will remove it from your list.",
                               ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text("Remove"),
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.redAccent,
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: const Text("Cancel"),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text("Remove"),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.redAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
 
-                        if (confirmed == true) {
-                          // remove logic
-                          final user = FirebaseAuth.instance.currentUser;
-                          if (user != null) {
-                            try {
-                              await FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(user.uid)
-                                  .collection('anime')
-                                  .doc(widget.anime['id'].toString())
-                                  .delete();
+                          if (confirmed == true) {
+                            // remove logic
+                            final user = FirebaseAuth.instance.currentUser;
+                            if (user != null) {
+                              try {
+                                await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(user.uid)
+                                    .collection('anime')
+                                    .doc(widget.anime['id'].toString())
+                                    .delete();
 
-                              if (context.mounted) {
-                                Navigator.pop(context); // Close dialog
-                                Navigator.pop(context); // Close bottom sheet
-                              }
-                            } catch (e) {
-                              if (context.mounted) {
-                                showErrorSnackbar(
-                                  context,
-                                  'Error removing anime',
-                                );
+                                if (context.mounted) {
+                                  Navigator.pop(context); // Close dialog
+                                  Navigator.pop(context); // Close bottom sheet
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  showErrorSnackbar(
+                                    context,
+                                    'Error removing anime',
+                                  );
+                                }
                               }
                             }
                           }
-                        }
-                      },
+                        },
 
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.redAccent,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Colors.red.withOpacity(0.05),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.redAccent,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.red.withOpacity(0.05),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                      ),
-                      icon: const Icon(Icons.delete_outline_rounded, size: 22),
-                      label: const Text(
-                        "Remove from list",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 22,
+                        ),
+                        label: const Text(
+                          "Remove from list",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                   const SizedBox(height: 20),
                 ],
               ),

@@ -1725,14 +1725,50 @@ class _SeasonalViewState extends State<_SeasonalView> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    child: Text(
-                      "Select Year",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  // Header Row with Title centered and Apply button on right
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Empty space to balance the Apply button
+                        const SizedBox(width: 60),
+                        // Centered Title
+                        const Text(
+                          "Select Year",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        // Apply Button on the right
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context, tempSelectedYear);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF714FDC),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Text(
+                              "Apply",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(
@@ -1776,11 +1812,13 @@ class _SeasonalViewState extends State<_SeasonalView> {
           },
         );
       },
-    ).whenComplete(() {
+    ).then((selectedYear) {
       scrollController.dispose();
-      if (tempSelectedYear != _selectedYear) {
+      // Handle both button tap (returns year) and drag-to-dismiss (returns null)
+      final yearToApply = selectedYear ?? tempSelectedYear;
+      if (yearToApply != _selectedYear) {
         setState(() {
-          _selectedYear = tempSelectedYear;
+          _selectedYear = yearToApply;
         });
       }
     });
