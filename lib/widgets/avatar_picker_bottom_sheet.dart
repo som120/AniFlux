@@ -79,12 +79,6 @@ class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
       }, SetOptions(merge: true));
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Avatar saved successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
         Navigator.pop(context, selectedAvatar);
       }
     } catch (e) {

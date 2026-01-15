@@ -95,12 +95,6 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
       }, SetOptions(merge: true));
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile updated successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
         Navigator.pop(context, newUsername);
       }
     } catch (e) {
