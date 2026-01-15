@@ -245,22 +245,51 @@ class _AboutScreenState extends State<AboutScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("New Version Available: v$version"),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "New Version Available",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "v$version",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: AppTheme.green,
+              ),
+            ),
+          ],
+        ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text("A new version of AniFlux is available!"),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               const Text(
                 "Release Notes:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
-              Text(
-                notes.length > 300 ? "${notes.substring(0, 300)}..." : notes,
-                style: const TextStyle(fontSize: 12),
+              const SizedBox(height: 8),
+              MarkdownBody(
+                data: notes,
+                styleSheet: MarkdownStyleSheet(
+                  h2: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  h3: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  p: const TextStyle(fontSize: 13, height: 1.5),
+                  listIndent: 20,
+                  blockSpacing: 8,
+                ),
               ),
             ],
           ),
@@ -572,8 +601,14 @@ class _AboutScreenState extends State<AboutScreen> {
                             release['body'] ?? 'No release notes provided.';
                         final bool isCurrent =
                             tag.replaceAll('v', '') == _version;
+                        final bool isLatest = index == 0;
 
-                        return _buildReleaseItem(tag, body, isCurrent);
+                        return _buildReleaseItem(
+                          tag,
+                          body,
+                          isCurrent,
+                          isLatest,
+                        );
                       },
                     ),
                   ),
@@ -640,7 +675,15 @@ class _AboutScreenState extends State<AboutScreen> {
     }
   }
 
-  Widget _buildReleaseItem(String tag, String body, bool isCurrent) {
+  Widget _buildReleaseItem(
+    String tag,
+    String body,
+    bool isCurrent,
+    bool isLatest,
+  ) {
+    // Ensure tag has 'v' prefix
+    final String displayTag = tag.startsWith('v') ? tag : 'v$tag';
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -649,14 +692,38 @@ class _AboutScreenState extends State<AboutScreen> {
           Row(
             children: [
               Text(
-                tag,
+                displayTag,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: isCurrent ? AppTheme.primary : Colors.black,
+                  color: isLatest
+                      ? AppTheme.green
+                      : (isCurrent ? AppTheme.primary : Colors.black),
                 ),
               ),
-              if (isCurrent)
+              if (isLatest)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.green.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      "Latest",
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.green,
+                      ),
+                    ),
+                  ),
+                ),
+              if (isCurrent && !isLatest)
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
                   child: Container(
