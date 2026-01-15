@@ -521,14 +521,34 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
           ),
         ),
 
-        // ⭐ SUBTITLE
+        // ⭐ SUBTITLE with Copy Button
         if (subtitle.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 4.0, left: 20, right: 20),
-            child: Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    subtitle,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Clipboard.setData(ClipboardData(text: subtitle));
+                  },
+                  child: Icon(
+                    Icons.copy_rounded,
+                    size: 18,
+                    color: Colors.grey.shade500,
+                  ),
+                ),
+              ],
             ),
           ),
 
