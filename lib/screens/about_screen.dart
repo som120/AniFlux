@@ -485,6 +485,13 @@ class _AboutScreenState extends State<AboutScreen> {
                         _showLicenseDialog();
                       },
                     ),
+                    _buildListTile(
+                      icon: Icons.privacy_tip_outlined,
+                      title: "Privacy Policy",
+                      onTap: () {
+                        _showPrivacyPolicyDialog();
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -692,6 +699,277 @@ class _AboutScreenState extends State<AboutScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showPrivacyPolicyDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.75,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF8A5CF6),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.privacy_tip_outlined,
+                        size: 32,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      "Privacy Policy",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Last updated: January 2026",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Privacy Policy content
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPrivacySection(
+                        "Data Collection",
+                        "AniFlux collects only the minimum data required for the app to function. This includes your saved anime lists, watch progress, and app preferences. Account-related information is collected only for authentication purposes and is not used for advertising or marketing.",
+                        Icons.data_usage_outlined,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildPrivacySection(
+                        "Data Storage & Security",
+                        "Your data is securely stored using Firebase services, including Firestore and Firebase Authentication. Backend operations are handled using Appwrite Cloud Functions. Reasonable security measures are in place to protect your data from unauthorized access.",
+                        Icons.cloud_outlined,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildPrivacySection(
+                        "Third-Party Services",
+                        "AniFlux uses third-party services to provide core functionality. Anime information is retrieved using the AniList API. Firebase is used for authentication and data storage, and Appwrite is used for backend processing. These services operate under their own privacy policies.",
+                        Icons.link_outlined,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildPrivacySection(
+                        "Your Rights",
+                        "You have the right to access and delete your data at any time. You may request account and data deletion by using the in-app options or by contacting the developer. Upon request, your data will be permanently removed within a reasonable timeframe.",
+                        Icons.shield_outlined,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildContactSection(),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Buttons row
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                child: Row(
+                  children: [
+                    // View Online button
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          _launchUrl(
+                            "https://ani-flux.vercel.app/privacy-policy",
+                          );
+                        },
+                        icon: const Icon(Icons.open_in_new, size: 18),
+                        label: const Text(
+                          "View Online",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF8A5CF6),
+                          side: const BorderSide(color: Color(0xFF8A5CF6)),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Close button
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF8A5CF6),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Close",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrivacySection(String title, String content, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF8A5CF6).withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF8A5CF6).withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 20, color: const Color(0xFF8A5CF6)),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.5,
+              color: Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF8A5CF6).withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF8A5CF6).withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.email_outlined,
+                size: 20,
+                color: Color(0xFF8A5CF6),
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                "Contact",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text.rich(
+            TextSpan(
+              style: const TextStyle(
+                fontSize: 13,
+                height: 1.5,
+                color: Colors.black54,
+              ),
+              children: [
+                const TextSpan(
+                  text:
+                      "If you have any questions or concerns regarding privacy or data usage, you can contact us at ",
+                ),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: GestureDetector(
+                    onTap: () {
+                      _launchUrl("mailto:aniflux.dev@gmail.com");
+                    },
+                    child: const Text(
+                      "aniflux.dev@gmail.com",
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.5,
+                        color: Color(0xFF8A5CF6),
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Color(0xFF8A5CF6),
+                      ),
+                    ),
+                  ),
+                ),
+                const TextSpan(
+                  text:
+                      ". You may also report issues or request support via the AniFlux GitHub repository.",
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
