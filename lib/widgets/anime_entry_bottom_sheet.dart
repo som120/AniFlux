@@ -30,12 +30,38 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
 
   final List<String> _statuses = ["Watching", "Completed", "Planning"];
 
+  // ScrollController for episode progress list
+  late ScrollController _episodeScrollController;
+
   @override
   void initState() {
     super.initState();
     _isNewEntry = true;
+    _episodeScrollController = ScrollController();
     _loadEpisodes();
     _checkForExistingEntry();
+  }
+
+  @override
+  void dispose() {
+    _episodeScrollController.dispose();
+    super.dispose();
+  }
+
+  /// Scrolls the episode list to center the selected episode
+  void _scrollToSelectedEpisode() {
+    if (!_episodeScrollController.hasClients) return;
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final targetOffset = _progress * 58.0 - (screenWidth / 2) + 29;
+    final maxOffset = _episodeScrollController.position.maxScrollExtent;
+    final clampedOffset = targetOffset.clamp(0.0, maxOffset);
+
+    _episodeScrollController.animateTo(
+      clampedOffset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   Future<void> _checkForExistingEntry() async {
@@ -66,6 +92,11 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
             _finishDate = (data['finishDate'] as Timestamp).toDate();
           }
         });
+
+        // Scroll to current progress after loading
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToSelectedEpisode();
+        });
       }
     } catch (e) {
       debugPrint("Error checking anime entry: $e");
@@ -84,6 +115,11 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
         _totalEpisodes = episodes;
         _episodesLoading = false;
         _animeDetailsLoaded = true;
+      });
+
+      // Scroll to selected episode after list is built
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToSelectedEpisode();
       });
       return;
     }
@@ -106,6 +142,11 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
 
         _episodesLoading = false;
         _animeDetailsLoaded = true;
+      });
+
+      // Scroll to selected episode after list is built
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToSelectedEpisode();
       });
     } catch (e) {
       if (!mounted) return;
@@ -297,13 +338,54 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                           child: GestureDetector(
                             onTap: () {
                               HapticFeedback.lightImpact();
+                              final previousStatus = _status;
                               setState(() {
                                 _status = status;
                                 _hasChanges = true;
-                                if (_status == "Completed" &&
-                                    _totalEpisodes > 0) {
-                                  _progress = _totalEpisodes;
+
+                                // Planning: Reset everything
+                                if (status == "Planning") {
+                                  _progress = 0;
+                                  _startDate = null;
+                                  _finishDate = null;
                                 }
+
+                                // Watching: Set progress to 1 (if 0), set start date, clear finish date
+                                if (status == "Watching") {
+                                  // Coming from Completed: decrease by 1
+                                  if (previousStatus == "Completed" &&
+                                      _progress > 1) {
+                                    _progress = _progress - 1;
+                                  } else if (_progress == 0) {
+                                    // Coming from Planning: set to 1
+                                    _progress = 1;
+                                  }
+                                  if (_startDate == null) {
+                                    _startDate = DateTime.now();
+                                  }
+                                  // Clear finish date when moving back from Completed
+                                  if (previousStatus == "Completed") {
+                                    _finishDate = null;
+                                  }
+                                }
+
+                                // Completed: Set max progress and both dates
+                                if (status == "Completed") {
+                                  if (_totalEpisodes > 0) {
+                                    _progress = _totalEpisodes;
+                                  }
+                                  if (_startDate == null) {
+                                    _startDate = DateTime.now();
+                                  }
+                                  if (_finishDate == null) {
+                                    _finishDate = DateTime.now();
+                                  }
+                                }
+                              });
+
+                              // Scroll to selected episode after status change
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                _scrollToSelectedEpisode();
                               });
                             },
                             child: AnimatedContainer(
@@ -392,23 +474,30 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                         : ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: maxEps + 1,
-                            controller: ScrollController(
-                              initialScrollOffset:
-                                  _progress * 54.0 -
-                                  (MediaQuery.of(context).size.width / 2) +
-                                  25,
-                            ),
+                            controller: _episodeScrollController,
                             itemBuilder: (context, index) {
                               final isSelected = index == _progress;
                               return GestureDetector(
                                 onTap: () {
+                                  final previousProgress = _progress;
                                   setState(() {
                                     _progress = index;
                                     _hasChanges = true;
 
+                                    // Auto-set start date when progress goes from 0 to 1+
+                                    if (previousProgress == 0 &&
+                                        index > 0 &&
+                                        _startDate == null) {
+                                      _startDate = DateTime.now();
+                                    }
+
                                     if (_progress == _totalEpisodes &&
                                         _totalEpisodes > 0) {
                                       _status = "Completed";
+                                      // Auto-set finish date when reaching last episode
+                                      if (_finishDate == null) {
+                                        _finishDate = DateTime.now();
+                                      }
                                     } else if (_progress > 0) {
                                       _status = "Watching";
                                     }
@@ -534,25 +623,117 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                           HapticFeedback.lightImpact();
                           final confirmed = await showDialog<bool>(
                             context: context,
-                            builder: (_) => AlertDialog(
-                              title: const Text("Remove anime?"),
-                              content: const Text(
-                                "This will remove it from your list.",
+                            builder: (_) => Dialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, false),
-                                  child: const Text("Cancel"),
+                              child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Warning Icon
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red.shade50,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.delete_outline_rounded,
+                                        color: Colors.redAccent,
+                                        size: 32,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+
+                                    // Title
+                                    const Text(
+                                      "Remove anime?",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+
+                                    // Message
+                                    Text(
+                                      "This will remove it from your list.",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade600,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+
+                                    // Buttons
+                                    Row(
+                                      children: [
+                                        // Cancel Button
+                                        Expanded(
+                                          child: OutlinedButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, false),
+                                            style: OutlinedButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 14,
+                                                  ),
+                                              side: BorderSide(
+                                                color: Colors.grey.shade300,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              "Cancel",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.grey.shade700,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        // Remove Button
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, true),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.redAccent,
+                                              foregroundColor: Colors.white,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 14,
+                                                  ),
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              "Remove",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text("Remove"),
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.redAccent,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           );
 
