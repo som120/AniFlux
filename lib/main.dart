@@ -81,6 +81,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         child: InkWell(
           borderRadius: BorderRadius.circular(30),
           onTap: () {
+            HapticFeedback.lightImpact();
             setState(() => _currentIndex = index);
           },
 
@@ -167,10 +168,41 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
         ..showSnackBar(
-          const SnackBar(
-            content: Text("Press back again to exit"),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.exit_to_app_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Press back again to exit",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: AppTheme.primary,
             behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),
+            ),
+            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            elevation: 8,
+            duration: const Duration(seconds: 2),
           ),
         );
 
