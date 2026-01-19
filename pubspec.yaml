@@ -90,6 +90,14 @@ flutter:
   assets:
     - assets/
     - assets/avatars/
+    - assets/avatars/AOT/
+    - assets/avatars/Default/
+    - assets/avatars/apothecary/
+    - assets/avatars/bochitherock/
+    - assets/avatars/jjk/
+    - assets/avatars/reZero/
+    - assets/avatars/solo leveling/
+    - assets/avatars/spyXfamily/
     - assets/icon/
     - assets/licenses/
 
