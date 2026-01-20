@@ -1,6 +1,7 @@
 //import 'package:ainme_vault/main.dart';
 //import 'package:ainme_vault/utils/transitions.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
+import 'package:ainme_vault/models/anime_preview.dart';
 import 'package:flutter/material.dart';
 import '../services/anilist_service.dart';
 import 'anime_detail_screen.dart';
@@ -24,7 +25,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _searchFocus = FocusNode();
-  List animeList = [];
+  List<AnimePreview> animeList = [];
   bool isLoading = false;
   bool hasError = false;
   bool isFocused = false;
@@ -41,6 +42,13 @@ class _SearchScreenState extends State<SearchScreen> {
   List<String> searchHistory = [];
   Set<String> _userAnimeIds = {};
   StreamSubscription? _userListSubscription;
+
+  // Session IDs to cancel stale API requests
+  int _searchSessionId = 0;
+  int _categorySessionId = 0;
+
+  // Store last API call for retry logic
+  Future<List> Function()? _lastApiCall;
 
   @override
   void initState() {
@@ -105,25 +113,14 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _retryLastAction() async {
     if (selectedFilter == "Search") {
       await _performSearch(_controller.text);
-    } else if (selectedFilter == "Calendar") {
-      // Calendar view has its own error handling, just refresh the state
+    } else if (selectedFilter == "Calendar" || selectedFilter == "Seasonal") {
+      // These views have their own error handling, just refresh the state
       setState(() {
         hasError = false;
       });
-    } else if (selectedFilter == "Seasonal") {
-      setState(() {
-        hasError = false;
-      });
-    } else if (selectedFilter == "Top 100") {
-      await _fetchAnimeByCategory("Top 100", AniListService.getTopAnime);
-    } else if (selectedFilter == "Popular") {
-      await _fetchAnimeByCategory("Popular", AniListService.getPopularAnime);
-    } else if (selectedFilter == "Upcoming") {
-      await _fetchAnimeByCategory("Upcoming", AniListService.getUpcomingAnime);
-    } else if (selectedFilter == "Airing") {
-      await _fetchAnimeByCategory("Airing", AniListService.getAiringAnime);
-    } else if (selectedFilter == "Movies") {
-      await _fetchAnimeByCategory("Movies", AniListService.getTopMovies);
+    } else if (_lastApiCall != null) {
+      // Use stored API call for retry - cleaner and safer
+      await _fetchAnimeByCategory(selectedFilter, _lastApiCall!);
     } else {
       // Fallback: default to Top 100
       await _fetchAnimeByCategory("Top 100", AniListService.getTopAnime);
@@ -258,6 +255,12 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
+    // Store the API call for retry logic
+    _lastApiCall = apiCall;
+
+    // Increment session ID to invalidate any pending requests
+    final currentSessionId = ++_categorySessionId;
+
     setState(() {
       isLoading = true;
       hasError = false; // Reset error state on new fetch
@@ -277,6 +280,12 @@ class _SearchScreenState extends State<SearchScreen> {
       final data = await apiCall();
       if (!mounted) return;
 
+      // Check if this request is stale (user switched filters while loading)
+      if (currentSessionId != _categorySessionId) {
+        debugPrint("⏭️ Stale category request ignored: $filterName");
+        return;
+      }
+
       // For search, an empty list is a valid result (no results).
       // For categories (Top 100, Popular, etc), an empty list likely indicates a fetch error.
       if (data.isEmpty && filterName != "Search") {
@@ -288,12 +297,16 @@ class _SearchScreenState extends State<SearchScreen> {
       }
 
       setState(() {
-        animeList = data;
+        animeList = data
+            .map((item) => AnimePreview.fromJson(item as Map<String, dynamic>))
+            .toList();
         isLoading = false;
         hasError = false;
       });
     } catch (e) {
       if (!mounted) return;
+      // Only show error if this is still the active request
+      if (currentSessionId != _categorySessionId) return;
       setState(() {
         isLoading = false;
         hasError = true;
@@ -307,7 +320,17 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _performSearch(String text) async {
     if (text.isEmpty) return;
 
+    // Increment search session to cancel any pending searches
+    final currentSearchSession = ++_searchSessionId;
+
     await _addToHistory(text);
+
+    // Check if search was superseded before making API call
+    if (currentSearchSession != _searchSessionId) {
+      debugPrint("⏭️ Search cancelled before API call: $text");
+      return;
+    }
+
     await _fetchAnimeByCategory(
       "Search",
       () => AniListService.searchAnime(text),
@@ -599,43 +622,7 @@ class _SearchScreenState extends State<SearchScreen> {
               style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 24),
-            _RetryButton(
-              onPressed: () async {
-                if (selectedFilter == "Search") {
-                  await _performSearch(_controller.text);
-                } else {
-                  // Re-fetch current category
-                  // Note: We need a way to call the original apiCall.
-                  // Since we don't store the apiCall, we can just call the category fetch logic again.
-                  if (selectedFilter == "Top 100") {
-                    await _fetchAnimeByCategory(
-                      "Top 100",
-                      AniListService.getTopAnime,
-                    );
-                  } else if (selectedFilter == "Popular") {
-                    await _fetchAnimeByCategory(
-                      "Popular",
-                      AniListService.getPopularAnime,
-                    );
-                  } else if (selectedFilter == "Upcoming") {
-                    await _fetchAnimeByCategory(
-                      "Upcoming",
-                      AniListService.getUpcomingAnime,
-                    );
-                  } else if (selectedFilter == "Airing") {
-                    await _fetchAnimeByCategory(
-                      "Airing",
-                      AniListService.getAiringAnime,
-                    );
-                  } else if (selectedFilter == "Movies") {
-                    await _fetchAnimeByCategory(
-                      "Movies",
-                      AniListService.getTopMovies,
-                    );
-                  }
-                }
-              },
-            ),
+            _RetryButton(onPressed: _retryLastAction),
           ],
         ),
       ),
@@ -852,47 +839,50 @@ class _SearchScreenState extends State<SearchScreen> {
                         padding: const EdgeInsets.only(bottom: 100),
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
-                        cacheExtent: 100,
+                        cacheExtent: 500,
                         itemCount: animeList.length,
                         itemBuilder: (context, index) {
                           final anime = animeList[index];
-                          return TweenAnimationBuilder<double>(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeOutBack,
-                            tween: Tween<double>(begin: 0.0, end: 1.0),
-                            builder: (context, value, child) {
-                              return Transform.translate(
-                                offset: Offset(0, 50 * (1 - value)),
-                                child: Transform.scale(
-                                  scale: 0.85 + (0.15 * value),
-                                  child: Opacity(
-                                    opacity: value.clamp(0.0, 1.0),
-                                    child: child,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: AnimeListCard(
-                              anime: anime,
-                              rank: selectedFilter == "Top 100"
-                                  ? index + 1
-                                  : null,
-                              isInList: _userAnimeIds.contains(
-                                anime['id'].toString(),
-                              ),
-                              onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                _searchFocus.unfocus();
-                                isFocused = false;
-                                setState(() {});
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        AnimeDetailScreen(anime: anime),
+                          return RepaintBoundary(
+                            child: TweenAnimationBuilder<double>(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeOutBack,
+                              tween: Tween<double>(begin: 0.0, end: 1.0),
+                              builder: (context, value, child) {
+                                return Transform.translate(
+                                  offset: Offset(0, 50 * (1 - value)),
+                                  child: Transform.scale(
+                                    scale: 0.85 + (0.15 * value),
+                                    child: Opacity(
+                                      opacity: value.clamp(0.0, 1.0),
+                                      child: child,
+                                    ),
                                   ),
                                 );
                               },
+                              child: AnimeListCard(
+                                anime: anime,
+                                rank: selectedFilter == "Top 100"
+                                    ? index + 1
+                                    : null,
+                                isInList: _userAnimeIds.contains(
+                                  anime.id.toString(),
+                                ),
+                                onTap: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  _searchFocus.unfocus();
+                                  isFocused = false;
+                                  setState(() {});
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AnimeDetailScreen(
+                                        anime: anime.toJson(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           );
                         },
@@ -920,7 +910,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
 // ------------------ EXTRACTED WIDGET ------------------
 class AnimeListCard extends StatelessWidget {
-  final dynamic anime;
+  final AnimePreview anime;
   final int? rank;
   final bool isInList;
   final VoidCallback onTap;
@@ -935,13 +925,13 @@ class AnimeListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl =
-        anime['coverImage']?['medium'] ?? anime['coverImage']?['large'];
-    final title =
-        anime['title']?['romaji'] ?? anime['title']?['english'] ?? 'Unknown';
-    final score = anime['averageScore']?.toString() ?? 'N/A';
-    final year = anime['startDate']?['year']?.toString() ?? '—';
-    final episodes = anime['episodes']?.toString() ?? "N/A";
+    // Use model's typed properties instead of dynamic map access
+    final imageUrl = anime.coverImage;
+    final title = anime.displayTitle;
+    final score = anime.scoreDisplay;
+    final year = anime.yearDisplay;
+    final episodes = anime.episodesDisplay;
+    final format = anime.formatDisplay;
 
     return GestureDetector(
       onTap: onTap,
@@ -991,7 +981,7 @@ class AnimeListCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              anime['format'] ?? "TV",
+                              format,
                               style: TextStyle(
                                 color: Colors.grey.shade800,
                                 fontSize: 12,
@@ -1261,7 +1251,10 @@ class FadeInImageWidget extends StatelessWidget {
           width: width,
           height: height,
           fit: BoxFit.cover,
-          memCacheWidth: (width * 3).toInt(), // Optimize memory usage
+          memCacheWidth: (width * 2).toInt(),
+          memCacheHeight: (height * 2).toInt(),
+          maxWidthDiskCache: 300,
+          maxHeightDiskCache: 400,
           placeholder: (context, url) => Container(color: Colors.grey[200]),
           errorWidget: (context, url, error) => Container(
             color: Colors.grey[300],
@@ -1414,6 +1407,7 @@ class _CalendarViewState extends State<_CalendarView> {
 
               return GridView.builder(
                 padding: const EdgeInsets.only(bottom: 100),
+                cacheExtent: 400,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   childAspectRatio: 0.65,
@@ -1423,19 +1417,21 @@ class _CalendarViewState extends State<_CalendarView> {
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
                   // Staggered animation delay based on index
-                  return TweenAnimationBuilder<double>(
-                    duration: Duration(milliseconds: 400 + (index * 50)),
-                    curve: Curves.easeOutCubic,
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    builder: (context, value, child) {
-                      return Transform.translate(
-                        offset: Offset(0, 30 * (1 - value)),
-                        child: Opacity(opacity: value, child: child),
-                      );
-                    },
-                    child: isLoading
-                        ? _buildSkeletonCard()
-                        : _buildAnimeCard(schedules[index]),
+                  return RepaintBoundary(
+                    child: TweenAnimationBuilder<double>(
+                      duration: Duration(milliseconds: 400 + (index * 50)),
+                      curve: Curves.easeOutCubic,
+                      tween: Tween<double>(begin: 0.0, end: 1.0),
+                      builder: (context, value, child) {
+                        return Transform.translate(
+                          offset: Offset(0, 30 * (1 - value)),
+                          child: Opacity(opacity: value, child: child),
+                        );
+                      },
+                      child: isLoading
+                          ? _buildSkeletonCard()
+                          : _buildAnimeCard(schedules[index]),
+                    ),
                   );
                 },
               );
@@ -1486,6 +1482,10 @@ class _CalendarViewState extends State<_CalendarView> {
                   ? CachedNetworkImage(
                       imageUrl: image,
                       fit: BoxFit.cover,
+                      memCacheWidth: 240,
+                      memCacheHeight: 360,
+                      maxWidthDiskCache: 300,
+                      maxHeightDiskCache: 450,
                       placeholder: (context, url) =>
                           Container(color: Colors.grey[200]),
                       errorWidget: (context, url, error) => Container(
@@ -1979,6 +1979,7 @@ class _SeasonalViewState extends State<_SeasonalView> {
 
               return GridView.builder(
                 padding: const EdgeInsets.only(bottom: 100),
+                cacheExtent: 400,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   childAspectRatio: 0.65,
@@ -1987,19 +1988,21 @@ class _SeasonalViewState extends State<_SeasonalView> {
                 ),
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
-                  return TweenAnimationBuilder<double>(
-                    duration: Duration(milliseconds: 400 + (index % 10 * 50)),
-                    curve: Curves.easeOutCubic,
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    builder: (context, value, child) {
-                      return Transform.translate(
-                        offset: Offset(0, 30 * (1 - value)),
-                        child: Opacity(opacity: value, child: child),
-                      );
-                    },
-                    child: isLoading
-                        ? _buildSkeletonCard()
-                        : _buildSeasonalAnimeCard(context, animeList[index]),
+                  return RepaintBoundary(
+                    child: TweenAnimationBuilder<double>(
+                      duration: Duration(milliseconds: 400 + (index % 10 * 50)),
+                      curve: Curves.easeOutCubic,
+                      tween: Tween<double>(begin: 0.0, end: 1.0),
+                      builder: (context, value, child) {
+                        return Transform.translate(
+                          offset: Offset(0, 30 * (1 - value)),
+                          child: Opacity(opacity: value, child: child),
+                        );
+                      },
+                      child: isLoading
+                          ? _buildSkeletonCard()
+                          : _buildSeasonalAnimeCard(context, animeList[index]),
+                    ),
                   );
                 },
               );
@@ -2044,6 +2047,10 @@ class _SeasonalViewState extends State<_SeasonalView> {
                   ? CachedNetworkImage(
                       imageUrl: image,
                       fit: BoxFit.cover,
+                      memCacheWidth: 240,
+                      memCacheHeight: 360,
+                      maxWidthDiskCache: 300,
+                      maxHeightDiskCache: 450,
                       placeholder: (context, url) =>
                           Container(color: Colors.grey[200]),
                       errorWidget: (context, url, error) => Container(
