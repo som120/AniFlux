@@ -1,3 +1,4 @@
+import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:ainme_vault/utils/transitions.dart';
 import 'package:flutter/material.dart';
 import 'package:ainme_vault/screens/login_screen.dart';
@@ -172,7 +173,7 @@ class ProfileScreen extends StatelessWidget {
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF8A5CF6), Color(0xFFC78BFA)],
+                    colors: [AppTheme.primary, AppTheme.accent],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
