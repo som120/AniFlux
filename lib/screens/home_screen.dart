@@ -405,54 +405,61 @@ class _HomeScreenState extends State<HomeScreen> {
                                         foregroundColor: AppTheme.primary,
                                       ),
                                       onPressed: () {
+                                        HapticFeedback.lightImpact();
                                         setState(() {
                                           _isGridView = !_isGridView;
                                         });
                                       },
                                     ),
-                                    PopupMenuButton<String>(
-                                      icon: Icon(
-                                        Icons.tune_rounded,
-                                        color: AppTheme.primary,
+                                    Listener(
+                                      onPointerDown: (_) =>
+                                          HapticFeedback.lightImpact(),
+                                      child: PopupMenuButton<String>(
+                                        icon: Icon(
+                                          Icons.tune_rounded,
+                                          color: AppTheme.primary,
+                                        ),
+                                        offset: const Offset(0, 52),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        color: Colors.white,
+                                        elevation: 12,
+                                        onSelected: (value) {
+                                          setState(() {
+                                            if (_sortBy == value) {
+                                              _sortAscending = !_sortAscending;
+                                            } else {
+                                              _sortBy = value;
+                                              _sortAscending = value == 'title';
+                                            }
+                                          });
+                                        },
+                                        itemBuilder: (context) => [
+                                          _filterItem(
+                                            value: 'title',
+                                            label: 'Title',
+                                            icon: Icons.sort_by_alpha_rounded,
+                                          ),
+                                          _filterItem(
+                                            value: 'score',
+                                            label: 'Score',
+                                            icon: Icons.star_rounded,
+                                          ),
+                                          _filterItem(
+                                            value: 'progress',
+                                            label: 'Progress',
+                                            icon: Icons.trending_up_rounded,
+                                          ),
+                                          _filterItem(
+                                            value: 'lastUpdated',
+                                            label: 'Updated',
+                                            icon: Icons.update_rounded,
+                                          ),
+                                        ],
                                       ),
-                                      offset: const Offset(0, 52),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      color: Colors.white,
-                                      elevation: 12,
-                                      onSelected: (value) {
-                                        setState(() {
-                                          if (_sortBy == value) {
-                                            _sortAscending = !_sortAscending;
-                                          } else {
-                                            _sortBy = value;
-                                            _sortAscending = value == 'title';
-                                          }
-                                        });
-                                      },
-                                      itemBuilder: (context) => [
-                                        _filterItem(
-                                          value: 'title',
-                                          label: 'Title',
-                                          icon: Icons.sort_by_alpha_rounded,
-                                        ),
-                                        _filterItem(
-                                          value: 'score',
-                                          label: 'Score',
-                                          icon: Icons.star_rounded,
-                                        ),
-                                        _filterItem(
-                                          value: 'progress',
-                                          label: 'Progress',
-                                          icon: Icons.trending_up_rounded,
-                                        ),
-                                        _filterItem(
-                                          value: 'lastUpdated',
-                                          label: 'Updated',
-                                          icon: Icons.update_rounded,
-                                        ),
-                                      ],
                                     ),
                                   ],
                                 ),
@@ -503,6 +510,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GestureDetector(
       onTap: () {
+        HapticFeedback.lightImpact();
         setState(() {
           _selectedStatus = label;
         });

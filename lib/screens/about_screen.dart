@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter/services.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -411,6 +412,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       onTap: _isCheckingUpdate
                           ? () {}
                           : () {
+                              HapticFeedback.lightImpact();
                               _checkForUpdates();
                             },
                     ),
@@ -418,15 +420,17 @@ class _AboutScreenState extends State<AboutScreen> {
                       icon: Icons.history,
                       title: "Changelog",
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         _showChangelog(context);
                       },
                     ),
                     _buildListTile(
                       icon: Icons.bug_report_outlined,
                       title: "Report a Bug",
-                      onTap: () => _launchUrl(
-                        "https://github.com/som120/AniFlux/issues",
-                      ),
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        _launchUrl("https://github.com/som120/AniFlux/issues");
+                      },
                     ),
                   ],
                 ),
@@ -456,6 +460,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       icon: Icons.people_outline,
                       title: "Contributors",
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         _showContributorsDialog();
                       },
                     ),
@@ -463,13 +468,16 @@ class _AboutScreenState extends State<AboutScreen> {
                       icon: Icons.coffee,
                       title: "Buy Me a Coffee",
                       iconColor: Colors.orange,
-                      onTap: () =>
-                          _launchUrl("https://buymeacoffee.com/sompaul"),
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        _launchUrl("https://buymeacoffee.com/sompaul");
+                      },
                     ),
                     _buildListTile(
                       icon: Icons.article_outlined,
                       title: "License",
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         _showLicenseDialog();
                       },
                     ),
@@ -477,6 +485,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       icon: Icons.privacy_tip_outlined,
                       title: "Privacy Policy",
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         _showPrivacyPolicyDialog();
                       },
                     ),
@@ -491,7 +500,10 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
             const SizedBox(height: 8),
             IconButton(
-              onPressed: () => _launchUrl("https://github.com/som120/AniFlux"),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                _launchUrl("https://github.com/som120/AniFlux");
+              },
               icon: Image.network(
                 "https://cdn-icons-png.flaticon.com/512/25/25231.png",
                 width: 24,
@@ -676,7 +688,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8A5CF6),
                       foregroundColor: Colors.white,
@@ -866,7 +881,10 @@ class _AboutScreenState extends State<AboutScreen> {
                     // Close button
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.pop(context);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF8A5CF6),
                           foregroundColor: Colors.white,
@@ -1229,7 +1247,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8A5CF6),
                       foregroundColor: Colors.white,
@@ -1328,7 +1349,10 @@ class _AboutScreenState extends State<AboutScreen> {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.pop(context);
+                        },
                         child: const Text("Close"),
                       ),
                     ),

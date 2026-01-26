@@ -2,6 +2,7 @@
 //import 'package:ainme_vault/utils/transitions.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../services/anilist_service.dart';
 import 'anime_detail_screen.dart';
 import 'dart:async';
@@ -385,6 +386,7 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: GestureDetector(
         onTap: () {
+          HapticFeedback.lightImpact();
           FocusManager.instance.primaryFocus?.unfocus();
           _searchFocus.unfocus();
           isFocused = false;
@@ -731,6 +733,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         const SizedBox(width: 6),
                                         GestureDetector(
                                           onTap: () {
+                                            HapticFeedback.lightImpact();
                                             _fetchAnimeByCategory(
                                               "Top 100",
                                               AniListService.getTopAnime,
@@ -757,6 +760,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                                 child: GestureDetector(
                                   onTap: () {
+                                    HapticFeedback.lightImpact();
                                     FocusManager.instance.primaryFocus
                                         ?.unfocus();
                                     _searchFocus.unfocus();
@@ -795,6 +799,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                                 child: GestureDetector(
                                   onTap: () {
+                                    HapticFeedback.lightImpact();
                                     FocusManager.instance.primaryFocus
                                         ?.unfocus();
                                     _searchFocus.unfocus();
@@ -1389,7 +1394,10 @@ class _CalendarViewState extends State<_CalendarView> {
               final isSelected = index == _selectedDayIndex;
 
               return GestureDetector(
-                onTap: () => setState(() => _selectedDayIndex = index),
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  setState(() => _selectedDayIndex = index);
+                },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -1787,6 +1795,7 @@ class _SeasonalViewState extends State<_SeasonalView> {
                         // Apply Button on the right
                         GestureDetector(
                           onTap: () {
+                            HapticFeedback.lightImpact();
                             Navigator.pop(context, tempSelectedYear);
                           },
                           child: Container(
@@ -1819,6 +1828,7 @@ class _SeasonalViewState extends State<_SeasonalView> {
                       physics: const FixedExtentScrollPhysics(),
                       controller: scrollController,
                       onSelectedItemChanged: (index) {
+                        HapticFeedback.mediumImpact();
                         setModalState(() {
                           tempSelectedYear = _years[index];
                         });
@@ -1897,7 +1907,10 @@ class _SeasonalViewState extends State<_SeasonalView> {
                       final isSelected = season == _selectedSeason;
 
                       return GestureDetector(
-                        onTap: () => setState(() => _selectedSeason = season),
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          setState(() => _selectedSeason = season);
+                        },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(
@@ -1935,7 +1948,10 @@ class _SeasonalViewState extends State<_SeasonalView> {
               const SizedBox(width: 8),
               // Year Filter Circle
               GestureDetector(
-                onTap: _showYearPicker,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showYearPicker();
+                },
                 child: Container(
                   width: 44, // Reduced size
                   height: 44, // Reduced size

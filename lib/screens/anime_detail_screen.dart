@@ -1035,7 +1035,10 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => setState(() => selectedTab = index),
+        onTap: () {
+          HapticFeedback.lightImpact();
+          setState(() => selectedTab = index);
+        },
         child: SizedBox(
           height: _tabHeight, // ⭐ same as pill
           child: Center(
@@ -1264,6 +1267,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
                 width: videoWidth,
                 child: GestureDetector(
                   onTap: () async {
+                    HapticFeedback.lightImpact();
                     final url = Uri.parse(
                       'https://www.youtube.com/watch?v=${trailer['id']}',
                     );
@@ -1400,6 +1404,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
 
             return GestureDetector(
               onTap: () {
+                HapticFeedback.lightImpact();
                 if (id != null) {
                   showModalBottomSheet(
                     context: context,
@@ -1550,6 +1555,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
 
             return GestureDetector(
               onTap: () {
+                HapticFeedback.lightImpact();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
