@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  🌐 <strong>Official Website:</strong> https://ani-flux.vercel.app
+  🌐 <strong>Official Website:</strong> https://www.aniflux.in/
 </p>
 
 <p align="center">
