@@ -557,9 +557,11 @@ class _AboutScreenState extends State<AboutScreen> {
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Container(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height * 0.75,
+            maxWidth: MediaQuery.of(context).size.width * 0.92,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -722,9 +724,11 @@ class _AboutScreenState extends State<AboutScreen> {
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Container(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height * 0.75,
+            maxWidth: MediaQuery.of(context).size.width * 0.92,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1296,9 +1300,14 @@ class _AboutScreenState extends State<AboutScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
             child: Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.65,
+                maxWidth: MediaQuery.of(context).size.width * 0.92,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1345,15 +1354,29 @@ class _AboutScreenState extends State<AboutScreen> {
 
                   // Actions
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
                         onPressed: () {
                           HapticFeedback.lightImpact();
                           Navigator.pop(context);
                         },
-                        child: const Text("Close"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF8A5CF6),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Close",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),
