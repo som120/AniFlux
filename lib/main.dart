@@ -240,7 +240,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final double systemBottomInset = MediaQuery.of(context).padding.bottom;
+    final double rawInset = MediaQuery.of(context).padding.bottom;
+    final double bottomInset = rawInset == 0 ? 12.0 : rawInset;
 
     _updateSystemNavBar(context);
 
@@ -284,7 +285,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             Positioned(
               left: 20,
               right: 20,
-              bottom: systemBottomInset,
+              bottom: bottomInset,
               child: RepaintBoundary(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(40),
