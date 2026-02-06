@@ -1,4 +1,5 @@
 import 'package:ainme_vault/services/anilist_service.dart';
+import 'package:ainme_vault/services/anilist_sync_service.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -230,6 +231,15 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
           .collection('anime')
           .doc(animeId)
           .set(data, SetOptions(merge: true));
+
+      // 🔄 Two-way sync: Also update AniList if connected
+      AniListSyncService.syncToAniList(
+        mediaId: widget.anime['id'],
+        status: _status,
+        progress: _progress,
+        startDate: _startDate,
+        finishDate: _finishDate,
+      );
     } catch (e) {
       if (mounted) {
         showErrorSnackbar(context, 'Error saving: $e');
@@ -748,6 +758,11 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                                     .collection('anime')
                                     .doc(widget.anime['id'].toString())
                                     .delete();
+
+                                // 🔄 Two-way sync: Also delete from AniList if connected
+                                AniListSyncService.deleteFromAniList(
+                                  mediaId: widget.anime['id'],
+                                );
 
                                 if (context.mounted) {
                                   Navigator.pop(context); // Close dialog
