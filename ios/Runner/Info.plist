@@ -45,5 +45,19 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- AniList OAuth URL Scheme -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>anilist-oauth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>aniflux</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

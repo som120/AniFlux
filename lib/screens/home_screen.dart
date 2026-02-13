@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:ainme_vault/screens/anime_detail_screen.dart';
 import 'package:ainme_vault/services/anilist_service.dart';
+import 'package:ainme_vault/services/anilist_sync_service.dart';
 import 'package:ainme_vault/services/notification_service.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -1446,6 +1447,29 @@ Future<void> _onAddEpisode({
       .collection('anime')
       .doc(docId)
       .update(updateData);
+
+  // 🔄 Two-way sync: Also update AniList if connected
+  final int animeId = data['id'] is int
+      ? data['id']
+      : int.tryParse(data['id'].toString()) ?? 0;
+  if (animeId > 0) {
+    final newProgress = updateData['progress'] ?? (progress + 1);
+    final newStatus = updateData['status'] ?? status;
+    final DateTime? startDate = updateData['startDate'] != null
+        ? (updateData['startDate'] as Timestamp).toDate()
+        : null;
+    final DateTime? finishDate = updateData['finishDate'] != null
+        ? (updateData['finishDate'] as Timestamp).toDate()
+        : null;
+
+    AniListSyncService.syncToAniList(
+      mediaId: animeId,
+      status: newStatus,
+      progress: newProgress,
+      startDate: startDate,
+      finishDate: finishDate,
+    );
+  }
 }
 
 class GreetingSection extends StatelessWidget {

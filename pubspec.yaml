@@ -57,6 +57,8 @@ dependencies:
   package_info_plus: ^9.0.0
   flutter_launcher_icons: ^0.14.4
   flutter_markdown: ^0.6.18
+  flutter_web_auth_2: ^4.0.0
+  flutter_secure_storage: ^9.2.3
 
 flutter_launcher_icons:
   android: true

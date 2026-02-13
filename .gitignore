@@ -47,6 +47,9 @@ app.*.map.json
 
 # Firebase secrets
 lib/firebase_options.dart
+
+# AniList secrets
+lib/services/anilist_auth_service.dart
 ios/Runner/GoogleService-Info.plist
 macos/Runner/GoogleService-Info.plist
 android/app/google-services.json
