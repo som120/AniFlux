@@ -92,7 +92,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
 
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+    // ✅ Pass the Web Client ID (client_type: 3 from google-services.json)
+    // This is REQUIRED on Android for the ID token to be returned
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      serverClientId:
+          '398850741774-h327kb4fh3kasqui8kfomul1hti274jh.apps.googleusercontent.com',
+    );
 
     try {
       // 🔥 (1) Clear stale Google session FIRST
@@ -102,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
-        // User cancelled
+        // User cancelled the sign-in dialog
         return;
       }
 
@@ -137,9 +142,16 @@ class _LoginScreenState extends State<LoginScreen> {
           isError: true,
         );
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
+      debugPrint('Google Sign-In PlatformException: ${e.code} - ${e.message}');
       _showSnackBar(
-        message: "Google sign-in cancelled or interrupted",
+        message: "Google sign-in failed: ${e.message ?? e.code}",
+        isError: true,
+      );
+    } catch (e) {
+      debugPrint('Google Sign-In unexpected error: $e');
+      _showSnackBar(
+        message: "Google sign-in failed. Please try again.",
         isError: true,
       );
     } finally {

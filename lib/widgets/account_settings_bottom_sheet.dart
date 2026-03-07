@@ -628,7 +628,10 @@ class _AccountSettingsBottomSheetState
     try {
       // 🔐 Google Sign-In re-auth
       if (providerId == 'google.com') {
-        final googleUser = await GoogleSignIn().signIn();
+        final googleUser = await GoogleSignIn(
+          serverClientId:
+              '398850741774-h327kb4fh3kasqui8kfomul1hti274jh.apps.googleusercontent.com',
+        ).signIn();
         if (googleUser == null) throw Exception("Google sign-in cancelled");
 
         final googleAuth = await googleUser.authentication;
