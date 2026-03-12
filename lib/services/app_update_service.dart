@@ -82,8 +82,8 @@ class AppUpdateService {
       context: Navigator.of(context, rootNavigator: true).context,
       barrierDismissible: !force,
       builder: (dialogContext) {
-        return WillPopScope(
-          onWillPop: () async => !force, // 🚫 block back button if forced
+        return PopScope(
+          canPop: !force, // 🚫 block back button if forced
           child: CupertinoAlertDialog(
             title: Column(
               children: [
@@ -96,7 +96,7 @@ class AppUpdateService {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -180,8 +180,7 @@ class AppUpdateService {
   static Future<void> _launchStore() async {
     final url = Platform.isAndroid
         ? Uri.parse(
-            'https://ani-flux.vercel.app/',
-            // https://play.google.com/store/apps/details?id=YOUR_PACKAGE_NAME
+            'https://play.google.com/store/apps/details?id=com.aniflux.app',
           )
         : Uri.parse('https://apps.apple.com/app/idYOUR_APP_ID');
 

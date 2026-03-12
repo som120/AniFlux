@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:ainme_vault/theme/app_theme.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -90,71 +92,73 @@ class _AboutScreenState extends State<AboutScreen> {
     });
 
     try {
-      final response = await http.get(
-        Uri.parse(
-          'https://api.github.com/repos/som120/AniFlux/releases/latest',
+      final remoteConfig = FirebaseRemoteConfig.instance;
+
+      await remoteConfig.setDefaults({
+        'latest_version_android': '0.0.0',
+        'latest_version_ios': '0.0.0',
+      });
+
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(seconds: 10),
+          minimumFetchInterval: Duration.zero,
         ),
       );
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final String latestVersionTag = data['tag_name'];
-        final String latestVersion = latestVersionTag.replaceAll('v', '');
-        final String releaseUrl = data['html_url'];
-        final String releaseBody =
-            data['body'] ?? 'No release notes available.';
+      await remoteConfig.fetchAndActivate();
 
-        // Simple version comparison logic
-        // Assumes semantic versioning (x.y.z)
-        if (_isNewerVersion(latestVersion, _version)) {
-          _showUpdateDialog(latestVersion, releaseUrl, releaseBody);
-        } else {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.check_circle_outline,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Text(
-                      "You're using the latest version!",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-                elevation: 8,
-                duration: const Duration(seconds: 2),
-              ),
-            );
-          }
-        }
+      final latestVersion = Platform.isAndroid
+          ? remoteConfig.getString('latest_version_android')
+          : remoteConfig.getString('latest_version_ios');
+
+      if (latestVersion.isEmpty || latestVersion == '0.0.0') {
+        throw Exception('Could not fetch latest version');
+      }
+
+      if (_isNewerVersion(latestVersion, _version)) {
+        _showUpdateDialog(latestVersion);
       } else {
-        throw Exception('Failed to load releases');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_circle_outline,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    "You're using the latest version!",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              elevation: 8,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -166,7 +170,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -239,7 +243,7 @@ class _AboutScreenState extends State<AboutScreen> {
     return latestParts.length > currentParts.length;
   }
 
-  void _showUpdateDialog(String version, String url, String notes) {
+  void _showUpdateDialog(String version) {
     if (!mounted) return;
 
     showDialog(
@@ -263,36 +267,17 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
           ],
         ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("A new version of AniFlux is available!"),
-              const SizedBox(height: 12),
-              const Text(
-                "Release Notes:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              MarkdownBody(
-                data: notes,
-                styleSheet: MarkdownStyleSheet(
-                  h2: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  h3: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  p: const TextStyle(fontSize: 13, height: 1.5),
-                  listIndent: 20,
-                  blockSpacing: 8,
-                ),
-              ),
-            ],
-          ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("A new version of AniFlux is available!"),
+            const SizedBox(height: 8),
+            Text(
+              "$_version → $version",
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -302,7 +287,10 @@ class _AboutScreenState extends State<AboutScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              _launchUrl(url);
+              final storeUrl = Platform.isAndroid
+                  ? 'https://play.google.com/store/apps/details?id=com.aniflux.app'
+                  : 'https://apps.apple.com/app/idYOUR_APP_ID';
+              _launchUrl(storeUrl);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF8A5CF6),
