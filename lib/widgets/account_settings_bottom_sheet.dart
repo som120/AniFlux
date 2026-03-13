@@ -6,6 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:ainme_vault/services/anilist_service.dart';
+import 'package:ainme_vault/services/anilist_auth_service.dart';
+import 'package:ainme_vault/widgets/anilist_integration_bottom_sheet.dart';
 
 class AccountSettingsBottomSheet extends StatefulWidget {
   const AccountSettingsBottomSheet({super.key});
@@ -18,7 +20,8 @@ class AccountSettingsBottomSheet extends StatefulWidget {
 class _AccountSettingsBottomSheetState
     extends State<AccountSettingsBottomSheet> {
   bool _showAdultContent = false;
-  bool _isLoading = true;
+  bool _isAniListConnected = false;
+  String? _aniListUsername;
 
   @override
   void initState() {
@@ -28,10 +31,14 @@ class _AccountSettingsBottomSheetState
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    final isConnected = await AniListAuthService.isLoggedIn();
+    final userInfo = await AniListAuthService.getStoredUserInfo();
+
     if (mounted) {
       setState(() {
         _showAdultContent = prefs.getBool('show_adult_content') ?? false;
-        _isLoading = false;
+        _isAniListConnected = isConnected;
+        _aniListUsername = userInfo['username'];
       });
     }
   }
@@ -123,92 +130,61 @@ class _AccountSettingsBottomSheetState
                     ),
                   ],
                 ),
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _sectionLabel("Current Email"),
-                          const SizedBox(height: 10),
-                          _infoTile(
-                            icon: Icons.email_outlined,
-                            value: user?.email ?? "No email",
-                          ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _sectionLabel("Current Email"),
+                    const SizedBox(height: 10),
+                    _infoTile(
+                      icon: Icons.email_outlined,
+                      value: user?.email ?? "No email",
+                    ),
 
-                          const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                          _sectionLabel("Integrations"),
-                          const SizedBox(height: 10),
-                          _actionTile(
-                            icon: Icons.link,
-                            title: "Login with AniList",
-                            subtitle: "Sync your anime list",
-                            iconColor: const Color(0xFF02A9FF),
-                            onTap: () {
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(6),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.2),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.rocket_launch_rounded,
-                                          color: Colors.white,
-                                          size: 18,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      const Text(
-                                        "AniList integration coming soon!",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  backgroundColor: AppTheme.primary,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 16,
-                                  ),
-                                  elevation: 8,
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                            },
-                          ),
+                    _sectionLabel("Integrations"),
+                    const SizedBox(height: 10),
+                    _actionTile(
+                      icon: Icons.link,
+                      title: _isAniListConnected
+                          ? "Connected as $_aniListUsername"
+                          : "Login with AniList",
+                      subtitle: _isAniListConnected
+                          ? "Tap to manage or sync"
+                          : "Sync your anime list",
+                      iconColor: _isAniListConnected
+                          ? Colors.green
+                          : const Color(0xFF02A9FF),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (_) => const AniListIntegrationBottomSheet(),
+                        );
+                      },
+                    ),
 
-                          const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                          _sectionLabel("Content Settings"),
-                          const SizedBox(height: 10),
-                          _switchTile(
-                            icon: Icons.explicit,
-                            title: "Adult Content",
-                            subtitle: "Enable 18+ content in search results",
-                            value: _showAdultContent,
-                            onChanged: _toggleAdultContent,
-                          ),
+                    _sectionLabel("Content Settings"),
+                    const SizedBox(height: 10),
+                    _switchTile(
+                      icon: Icons.explicit,
+                      title: "Adult Content",
+                      subtitle: "Enable 18+ content in search results",
+                      value: _showAdultContent,
+                      onChanged: _toggleAdultContent,
+                    ),
 
-                          const SizedBox(height: 28),
+                    const SizedBox(height: 28),
 
-                          _sectionLabel("Danger Zone"),
-                          const SizedBox(height: 10),
-                          _dangerTile(context),
-                        ],
-                      ),
+                    _sectionLabel("Danger Zone"),
+                    const SizedBox(height: 10),
+                    _dangerTile(context),
+                  ],
+                ),
               ),
             ),
 

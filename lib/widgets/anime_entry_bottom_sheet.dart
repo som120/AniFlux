@@ -1,4 +1,5 @@
 import 'package:ainme_vault/services/anilist_service.dart';
+import 'package:ainme_vault/services/anilist_sync_service.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -230,6 +231,15 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
           .collection('anime')
           .doc(animeId)
           .set(data, SetOptions(merge: true));
+
+      // 🔄 Two-way sync: Also update AniList if connected
+      AniListSyncService.syncToAniList(
+        mediaId: widget.anime['id'],
+        status: _status,
+        progress: _progress,
+        startDate: _startDate,
+        finishDate: _finishDate,
+      );
     } catch (e) {
       if (mounted) {
         showErrorSnackbar(context, 'Error saving: $e');
@@ -749,9 +759,47 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
                                     .doc(widget.anime['id'].toString())
                                     .delete();
 
+                                // 🔄 Two-way sync: Also delete from AniList if connected
+                                final int animeId = widget.anime['id'] is int
+                                    ? widget.anime['id']
+                                    : int.tryParse(
+                                            widget.anime['id'].toString(),
+                                          ) ??
+                                          0;
+                                final anilistDeleted =
+                                    await AniListSyncService.deleteFromAniList(
+                                      mediaId: animeId,
+                                    );
+
                                 if (context.mounted) {
-                                  Navigator.pop(context); // Close dialog
                                   Navigator.pop(context); // Close bottom sheet
+
+                                  // Show feedback about AniList sync
+                                  if (anilistDeleted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: const Text(
+                                          'Removed from list and AniList',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        backgroundColor: Colors.green,
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+                                        ),
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
+                                  }
                                 }
                               } catch (e) {
                                 if (context.mounted) {
