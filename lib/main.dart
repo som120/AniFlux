@@ -150,6 +150,12 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
+  @override
+  void didChangeMetrics() {
+    // Called when system navigation mode changes
+    setState(() {});
+  }
+
   Future<bool> _handleBackPress() async {
     // If not on Home → go to Home
     if (_currentIndex != 0) {
@@ -214,102 +220,116 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     return false;
   }
 
+  void _updateSystemNavBar(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final isDark = brightness == Brightness.dark;
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: isDark ? Colors.black : Colors.white,
+        systemNavigationBarIconBrightness: isDark
+            ? Brightness.light
+            : Brightness.dark,
+        // keep your status bar config consistent
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double rawInset = MediaQuery.of(context).padding.bottom;
+    final double bottomInset = rawInset == 0 ? 12.0 : rawInset;
+
+    _updateSystemNavBar(context);
+
     return WillPopScope(
       onWillPop: _handleBackPress,
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light,
-        ),
-        child: Scaffold(
-          backgroundColor: Colors.grey[100],
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: IndexedStack(index: _currentIndex, children: _screens),
-              ),
+      child: Scaffold(
+        backgroundColor: Colors.grey[100],
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: IndexedStack(index: _currentIndex, children: _screens),
+            ),
 
-              // Bottom progressive fade blur
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: 80,
-                child: IgnorePointer(
-                  ignoring: true, // allows touches to pass through
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.transparent,
-                          Colors.white12,
-                          Colors.white60, // subtle fade
-                          Colors.white, // full fade under nav bar
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: [0.0, 0.3, 0.7, 1.0],
-                      ),
+            // Bottom progressive fade blur
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 80,
+              child: IgnorePointer(
+                ignoring: true, // allows touches to pass through
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Colors.white12,
+                        Colors.white60, // subtle fade
+                        Colors.white, // full fade under nav bar
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.0, 0.3, 0.7, 1.0],
                     ),
                   ),
                 ),
               ),
+            ),
 
-              // Floating Rounded Nav Bar
-              Positioned(
-                left: 20,
-                right: 20,
-                bottom: 20,
-                child: RepaintBoundary(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(40),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(
-                            0.18,
-                          ), // transparent glass
-                          borderRadius: BorderRadius.circular(40),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(
-                              0.5,
-                            ), // glass border
-                            width: 1.2,
+            // Floating Rounded Nav Bar
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: bottomInset,
+              child: RepaintBoundary(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(40),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(
+                          0.18,
+                        ), // transparent glass
+                        borderRadius: BorderRadius.circular(40),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.5), // glass border
+                          width: 1.2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(
+                              0xFF714FDC,
+                            ).withOpacity(0.2), // purple glow
+                            blurRadius: 25,
+                            spreadRadius: 1,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(
-                                0xFF714FDC,
-                              ).withOpacity(0.2), // purple glow
-                              blurRadius: 25,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 12,
-                        ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 12,
+                      ),
 
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            navItem(Icons.home_rounded, "Home", 0),
-                            navItem(Icons.search_rounded, "Search", 1),
-                            navItem(Icons.person_rounded, "Profile", 2),
-                          ],
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          navItem(Icons.home_rounded, "Home", 0),
+                          navItem(Icons.search_rounded, "Search", 1),
+                          navItem(Icons.person_rounded, "Profile", 2),
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
