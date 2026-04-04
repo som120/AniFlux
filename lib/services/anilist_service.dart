@@ -8,7 +8,7 @@ class AniListService {
   // 🔥 Cached adult content preference to avoid repeated disk hits
   static bool? _cachedShowAdult;
 
-  /// Get the cached show adult content preference
+  /// Get the cached show adult content preferen
   static Future<bool> _showAdult() async {
     if (_cachedShowAdult != null) return _cachedShowAdult!;
     final prefs = await SharedPreferences.getInstance();

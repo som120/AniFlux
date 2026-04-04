@@ -231,7 +231,7 @@ class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFFF5F4FA),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
@@ -304,13 +304,28 @@ class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
           Expanded(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: animeCategories.length,
-                    itemBuilder: (context, index) {
-                      final category = animeCategories[index];
-                      return _buildAnimeCategory(category);
-                    },
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: animeCategories
+                            .map((category) => _buildAnimeCategory(category))
+                            .toList(),
+                      ),
+                    ),
                   ),
           ),
         ],
@@ -319,28 +334,25 @@ class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
   }
 
   Widget _buildAnimeCategory(AnimeCategory category) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Anime Title
-          Text(
-            category.title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(
+              category.title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Avatar Row (Horizontal scroll)
           SizedBox(
