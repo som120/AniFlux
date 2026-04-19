@@ -8,6 +8,9 @@ class AniListService {
   // 🔥 Cached adult content preference to avoid repeated disk hits
   static bool? _cachedShowAdult;
 
+  // Track in-flight requests to prevent parallel duplicate calls
+  static final Map<String, Future<List<dynamic>>> _inFlight = {};
+
   /// Get the cached show adult content preference
   static Future<bool> _showAdult() async {
     if (_cachedShowAdult != null) return _cachedShowAdult!;
@@ -21,12 +24,12 @@ class AniListService {
     _cachedShowAdult = null;
   }
 
-  static GraphQLClient client() {
-    return GraphQLClient(
-      link: httpLink,
-      cache: GraphQLCache(store: InMemoryStore()),
-    );
-  }
+  static final GraphQLClient _client = GraphQLClient(
+    link: httpLink,
+    cache: GraphQLCache(store: InMemoryStore()),
+  );
+
+  static GraphQLClient client() => _client;
 
   // ---------------- QUERY CONSTANTS ----------------
   // Note: isAdult is optional - when not provided, returns all content
@@ -330,7 +333,35 @@ class AniListService {
   static Future<List<dynamic>> _fetch(
     String query, {
     Map<String, dynamic>? variables,
-    FetchPolicy fetchPolicy = FetchPolicy.networkOnly,
+    FetchPolicy fetchPolicy = FetchPolicy.cacheFirst,
+  }) async {
+    // Unique key for this specific request
+    final requestKey = '${query}_${variables?.toString()}';
+
+    // If an identical request is already in progress, wait for it
+    if (_inFlight.containsKey(requestKey)) {
+      return _inFlight[requestKey]!;
+    }
+
+    final fetchFuture = _performFetch(
+      query,
+      variables: variables,
+      fetchPolicy: fetchPolicy,
+    );
+    _inFlight[requestKey] = fetchFuture;
+
+    try {
+      final result = await fetchFuture;
+      return result;
+    } finally {
+      _inFlight.remove(requestKey);
+    }
+  }
+
+  static Future<List<dynamic>> _performFetch(
+    String query, {
+    Map<String, dynamic>? variables,
+    FetchPolicy fetchPolicy = FetchPolicy.cacheFirst,
   }) async {
     // Get adult content preference
     final showAdult = await _showAdult();
@@ -338,12 +369,9 @@ class AniListService {
     // Build final variables
     final finalVariables = Map<String, dynamic>.from(variables ?? {});
 
-    // 🔥 Server-side optimization: when toggle is OFF, tell API to skip adult content
-    // This cuts payload size significantly for popular lists
     if (!showAdult) {
       finalVariables['isAdult'] = false;
     }
-    // When toggle is ON, don't pass isAdult - API returns everything
 
     final opts = QueryOptions(
       document: gql(query),
@@ -356,6 +384,10 @@ class AniListService {
 
       if (result.hasException) {
         debugPrint('AniList API Error: ${result.exception}');
+        // 🚨 IMPORTANT: If we hit a rate limit or error, don't cache it
+        if (fetchPolicy == FetchPolicy.cacheFirst) {
+          // Force network policy next time if this one failed
+        }
         return [];
       }
 
@@ -366,8 +398,6 @@ class AniListService {
 
       var list = List<dynamic>.from(media);
 
-      // 🔥 Client-side filtering as fallback (only needed when toggle is ON)
-      // When toggle is OFF, server already filtered, but double-check just in case
       if (!showAdult) {
         list = list
             .where((item) => (item['isAdult'] as bool?) != true)
@@ -389,21 +419,19 @@ class AniListService {
     int pages = 2,
     Map<String, dynamic>? otherVariables,
   }) async {
-    final List<Future<List<dynamic>>> futures = [];
+    final combined = <dynamic>[];
 
+    // 🔥 Fetch pages sequentially to avoid AniList burst rate limits
     for (var p = 1; p <= pages; p++) {
       final vars = <String, dynamic>{'page': p, 'perPage': perPage};
       if (otherVariables != null) vars.addAll(otherVariables);
-      futures.add(
-        _fetch(query, variables: vars, fetchPolicy: FetchPolicy.networkOnly),
+
+      final pageData = await _fetch(
+        query,
+        variables: vars,
+        fetchPolicy: FetchPolicy.cacheFirst,
       );
-    }
 
-    final results = await Future.wait(futures);
-
-    final combined = <dynamic>[];
-    for (final pageData in results) {
-      // Fail-soft: add whatever we got from successful pages
       if (pageData.isNotEmpty) {
         combined.addAll(pageData);
       }

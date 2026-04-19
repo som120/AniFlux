@@ -77,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ---------------- LIFECYCLE ----------------
+  static bool _startupLogicDone = false;
+
   @override
   void initState() {
     super.initState();
@@ -94,11 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    _fetchAiringAnime();
-    NotificationService.init();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      AppUpdateService.checkForUpdate(context);
-    });
+    // Only run these once per app session to avoid "reload" spam
+    if (!_startupLogicDone) {
+      _startupLogicDone = true;
+      _fetchAiringAnime(); // Only fetch data once
+      NotificationService.init();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AppUpdateService.checkForUpdate(context);
+      });
+    }
   }
 
   @override
@@ -137,56 +143,60 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // ---------------- DATA FETCHING ----------------
   Future<void> _fetchAiringAnime({bool retry = true}) async {
+    // Prevent redundant fetches if we already have data
+    if (_airingAnimeList.isNotEmpty && !_isLoading && !retry) return;
+
     try {
-      // Fetch from all three sources in parallel
-      final results = await Future.wait([
-        AniListService.getAiringAnime(),
-        AniListService.getPopularAnime(),
-        AniListService.getUpcomingAnime(),
-      ]);
+      // SEQUENTIAL FETCHING to avoid burst rate limits
+      final airingData = await AniListService.getAiringAnime();
+      final popularData = await AniListService.getPopularAnime();
+      final upcomingData = await AniListService.getUpcomingAnime();
 
       if (!mounted) return;
 
-      final airingData = results[0];
-      final popularData = results[1];
-      final upcomingData = results[2];
+      // Only update if we actually got some data (preserves old state on error)
+      if (airingData.isNotEmpty ||
+          popularData.isNotEmpty ||
+          upcomingData.isNotEmpty) {
+        setState(() {
+          final combinedList = [
+            ...pickWeightedRandom(airingData, 4),
+            ...pickWeightedRandom(popularData, 3),
+            ...pickWeightedRandom(upcomingData, 3),
+          ];
 
-      setState(() {
-        // ✅ USE WEIGHTED RANDOM HERE
-        final combinedList = [
-          ...pickWeightedRandom(airingData, 4),
-          ...pickWeightedRandom(popularData, 3),
-          ...pickWeightedRandom(upcomingData, 3),
-        ];
+          // Remove duplicates based on anime ID
+          final Set<int> seenIds = {};
+          final List<dynamic> uniqueList = [];
 
-        // Remove duplicates based on anime ID
-        final Set<int> seenIds = {};
-        final List<dynamic> uniqueList = [];
-
-        for (final anime in combinedList) {
-          final id = anime['id'] as int?;
-          if (id != null && seenIds.add(id)) {
-            uniqueList.add(anime);
+          for (final anime in combinedList) {
+            final id = anime['id'] as int?;
+            if (id != null && seenIds.add(id)) {
+              uniqueList.add(anime);
+            }
           }
-        }
 
-        // Optional: shuffle final list for display randomness
-        uniqueList.shuffle();
+          // Optional: shuffle final list for display randomness
+          uniqueList.shuffle();
 
-        _airingAnimeList = uniqueList;
-        _isLoading = false;
+          _airingAnimeList = uniqueList;
+          _isLoading = false;
 
-        // Cancel retry timer on success
-        _carouselRetryTimer?.cancel();
-        _carouselRetryTimer = null;
-        _carouselRetryCountdown.value = 0;
+          // Cancel retry timer on success
+          _carouselRetryTimer?.cancel();
+          _carouselRetryTimer = null;
+          _carouselRetryCountdown.value = 0;
 
-        if (_airingAnimeList.isNotEmpty) {
-          _bgColorNotifier.value = _getProcessedColor(0);
-          _pageIndexNotifier.value = 0;
-          _startAutoScroll();
-        }
-      });
+          if (_airingAnimeList.isNotEmpty) {
+            _bgColorNotifier.value = _getProcessedColor(0);
+            _pageIndexNotifier.value = 0;
+            _startAutoScroll();
+          }
+        });
+      } else {
+        // Fallback: stop loading but keep current list
+        if (mounted) setState(() => _isLoading = false);
+      }
     } catch (e) {
       if (!mounted) return;
 
@@ -333,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                     itemBuilder: (context, index) {
                                       final anime = _airingAnimeList[index];
-                                      return _buildAnimeCard(anime);
+                                      return _AnimeCard(anime: anime);
                                     },
                                   ),
                                 ),
@@ -477,11 +487,26 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  _statusChip("Completed"),
+                                  _StatusChip(
+                                    label: "Completed",
+                                    selectedStatus: _selectedStatus,
+                                    onTap: (val) =>
+                                        setState(() => _selectedStatus = val),
+                                  ),
                                   const SizedBox(width: 12),
-                                  _statusChip("Planning"),
+                                  _StatusChip(
+                                    label: "Planning",
+                                    selectedStatus: _selectedStatus,
+                                    onTap: (val) =>
+                                        setState(() => _selectedStatus = val),
+                                  ),
                                   const SizedBox(width: 12),
-                                  _statusChip("Watching"),
+                                  _StatusChip(
+                                    label: "Watching",
+                                    selectedStatus: _selectedStatus,
+                                    onTap: (val) =>
+                                        setState(() => _selectedStatus = val),
+                                  ),
                                 ],
                               ),
                             ),
@@ -501,35 +526,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _statusChip(String label) {
-    final bool isSelected = _selectedStatus == label;
-
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        setState(() {
-          _selectedStatus = label;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: isSelected ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
       ),
     );
   }
@@ -584,135 +580,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: AppTheme.primary,
               ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnimeCard(dynamic anime) {
-    final coverImage = anime['coverImage']?['large'] ?? "";
-    final title = anime['title']?['english'] ?? anime['title']?['romaji'] ?? "";
-    final score = ((anime['averageScore'] ?? 0) as num) / 10;
-
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AnimeDetailScreen(anime: anime),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: _cardHorizontalMargin),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CachedNetworkImage(
-                imageUrl: coverImage,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: Colors.grey[300],
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
-              // Gradient Overlay for Title readability
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.7),
-                      ],
-                    ),
-                  ),
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: score > 0
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.star_rounded,
-                              color: Colors.amber,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              score.toStringAsFixed(1),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.upcoming_rounded,
-                              color: Colors.lightBlueAccent,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 4),
-                            const Text(
-                              "Upcoming",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -1224,10 +1091,7 @@ class _MyAnimeListState extends State<MyAnimeList> {
                                 // 🔥 FORMAT + YEAR
                                 if (format != null || year != null)
                                   Text(
-                                    [
-                                      ?format,
-                                      ?year?.toString(),
-                                    ].join(' • '),
+                                    [?format, ?year?.toString()].join(' • '),
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
@@ -1531,6 +1395,182 @@ class GreetingSection extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({
+    required this.label,
+    required this.selectedStatus,
+    required this.onTap,
+  });
+
+  final String label;
+  final String selectedStatus;
+  final ValueChanged<String> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isSelected = selectedStatus == label;
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap(label);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primary : Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: isSelected ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnimeCard extends StatelessWidget {
+  const _AnimeCard({required this.anime});
+
+  final dynamic anime;
+
+  @override
+  Widget build(BuildContext context) {
+    final coverImage = anime['coverImage']?['large'] ?? "";
+    final title = anime['title']?['english'] ?? anime['title']?['romaji'] ?? "";
+    final score = ((anime['averageScore'] ?? 0) as num) / 10;
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AnimeDetailScreen(anime: anime),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
+                imageUrl: coverImage,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Colors.grey[300],
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
+              // Gradient Overlay for Title readability
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.7),
+                      ],
+                    ),
+                  ),
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: score > 0
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              color: Colors.amber,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              score.toStringAsFixed(1),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.upcoming_rounded,
+                              color: Colors.lightBlueAccent,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              "Upcoming",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
