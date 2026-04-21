@@ -59,10 +59,12 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   DateTime? _lastBackPressTime;
   late SharedPreferences _prefs;
 
-  final List<Widget> _screens = const [
-    HomeScreen(key: PageStorageKey('home_key')),
-    SearchScreen(key: PageStorageKey('search_key')),
-    ProfileScreen(key: PageStorageKey('profile_key')),
+  final GlobalKey<SearchScreenState> _searchScreenKey = GlobalKey<SearchScreenState>();
+
+  late final List<Widget> _screens = [
+    const HomeScreen(key: PageStorageKey('home_key')),
+    SearchScreen(key: _searchScreenKey),
+    const ProfileScreen(key: PageStorageKey('profile_key')),
   ];
 
   @override
@@ -265,7 +267,14 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                             label: "Search",
                             index: 1,
                             currentIndex: _currentIndex,
-                            onTap: (idx) => setState(() => _currentIndex = idx),
+                            onTap: (idx) {
+                              if (_currentIndex == 1) {
+                                // Already on search tab — focus the text field
+                                _searchScreenKey.currentState?.focusSearchField();
+                              } else {
+                                setState(() => _currentIndex = idx);
+                              }
+                            },
                           ),
                           _NavItem(
                             icon: Icons.person_rounded,
