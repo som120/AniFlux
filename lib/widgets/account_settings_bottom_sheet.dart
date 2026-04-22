@@ -56,7 +56,7 @@ class _AccountSettingsBottomSheetState
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F3FF),
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
@@ -73,7 +73,7 @@ class _AccountSettingsBottomSheetState
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.black26,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.25),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -88,7 +88,7 @@ class _AccountSettingsBottomSheetState
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),
-                    color: Colors.black54,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   const Expanded(
                     child: Text(
@@ -113,11 +113,13 @@ class _AccountSettingsBottomSheetState
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12.withValues(alpha: 0.05),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withValues(alpha: 0.2)
+                          : Colors.black12.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -224,10 +226,10 @@ class _AccountSettingsBottomSheetState
   Widget _sectionLabel(String label) {
     return Text(
       label.toUpperCase(),
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.bold,
-        color: Colors.black54,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         letterSpacing: 0.6,
       ),
     );
@@ -237,7 +239,7 @@ class _AccountSettingsBottomSheetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -268,7 +270,7 @@ class _AccountSettingsBottomSheetState
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey.shade50,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
@@ -294,10 +296,10 @@ class _AccountSettingsBottomSheetState
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Colors.black26,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.25),
             ),
           ],
         ),
@@ -315,7 +317,7 @@ class _AccountSettingsBottomSheetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -444,13 +446,13 @@ class _AccountSettingsBottomSheetState
 
               const SizedBox(height: 10),
 
-              const Text(
+              Text(
                 "This action cannot be undone.\nAll your data will be permanently lost.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.4,
-                  color: Colors.black54,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
 
@@ -462,14 +464,14 @@ class _AccountSettingsBottomSheetState
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.black38, width: 1),
+                        side: BorderSide(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3), width: 1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         "Cancel",
-                        style: TextStyle(color: Colors.black54),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                       ),
                     ),
                   ),

@@ -62,12 +62,12 @@ class _HomeScreenState extends State<HomeScreen> {
         .toColor();
 
     // Blend slightly with white for UI softness
-    return Color.lerp(softened, Colors.white, 0.15)!;
+    return Color.lerp(softened, Colors.white, 0.12)!;
   }
 
   Color _getProcessedColor(int index) {
     if (index < 0 || index >= _airingAnimeList.length) {
-      return Colors.white;
+      return const Color(0xFFF5F4FA);
     }
 
     final hex = _airingAnimeList[index]['coverImage']?['color'];
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _bgColorNotifier = ValueNotifier(Colors.white);
+    _bgColorNotifier = ValueNotifier(const Color(0xFFF5F4FA));
     _pageIndexNotifier = ValueNotifier(0);
     _carouselRetryCountdown = ValueNotifier(0);
 
@@ -257,7 +257,9 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 ValueListenableBuilder<Color>(
                   valueListenable: _bgColorNotifier,
-                  builder: (_, color, _) {
+                  builder: (_, color, child) {
+                    final scaffoldBg =
+                        Theme.of(context).scaffoldBackgroundColor;
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 600),
                       curve: Curves.easeOutCubic,
@@ -268,8 +270,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             color,
-                            Color.lerp(color, Colors.white, 0.35)!,
-                            Colors.white,
+                            Color.lerp(color, scaffoldBg, 0.35)!,
+                            scaffoldBg,
                           ],
                           stops: const [0.0, 0.6, 1.0],
                         ),
@@ -277,7 +279,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                Expanded(child: Container(color: Colors.white)),
+                Expanded(
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                ),
               ],
             ),
           ),
@@ -435,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             20,
                                           ),
                                         ),
-                                        color: Colors.white,
+                                        color: Theme.of(context).colorScheme.surface,
                                         elevation: 12,
                                         onSelected: (value) {
                                           setState(() {
@@ -565,7 +571,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? AppTheme.primary : Colors.black87,
+                  color: isSelected ? AppTheme.primary : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -598,11 +604,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
             child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[800]!
+                  : Colors.grey[300]!,
+              highlightColor: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[700]!
+                  : Colors.grey[100]!,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
@@ -655,9 +665,14 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 220,
       margin: const EdgeInsets.symmetric(horizontal: _cardHorizontalMargin),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade700
+              : Colors.grey.shade300,
+          width: 1,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
@@ -1027,11 +1042,13 @@ class _MyAnimeListState extends State<MyAnimeList> {
                 key: ValueKey('${doc.id}_${data['status']}_$progress'),
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withValues(alpha: 0.3)
+                          : Colors.black.withValues(alpha: 0.08),
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
@@ -1120,7 +1137,9 @@ class _MyAnimeListState extends State<MyAnimeList> {
                                           ? 0
                                           : progress / totalEpisodes,
                                       minHeight: 3,
-                                      backgroundColor: Colors.grey.shade200,
+                                      backgroundColor: Theme.of(context).brightness == Brightness.dark
+                                          ? Colors.grey.shade800
+                                          : Colors.grey.shade200,
                                       valueColor: AlwaysStoppedAnimation(
                                         AppTheme.primary,
                                       ),
@@ -1423,14 +1442,18 @@ class _StatusChip extends StatelessWidget {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary : Colors.grey.shade300,
+          color: isSelected
+              ? AppTheme.primary
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 14,
-            color: isSelected ? Colors.white : Colors.black87,
+            color: isSelected
+                ? Colors.white
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
