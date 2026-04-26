@@ -616,4 +616,44 @@ class AniListService {
       return [];
     }
   }
+
+  static const String multipleMediaDetailQuery = r'''
+    query ($ids: [Int]) {
+      Page {
+        media(id_in: $ids) {
+          id
+          status
+          episodes
+          format
+        }
+      }
+    }
+  ''';
+
+  static Future<List<dynamic>> getMultipleAnimeDetails(List<int> ids) async {
+    if (ids.isEmpty) return [];
+
+    final opts = QueryOptions(
+      document: gql(multipleMediaDetailQuery),
+      variables: {'ids': ids},
+      fetchPolicy: FetchPolicy.networkOnly,
+    );
+
+    try {
+      final result = await client().query(opts);
+
+      if (result.hasException) {
+        debugPrint('AniList API Error: ${result.exception}');
+        return [];
+      }
+
+      final page = result.data?['Page'];
+      if (page == null) return [];
+      final media = page['media'];
+      return media ?? [];
+    } catch (e, st) {
+      debugPrint('AniList fetch failed: $e\n$st');
+      return [];
+    }
+  }
 }

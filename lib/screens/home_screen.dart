@@ -100,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!_startupLogicDone) {
       _startupLogicDone = true;
       _fetchAiringAnime(); // Only fetch data once
+      _syncUpcomingAnimeStatuses(); // 🔥 Sync statuses for upcoming shows
       NotificationService.init();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         AppUpdateService.checkForUpdate(context);
@@ -139,6 +140,61 @@ class _HomeScreenState extends State<HomeScreen> {
 
     weighted.shuffle(Random(DateTime.now().millisecondsSinceEpoch));
     return weighted.take(count).toList();
+  }
+
+  // 🔥 BACKGROUND SYNC: Update status of upcoming anime
+  Future<void> _syncUpcomingAnimeStatuses() async {
+    final user = _currentUser;
+    if (user == null) return;
+
+    try {
+      // 1. Get all anime with 'NOT_YET_RELEASED' status
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('anime')
+          .where('releaseStatus', isEqualTo: 'NOT_YET_RELEASED')
+          .get();
+
+      if (snapshot.docs.isEmpty) return;
+
+      final List<int> ids =
+          snapshot.docs.map((doc) => doc.data()['id'] as int).toList();
+
+      // 2. Fetch latest status from AniList in a single batch
+      final latestData = await AniListService.getMultipleAnimeDetails(ids);
+
+      if (latestData.isEmpty) return;
+
+      final batch = FirebaseFirestore.instance.batch();
+      bool hasUpdates = false;
+
+      for (var anime in latestData) {
+        final int id = anime['id'];
+        final String newStatus = anime['status'];
+        final int? newEpisodes = anime['episodes'];
+
+        // Find the matching doc in Firestore
+        final doc = snapshot.docs.firstWhere((d) => d.data()['id'] == id);
+        final currentStatus = doc.data()['releaseStatus'];
+
+        if (newStatus != currentStatus) {
+          batch.update(doc.reference, {
+            'releaseStatus': newStatus,
+            if (newEpisodes != null) 'totalEpisodes': newEpisodes,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+          hasUpdates = true;
+        }
+      }
+
+      if (hasUpdates) {
+        await batch.commit();
+        debugPrint('🔥 Sync: Updated statuses for ${ids.length} anime');
+      }
+    } catch (e) {
+      debugPrint('❌ Sync failed: $e');
+    }
   }
 
   // ---------------- DATA FETCHING ----------------
