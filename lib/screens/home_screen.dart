@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:ainme_vault/providers/theme_provider.dart';
 import 'package:ainme_vault/screens/anime_detail_screen.dart';
 import 'package:ainme_vault/services/anilist_service.dart';
 import 'package:ainme_vault/services/notification_service.dart';
@@ -90,9 +91,16 @@ class _HomeScreenState extends State<HomeScreen> {
     _currentUser = FirebaseAuth.instance.currentUser;
     _authSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
       if (mounted) {
+        final wasGuest = _currentUser == null;
         setState(() {
           _currentUser = user;
         });
+
+        // 🔥 If user just logged in, refresh theme and sync data
+        if (wasGuest && user != null) {
+          ThemeProvider.instance.refresh(); // Apply user's theme preference
+          _syncUpcomingAnimeStatuses(); // Sync their list status
+        }
       }
     });
 
@@ -158,8 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (snapshot.docs.isEmpty) return;
 
-      final List<int> ids =
-          snapshot.docs.map((doc) => doc.data()['id'] as int).toList();
+      final List<int> ids = snapshot.docs
+          .map((doc) => doc.data()['id'] as int)
+          .toList();
 
       // 2. Fetch latest status from AniList in a single batch
       final latestData = await AniListService.getMultipleAnimeDetails(ids);
@@ -179,11 +188,16 @@ class _HomeScreenState extends State<HomeScreen> {
         final currentStatus = doc.data()['releaseStatus'];
 
         if (newStatus != currentStatus) {
-          batch.update(doc.reference, {
+          final Map<String, dynamic> updateData = {
             'releaseStatus': newStatus,
-            if (newEpisodes != null) 'totalEpisodes': newEpisodes,
             'lastUpdated': FieldValue.serverTimestamp(),
-          });
+          };
+
+          if (newEpisodes != null) {
+            updateData['totalEpisodes'] = newEpisodes;
+          }
+
+          batch.update(doc.reference, updateData);
           hasUpdates = true;
         }
       }
@@ -1659,8 +1673,6 @@ class _AnimeCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 fadeInDuration: const Duration(milliseconds: 300),
                 fadeOutDuration: const Duration(milliseconds: 300),
-                // Optimization: limit image cache size for carousel to save memory/time
-                memCacheHeight: 400,
                 placeholder: (context, url) => Container(
                   color: Colors.grey[300],
                   child: const Center(child: CircularProgressIndicator()),

@@ -27,9 +27,16 @@ class ThemeProvider extends ValueNotifier<ThemeMode> {
     if (stored != null) {
       value = ThemeMode.values.firstWhere(
         (m) => m.name == stored,
-        orElse: () => ThemeMode.system,
+        orElse: () => ThemeMode.light, // Default to light instead of system
       );
+    } else {
+      value = ThemeMode.light; // Ensure light mode if no preference exists
     }
+  }
+
+  /// Public method to reload the theme (e.g., after login).
+  Future<void> refresh() async {
+    await _loadFromPrefs();
   }
 
   /// Updates the theme mode and persists the choice.

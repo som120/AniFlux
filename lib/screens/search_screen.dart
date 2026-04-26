@@ -1366,15 +1366,6 @@ class FadeInImageWidget extends StatelessWidget {
           width: width,
           height: height,
           fit: BoxFit.cover,
-          // ====== MEMORY CACHE LIMITS ======
-          // Limit image size in memory to reduce RAM usage.
-          // Without limits: Full-res images (e.g., 1000x1500px = ~4.5MB each)
-          // With limits: Downscaled to ~2x display size (~0.3MB each)
-          // For 100 images: 450MB → 30MB RAM savings
-          memCacheWidth: (width * 2).toInt(),
-          memCacheHeight: (height * 2).toInt(),
-          maxWidthDiskCache: 300,
-          maxHeightDiskCache: 400,
           placeholder: (context, url) => Container(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
