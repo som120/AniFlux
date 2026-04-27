@@ -170,7 +170,9 @@ class _CalendarViewState extends State<CalendarView> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? _primaryColor
-                            : const Color(0xFFE8E5F0),
+                            : Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF2C2C3A)
+                                : const Color(0xFFE8E5F0),
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: isSelected
                             ? [
@@ -191,7 +193,7 @@ class _CalendarViewState extends State<CalendarView> {
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white.withValues(alpha: 0.9)
-                                  : Colors.grey.shade500,
+                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.45),
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.8,
@@ -217,7 +219,7 @@ class _CalendarViewState extends State<CalendarView> {
                               style: TextStyle(
                                 color: isSelected
                                     ? Colors.white
-                                    : Colors.grey.shade700,
+                                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -261,7 +263,7 @@ class _CalendarViewState extends State<CalendarView> {
                 alignment: Alignment.centerLeft,
                 children: <Widget>[
                   ...previousChildren,
-                  if (currentChild != null) currentChild,
+                  ?currentChild,
                 ],
               );
             },
@@ -283,10 +285,10 @@ class _CalendarViewState extends State<CalendarView> {
             child: Text(
               _getDateLabel(selectedDate),
               key: ValueKey(_selectedDayIndex),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF2D2D3A),
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: -0.2,
               ),
             ),
@@ -317,7 +319,7 @@ class _CalendarViewState extends State<CalendarView> {
                       Icon(
                         Icons.event_busy_rounded,
                         size: 48,
-                        color: Colors.grey.shade300,
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.25),
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -325,7 +327,7 @@ class _CalendarViewState extends State<CalendarView> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade500,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.45),
                         ),
                       ),
                     ],
@@ -373,7 +375,9 @@ class _CalendarViewState extends State<CalendarView> {
   Widget _buildSkeletonCard() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.grey[300],
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -417,13 +421,20 @@ class _CalendarViewState extends State<CalendarView> {
                       maxWidthDiskCache: 300,
                       maxHeightDiskCache: 450,
                       placeholder: (context, url) =>
-                          Container(color: Colors.grey[200]),
+                          Container(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          ),
                       errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.broken_image),
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                        ),
                       ),
                     )
-                  : Container(color: Colors.grey[200]),
+                  : Container(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ),
             ),
 
             // Gradient overlay at bottom

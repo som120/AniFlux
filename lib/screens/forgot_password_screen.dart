@@ -66,7 +66,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightTheme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text("Reset Password"),
         backgroundColor: AppTheme.primary,
@@ -80,11 +80,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black.withValues(alpha: 0.3)
+                    : Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -124,16 +126,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       _formKey.currentState!.validate();
                     }
                   },
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                  style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
                   decoration: InputDecoration(
                     hintText: "example@gmail.com",
                     hintStyle: TextStyle(
-                      color: Colors.grey.shade400,
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.35),
                       fontSize: 13,
                     ),
 
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
 
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 20,
@@ -143,7 +145,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     // NORMAL
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: Colors.grey.shade100),
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                     ),
 
                     // FOCUSED

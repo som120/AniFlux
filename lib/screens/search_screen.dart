@@ -422,13 +422,19 @@ class SearchScreenState extends State<SearchScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: active ? const Color(0xFF714FDC) : Colors.grey[300],
+            color: active
+                ? const Color(0xFF714FDC)
+                : Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey.shade800
+                    : Colors.grey[300],
             borderRadius: BorderRadius.circular(25),
           ),
           child: Text(
             label,
             style: TextStyle(
-              color: active ? Colors.white : Colors.black87,
+              color: active
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -451,12 +457,14 @@ class SearchScreenState extends State<SearchScreen> {
         vertical: _isScrolled && !isFocused ? 0 : 4,
       ),
       decoration: BoxDecoration(
-        color: isFocused ? Colors.white : const Color(0xFFFFFFFF),
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(isFocused ? 30 : 24),
         boxShadow: [
           if (isFocused)
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.black.withValues(alpha: 0.12),
               blurRadius: 14,
               offset: const Offset(0, 6),
             ),
@@ -480,7 +488,9 @@ class SearchScreenState extends State<SearchScreen> {
             child: Icon(
               isFocused ? Icons.arrow_back : Icons.search,
               size: 24,
-              color: isFocused ? const Color(0xFF714FDC) : Colors.grey[500],
+              color: isFocused
+                  ? const Color(0xFF714FDC)
+                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(width: 12),
@@ -507,10 +517,15 @@ class SearchScreenState extends State<SearchScreen> {
                   searchAnimeSubmit(), // ✔ closes keyboard only on submit
 
               textInputAction: TextInputAction.search,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: "Search anime...",
-                hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
+                hintStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                  fontSize: 16,
+                ),
                 border: InputBorder.none,
+                filled: true,
+                fillColor: Colors.transparent,
               ),
             ),
           ),
@@ -522,7 +537,11 @@ class SearchScreenState extends State<SearchScreen> {
                 // Optional: If you want clearing search to go back to Top 100:
                 // _fetchAnimeByCategory("Top 100", AniListService.getTopAnime);
               },
-              child: const Icon(Icons.close, size: 20, color: Colors.grey),
+              child: Icon(
+                Icons.close,
+                size: 20,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
             ),
         ],
       ),
@@ -541,12 +560,12 @@ class SearchScreenState extends State<SearchScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "Recent Searches",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               GestureDetector(
@@ -570,13 +589,20 @@ class SearchScreenState extends State<SearchScreen> {
               final query = searchHistory[index];
               return ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                leading: const Icon(Icons.history, color: Colors.grey),
+                leading: Icon(
+                  Icons.history,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
                 title: Text(query),
                 trailing: GestureDetector(
                   onTap: () => _removeFromHistory(query),
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Icon(Icons.close, size: 20, color: Colors.grey),
+                    child: Icon(
+                      Icons.close,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                    ),
                   ),
                 ),
                 onTap: () {
@@ -601,7 +627,7 @@ class SearchScreenState extends State<SearchScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -616,14 +642,17 @@ class SearchScreenState extends State<SearchScreen> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             "We couldn't find any anime\nmatching your search.",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
           ),
           // Push it up a bit visually to stay centered in the "content" area
           const SizedBox(height: 60),
@@ -638,11 +667,13 @@ class SearchScreenState extends State<SearchScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 40),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.black.withValues(alpha: 0.08),
               blurRadius: 30,
               offset: const Offset(0, 10),
             ),
@@ -664,19 +695,22 @@ class SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
+            Text(
               "Something went wrong",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               "We couldn't load the anime list.\nPlease check your connection.",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              ),
             ),
             const SizedBox(height: 24),
             // ====== USES CENTRALIZED RETRY ======
@@ -803,7 +837,9 @@ class SearchScreenState extends State<SearchScreen> {
                                     decoration: BoxDecoration(
                                       color: selectedFilter == "Calendar"
                                           ? const Color(0xFF714FDC)
-                                          : Colors.grey[300],
+                                          : Theme.of(context).brightness == Brightness.dark
+                                              ? Colors.grey.shade800
+                                              : Colors.grey[300],
                                       borderRadius: BorderRadius.circular(25),
                                     ),
                                     child: Text(
@@ -811,7 +847,7 @@ class SearchScreenState extends State<SearchScreen> {
                                       style: TextStyle(
                                         color: selectedFilter == "Calendar"
                                             ? Colors.white
-                                            : Colors.black87,
+                                            : Theme.of(context).colorScheme.onSurface,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -842,7 +878,9 @@ class SearchScreenState extends State<SearchScreen> {
                                     decoration: BoxDecoration(
                                       color: selectedFilter == "Seasonal"
                                           ? const Color(0xFF714FDC)
-                                          : Colors.grey[300],
+                                          : Theme.of(context).brightness == Brightness.dark
+                                              ? Colors.grey.shade800
+                                              : Colors.grey[300],
                                       borderRadius: BorderRadius.circular(25),
                                     ),
                                     child: Text(
@@ -850,7 +888,7 @@ class SearchScreenState extends State<SearchScreen> {
                                       style: TextStyle(
                                         color: selectedFilter == "Seasonal"
                                             ? Colors.white
-                                            : Colors.black87,
+                                            : Theme.of(context).colorScheme.onSurface,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -1006,11 +1044,13 @@ class AnimeListCard extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 6),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black.withValues(alpha: 0.2)
+                      : Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
@@ -1046,7 +1086,7 @@ class AnimeListCard extends StatelessWidget {
                           Text(
                             anime['format'] ?? "TV",
                             style: TextStyle(
-                              color: Colors.grey.shade800,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1055,13 +1095,13 @@ class AnimeListCard extends StatelessWidget {
                           Icon(
                             Icons.circle,
                             size: 4,
-                            color: Colors.grey.shade500,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             year,
                             style: TextStyle(
-                              color: Colors.grey.shade800,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1084,11 +1124,16 @@ class AnimeListCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade800,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Text("•", style: TextStyle(color: Colors.grey)),
+                          Text(
+                            "•",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                            ),
+                          ),
                           const SizedBox(width: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -1220,14 +1265,18 @@ class AnimeListShimmer extends StatelessWidget {
       itemCount: 8,
       itemBuilder: (context, index) {
         return Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
+          baseColor: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade800
+              : Colors.grey.shade300,
+          highlightColor: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade700
+              : Colors.grey.shade100,
           period: const Duration(milliseconds: 1200),
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 6),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
@@ -1311,25 +1360,21 @@ class FadeInImageWidget extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        color: Colors.grey[200],
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         child: CachedNetworkImage(
           imageUrl: imageUrl,
           width: width,
           height: height,
           fit: BoxFit.cover,
-          // ====== MEMORY CACHE LIMITS ======
-          // Limit image size in memory to reduce RAM usage.
-          // Without limits: Full-res images (e.g., 1000x1500px = ~4.5MB each)
-          // With limits: Downscaled to ~2x display size (~0.3MB each)
-          // For 100 images: 450MB → 30MB RAM savings
-          memCacheWidth: (width * 2).toInt(),
-          memCacheHeight: (height * 2).toInt(),
-          maxWidthDiskCache: 300,
-          maxHeightDiskCache: 400,
-          placeholder: (context, url) => Container(color: Colors.grey[200]),
+          placeholder: (context, url) => Container(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          ),
           errorWidget: (context, url, error) => Container(
-            color: Colors.grey[300],
-            child: const Icon(Icons.broken_image, color: Colors.grey),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Icon(
+              Icons.broken_image,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+            ),
           ),
           fadeInDuration: const Duration(milliseconds: 250),
         ),

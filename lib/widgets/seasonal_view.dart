@@ -73,7 +73,7 @@ class _SeasonalViewState extends State<SeasonalView> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -89,7 +89,7 @@ class _SeasonalViewState extends State<SeasonalView> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -168,7 +168,7 @@ class _SeasonalViewState extends State<SeasonalView> {
                                     : FontWeight.normal,
                                 color: isSelected
                                     ? const Color(0xFF714FDC)
-                                    : Colors.grey,
+                                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                               ),
                             ),
                           );
@@ -208,10 +208,14 @@ class _SeasonalViewState extends State<SeasonalView> {
               Expanded(
                 child: ShaderMask(
                   shaderCallback: (Rect bounds) {
-                    return const LinearGradient(
+                    return LinearGradient(
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
-                      colors: [Colors.white, Colors.white, Colors.transparent],
+                      colors: [
+                        Theme.of(context).scaffoldBackgroundColor,
+                        Theme.of(context).scaffoldBackgroundColor,
+                        Colors.transparent,
+                      ],
                       stops: [0.0, 0.92, 1.0], // Fade out only the last 8%
                     ).createShader(bounds);
                   },
@@ -241,12 +245,12 @@ class _SeasonalViewState extends State<SeasonalView> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? const Color(0xFF714FDC)
-                                : Colors.white,
+                                : Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(22),
                             border: Border.all(
                               color: isSelected
                                   ? const Color(0xFF714FDC)
-                                  : Colors.grey.shade200,
+                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.15),
                             ),
                           ),
                           child: Text(
@@ -254,7 +258,7 @@ class _SeasonalViewState extends State<SeasonalView> {
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : Colors.grey.shade700,
+                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                               fontWeight: FontWeight.w600,
                               fontSize: 13, // Slightly smaller text
                             ),
@@ -392,7 +396,9 @@ class _SeasonalViewState extends State<SeasonalView> {
   Widget _buildSkeletonCard() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.grey[300],
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -430,13 +436,20 @@ class _SeasonalViewState extends State<SeasonalView> {
                       maxWidthDiskCache: 300,
                       maxHeightDiskCache: 450,
                       placeholder: (context, url) =>
-                          Container(color: Colors.grey[200]),
+                          Container(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          ),
                       errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.broken_image),
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                        ),
                       ),
                     )
-                  : Container(color: Colors.grey[200]),
+                  : Container(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ),
             ),
 
             // Gradient overlay at bottom

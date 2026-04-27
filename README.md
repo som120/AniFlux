@@ -22,7 +22,6 @@
   <img src="https://img.shields.io/badge/License-MIT-green" />
 </p>
 
-
 AniFlux is a modern **Flutter-based anime tracking application** inspired by **MyAnimeList** and **AniList**.  
 It allows users to **search, browse, and track anime**, with **cloud sync using Firebase and Appwrite** and **live data from the AniList GraphQL API**.
 
@@ -39,8 +38,8 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
     <img src="https://img.shields.io/badge/Download_APK-GitHub-24292e?style=for-the-badge&logo=github&logoColor=white&height=50" height="50" alt="Download from GitHub" />
   </a>
   &nbsp;&nbsp;
-  <a href="#">
-    <img src="https://img.shields.io/badge/Google_Play-Coming_Soon-lightgrey?style=for-the-badge&logo=googleplay&logoColor=grey&height=50" height="50" alt="Google Play Coming Soon" />
+  <a href="https://play.google.com/store/apps/details?id=com.aniflux.app">
+    <img src="https://img.shields.io/badge/Get_it_on-Google_Play-34A853?style=for-the-badge&logo=googleplay&logoColor=white&height=50" height="50" alt="Get it on Google Play" />
   </a>
 </p>
 
@@ -56,8 +55,8 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 
 ## 📱 Screenshots
 
-| Home Screen | Anime Details | Search | Profile |
-|:---:|:---:|:---:|:---:|
+|                            Home Screen                            |                             Anime Details                              |                                Search                                 |                                 Profile                                 |
+| :---------------------------------------------------------------: | :--------------------------------------------------------------------: | :-------------------------------------------------------------------: | :---------------------------------------------------------------------: |
 | <img src="assets/Screenshorts/Home.png" width="200" alt="Home" /> | <img src="assets/Screenshorts/Detail.png" width="200" alt="Details" /> | <img src="assets/Screenshorts/Search.png" width="200" alt="Search" /> | <img src="assets/Screenshorts/Profile.png" width="200" alt="Profile" /> |
 
 ---
@@ -71,9 +70,8 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
   />
 </p>
 
-
-
 ---
+
 ## 📈 Project Growth
 
 <p align="center">
@@ -84,10 +82,10 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 
 ---
 
-
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Travel%20and%20Places/Rocket.webp" alt="Rocket" width="50" height="50" /> Features
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Magnifying%20Glass%20Tilted%20Left.webp" alt="Magnifying Glass Tilted Left" width="25" height="25" /> Anime Search
+
 - Search anime using **AniList GraphQL API**
 - Clean and modern UI
 - Displays poster, rating, release year
@@ -101,6 +99,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
   - Movies
 
 ### 🎨 Modern UI
+
 - Custom anime cards
 - Rounded corners & soft shadows
 - Smooth animations
@@ -108,6 +107,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 - Fully responsive for **Android & iOS**
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Star.webp" alt="Star" width="25" height="25" /> Anime Details
+
 - High-quality cover image
 - Description & synopsis
 - Genres
@@ -115,12 +115,14 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 - Direct link to AniList page
 
 ### ☁️ Firebase Integration
+
 - Firebase Core configured
 - Firestore database connected
 - Store user watchlist & progress
-- Real-time cloud sync *(coming soon)*
+- Real-time cloud sync _(coming soon)_
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Dove.webp" alt="Dove" width="25" height="25" /> Seamless Updates
+
 - Powered by **Shorebird** Code Push
 - Get **instant bug fixes** and performance improvements
 - No need to re-download the APK for minor updates
@@ -130,14 +132,14 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 
 ## 🏗️ Tech Stack
 
-| Technology | Icon | Purpose |
-|-----------|:---:|--------|
-| **Flutter 3** | <img src="https://skillicons.dev/icons?i=flutter" width="20"/> | Cross-platform UI Framework |
-| **Dart** | <img src="https://skillicons.dev/icons?i=dart" width="20"/> | Programming Language |
-| **Firebase** | <img src="https://skillicons.dev/icons?i=firebase" width="20"/> | Auth, Database, & Backend |
-| **Appwrite** | <img src="https://skillicons.dev/icons?i=appwrite" width="20"/> | Cloud Functions |
-| **GraphQL** | <img src="https://skillicons.dev/icons?i=graphql" width="20"/> | AniList Data Querying |
-| **Shorebird** | <img src="https://avatars.githubusercontent.com/u/135552150?s=200&v=4" width="20"/> | OTA Code Push & Updates |
+| Technology    |                                        Icon                                         | Purpose                     |
+| ------------- | :---------------------------------------------------------------------------------: | --------------------------- |
+| **Flutter 3** |           <img src="https://skillicons.dev/icons?i=flutter" width="20"/>            | Cross-platform UI Framework |
+| **Dart**      |             <img src="https://skillicons.dev/icons?i=dart" width="20"/>             | Programming Language        |
+| **Firebase**  |           <img src="https://skillicons.dev/icons?i=firebase" width="20"/>           | Auth, Database, & Backend   |
+| **Appwrite**  |           <img src="https://skillicons.dev/icons?i=appwrite" width="20"/>           | Cloud Functions             |
+| **GraphQL**   |           <img src="https://skillicons.dev/icons?i=graphql" width="20"/>            | AniList Data Querying       |
+| **Shorebird** | <img src="https://avatars.githubusercontent.com/u/135552150?s=200&v=4" width="20"/> | OTA Code Push & Updates     |
 
 ---
 
@@ -192,32 +194,38 @@ AniFlux/
 └── pubspec.yaml
 ```
 
-
 ---
 
 ## 🔧 Setup Instructions
 
 ### 1️⃣ Clone the repository
+
 ```bash
 git clone https://github.com/<your-username>/AniFlux.git
 cd AniFlux
 ```
+
 ```bash
 flutter pub get
 ```
+
 ```bash
 flutterfire configure
 ```
+
 ```bash
 flutter run
 ```
+
 ---
 
 🌐 API Used
 AniList GraphQL API
 
 ---
+
 ## 📖 Documentation:
+
 https://anilist.gitbook.io/anilist-apiv2-docs/
 
 🛠️ Planned Features
@@ -241,6 +249,7 @@ https://anilist.gitbook.io/anilist-apiv2-docs/
 ✨ Hero animations & advanced transitions
 
 ---
+
 ## 🤝 Contributing
 
 Contributions are welcome!
@@ -257,6 +266,7 @@ Commit your changes
 Open a pull request
 
 ---
+
 ## 📜 Legal & Community
 
 This project is licensed under the **MIT License** and follows open-source best practices.

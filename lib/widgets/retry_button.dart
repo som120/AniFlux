@@ -1,3 +1,4 @@
+import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class RetryButton extends StatefulWidget {
@@ -63,11 +64,11 @@ class _RetryButtonState extends State<RetryButton>
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFF714FDC),
+          color: AppTheme.primary,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF714FDC).withValues(alpha: 0.3),
+              color: AppTheme.primary.withValues(alpha: 0.3),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),

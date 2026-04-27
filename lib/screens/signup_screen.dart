@@ -129,7 +129,7 @@ class _SignupScreenState extends State<SignupScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppTheme.lightTheme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       // Use a Stack to layer the background and the content
       body: Stack(
         children: [
@@ -139,16 +139,36 @@ class _SignupScreenState extends State<SignupScreen> {
             left: 0,
             right: 0,
             height: size.height * 0.25,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/logban.png'),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/logban.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  // Dark gradient overlay for status bar visibility
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.center,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.6),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -167,11 +187,13 @@ class _SignupScreenState extends State<SignupScreen> {
                     vertical: 28,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withValues(alpha: 0.3)
+                            : Colors.black.withValues(alpha: 0.1),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -194,7 +216,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -288,8 +309,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                 child: RichText(
                                   text: TextSpan(
                                     text: "I agree to the ",
-                                    style: const TextStyle(
-                                      color: Colors.black87,
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -360,7 +381,6 @@ class _SignupScreenState extends State<SignupScreen> {
                               const Text(
                                 "Already have an account? ",
                                 style: TextStyle(
-                                  color: Colors.black87,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -401,10 +421,10 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget _buildLabel(String text) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        color: Colors.black87,
+        color: Theme.of(context).colorScheme.onSurface,
       ),
     );
   }
@@ -433,13 +453,13 @@ class _SignupScreenState extends State<SignupScreen> {
         }
       },
 
-      style: const TextStyle(fontSize: 14, color: Colors.black87),
+      style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.35), fontSize: 13),
 
         filled: true,
-        fillColor: Colors.grey.shade100,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
 
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
@@ -454,7 +474,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ? Icons.visibility_off_rounded
                       : Icons.visibility_rounded,
                   size: 20,
-                  color: Colors.grey.shade600,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 onPressed: () {
                   setState(() {
@@ -466,7 +486,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade100),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.surfaceContainerHighest),
         ),
 
         focusedBorder: OutlineInputBorder(

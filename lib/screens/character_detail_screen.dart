@@ -175,7 +175,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         controller: widget.scrollController,
         physics: const ClampingScrollPhysics(),
@@ -204,13 +204,13 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                       memCacheWidth: 800,
                       memCacheHeight: 1200,
                       placeholder: (context, url) =>
-                          Container(color: Colors.grey[300]),
+                          Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                       errorWidget: (context, url, error) =>
-                          Container(color: Colors.grey),
+                          Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                       fadeInDuration: const Duration(milliseconds: 300),
                     )
                   else
-                    Container(color: Colors.grey),
+                    Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -259,7 +259,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                     Text(
                       "We couldn't load the character details.\nPlease check your connection.",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 15),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 15),
                     ),
                     const SizedBox(height: 30),
                     ElevatedButton.icon(
@@ -303,7 +303,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade800,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                             letterSpacing: 1.0,
                           ),
                         ),
@@ -318,11 +318,13 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                         horizontal: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.08),
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.black.withValues(alpha: 0.3)
+                                : Colors.black.withValues(alpha: 0.08),
                             blurRadius: 15,
                             offset: const Offset(0, 5),
                           ),
@@ -353,9 +355,13 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                               ),
                             ],
                           ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            child: Divider(indent: 20, endIndent: 20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Divider(
+                              indent: 20,
+                              endIndent: 20,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -393,7 +399,6 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
                           ),
                         ),
                         const Spacer(),
@@ -413,12 +418,12 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                             decoration: BoxDecoration(
                               color: showSpoilers
                                   ? AppTheme.primary.withValues(alpha: 0.1)
-                                  : Colors.grey.shade100,
+                                  : Theme.of(context).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: showSpoilers
                                     ? AppTheme.primary.withValues(alpha: 0.3)
-                                    : Colors.grey.shade300,
+                                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.15),
                               ),
                             ),
                             child: Row(
@@ -431,7 +436,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                                   size: 16,
                                   color: showSpoilers
                                       ? AppTheme.primary
-                                      : Colors.grey.shade600,
+                                      : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
@@ -443,7 +448,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                                     fontWeight: FontWeight.w600,
                                     color: showSpoilers
                                         ? AppTheme.primary
-                                        : Colors.grey.shade600,
+                                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                                   ),
                                 ),
                               ],
@@ -456,7 +461,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ClipRect(
@@ -486,7 +491,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                                       styleSheet: MarkdownStyleSheet(
                                         p: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.grey.shade700,
+                                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                                           height: 1.6,
                                         ),
                                         del: TextStyle(
@@ -513,7 +518,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                                 styleSheet: MarkdownStyleSheet(
                                   p: TextStyle(
                                     fontSize: 16,
-                                    color: Colors.grey.shade700,
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                                     height: 1.6,
                                   ),
                                   del: TextStyle(
@@ -617,13 +622,13 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                                               width: 120,
                                               height: 160,
                                               decoration: BoxDecoration(
-                                                color: Colors.grey[300],
+                                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                                                 borderRadius:
                                                     BorderRadius.circular(12),
                                               ),
-                                              child: const Icon(
+                                              child: Icon(
                                                 Icons.image,
-                                                color: Colors.grey,
+                                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                                               ),
                                             ),
                                       const SizedBox(height: 8),
@@ -675,10 +680,10 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.onSurface,
                     height: 1.2,
                   ),
                 ),
@@ -690,7 +695,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 11,
-                color: Colors.grey.shade500,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.45),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -720,17 +725,22 @@ class FadeInImageWidget extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        color: Colors.grey[200],
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         child: CachedNetworkImage(
           imageUrl: imageUrl,
           width: width,
           height: height,
           fit: BoxFit.cover,
           memCacheWidth: (width * 3).toInt(),
-          placeholder: (context, url) => Container(color: Colors.grey[200]),
+          placeholder: (context, url) => Container(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          ),
           errorWidget: (context, url, error) => Container(
-            color: Colors.grey[300],
-            child: const Icon(Icons.broken_image, color: Colors.grey),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Icon(
+              Icons.broken_image,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+            ),
           ),
           fadeInDuration: const Duration(milliseconds: 250),
         ),

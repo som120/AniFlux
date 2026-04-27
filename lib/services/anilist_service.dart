@@ -450,20 +450,20 @@ class AniListService {
     variables: {'search': name, 'page': page, 'perPage': perPage},
   );
 
-  static Future<List<dynamic>> getTopAnime() async =>
-      _fetchMultiplePages(topAnimeQuery, perPage: 50, pages: 2);
+  static Future<List<dynamic>> getTopAnime({int pages = 2}) async =>
+      _fetchMultiplePages(topAnimeQuery, perPage: 50, pages: pages);
 
-  static Future<List<dynamic>> getPopularAnime() async =>
-      _fetchMultiplePages(popularAnimeQuery, perPage: 50, pages: 2);
+  static Future<List<dynamic>> getPopularAnime({int pages = 2}) async =>
+      _fetchMultiplePages(popularAnimeQuery, perPage: 50, pages: pages);
 
-  static Future<List<dynamic>> getUpcomingAnime() async =>
-      _fetchMultiplePages(upcomingAnimeQuery, perPage: 50, pages: 2);
+  static Future<List<dynamic>> getUpcomingAnime({int pages = 2}) async =>
+      _fetchMultiplePages(upcomingAnimeQuery, perPage: 50, pages: pages);
 
-  static Future<List<dynamic>> getAiringAnime() async =>
-      _fetchMultiplePages(airingAnimeQuery, perPage: 50, pages: 2);
+  static Future<List<dynamic>> getAiringAnime({int pages = 2}) async =>
+      _fetchMultiplePages(airingAnimeQuery, perPage: 50, pages: pages);
 
-  static Future<List<dynamic>> getTopMovies() async =>
-      _fetchMultiplePages(topMoviesQuery, perPage: 50, pages: 2);
+  static Future<List<dynamic>> getTopMovies({int pages = 2}) async =>
+      _fetchMultiplePages(topMoviesQuery, perPage: 50, pages: pages);
 
   static Future<List<dynamic>> getAnimeByGenre(String genre) async =>
       _fetchMultiplePages(
@@ -611,6 +611,46 @@ class AniListService {
       }
 
       return list;
+    } catch (e, st) {
+      debugPrint('AniList fetch failed: $e\n$st');
+      return [];
+    }
+  }
+
+  static const String multipleMediaDetailQuery = r'''
+    query ($ids: [Int]) {
+      Page {
+        media(id_in: $ids) {
+          id
+          status
+          episodes
+          format
+        }
+      }
+    }
+  ''';
+
+  static Future<List<dynamic>> getMultipleAnimeDetails(List<int> ids) async {
+    if (ids.isEmpty) return [];
+
+    final opts = QueryOptions(
+      document: gql(multipleMediaDetailQuery),
+      variables: {'ids': ids},
+      fetchPolicy: FetchPolicy.networkOnly,
+    );
+
+    try {
+      final result = await client().query(opts);
+
+      if (result.hasException) {
+        debugPrint('AniList API Error: ${result.exception}');
+        return [];
+      }
+
+      final page = result.data?['Page'];
+      if (page == null) return [];
+      final media = page['media'];
+      return media ?? [];
     } catch (e, st) {
       debugPrint('AniList fetch failed: $e\n$st');
       return [];

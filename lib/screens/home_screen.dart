@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:ainme_vault/providers/theme_provider.dart';
 import 'package:ainme_vault/screens/anime_detail_screen.dart';
 import 'package:ainme_vault/services/anilist_service.dart';
 import 'package:ainme_vault/services/notification_service.dart';
@@ -21,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   // ---------------- STATE VARIABLES ----------------
-  final PageController _pageController = PageController();
+  final PageController _pageController = PageController(initialPage: 5000);
   List<dynamic> _airingAnimeList = [];
   bool _isLoading = true;
   bool _isDark(Color c) => c.computeLuminance() < 0.5;
@@ -62,12 +63,12 @@ class _HomeScreenState extends State<HomeScreen> {
         .toColor();
 
     // Blend slightly with white for UI softness
-    return Color.lerp(softened, Colors.white, 0.15)!;
+    return Color.lerp(softened, Colors.white, 0.12)!;
   }
 
   Color _getProcessedColor(int index) {
     if (index < 0 || index >= _airingAnimeList.length) {
-      return Colors.white;
+      return const Color(0xFFF5F4FA);
     }
 
     final hex = _airingAnimeList[index]['coverImage']?['color'];
@@ -82,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _bgColorNotifier = ValueNotifier(Colors.white);
+    _bgColorNotifier = ValueNotifier(AppTheme.primary);
     _pageIndexNotifier = ValueNotifier(0);
     _carouselRetryCountdown = ValueNotifier(0);
 
@@ -90,9 +91,16 @@ class _HomeScreenState extends State<HomeScreen> {
     _currentUser = FirebaseAuth.instance.currentUser;
     _authSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
       if (mounted) {
+        final wasGuest = _currentUser == null;
         setState(() {
           _currentUser = user;
         });
+
+        // 🔥 If user just logged in, refresh theme and sync data
+        if (wasGuest && user != null) {
+          ThemeProvider.instance.refresh(); // Apply user's theme preference
+          _syncUpcomingAnimeStatuses(); // Sync their list status
+        }
       }
     });
 
@@ -100,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!_startupLogicDone) {
       _startupLogicDone = true;
       _fetchAiringAnime(); // Only fetch data once
+      _syncUpcomingAnimeStatuses(); // 🔥 Sync statuses for upcoming shows
       NotificationService.init();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         AppUpdateService.checkForUpdate(context);
@@ -141,16 +150,83 @@ class _HomeScreenState extends State<HomeScreen> {
     return weighted.take(count).toList();
   }
 
+  // 🔥 BACKGROUND SYNC: Update status of upcoming anime
+  Future<void> _syncUpcomingAnimeStatuses() async {
+    final user = _currentUser;
+    if (user == null) return;
+
+    try {
+      // 1. Get all anime with 'NOT_YET_RELEASED' status
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('anime')
+          .where('releaseStatus', isEqualTo: 'NOT_YET_RELEASED')
+          .get();
+
+      if (snapshot.docs.isEmpty) return;
+
+      final List<int> ids = snapshot.docs
+          .map((doc) => doc.data()['id'] as int)
+          .toList();
+
+      // 2. Fetch latest status from AniList in a single batch
+      final latestData = await AniListService.getMultipleAnimeDetails(ids);
+
+      if (latestData.isEmpty) return;
+
+      final batch = FirebaseFirestore.instance.batch();
+      bool hasUpdates = false;
+
+      for (var anime in latestData) {
+        final int id = anime['id'];
+        final String newStatus = anime['status'];
+        final int? newEpisodes = anime['episodes'];
+
+        // Find the matching doc in Firestore
+        final doc = snapshot.docs.firstWhere((d) => d.data()['id'] == id);
+        final currentStatus = doc.data()['releaseStatus'];
+
+        if (newStatus != currentStatus) {
+          final Map<String, dynamic> updateData = {
+            'releaseStatus': newStatus,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          };
+
+          if (newEpisodes != null) {
+            updateData['totalEpisodes'] = newEpisodes;
+          }
+
+          batch.update(doc.reference, updateData);
+          hasUpdates = true;
+        }
+      }
+
+      if (hasUpdates) {
+        await batch.commit();
+        debugPrint('🔥 Sync: Updated statuses for ${ids.length} anime');
+      }
+    } catch (e) {
+      debugPrint('❌ Sync failed: $e');
+    }
+  }
+
   // ---------------- DATA FETCHING ----------------
   Future<void> _fetchAiringAnime({bool retry = true}) async {
     // Prevent redundant fetches if we already have data
     if (_airingAnimeList.isNotEmpty && !_isLoading && !retry) return;
 
     try {
-      // SEQUENTIAL FETCHING to avoid burst rate limits
-      final airingData = await AniListService.getAiringAnime();
-      final popularData = await AniListService.getPopularAnime();
-      final upcomingData = await AniListService.getUpcomingAnime();
+      // PARALLEL FETCHING for significantly faster load times
+      final results = await Future.wait([
+        AniListService.getAiringAnime(pages: 1),
+        AniListService.getPopularAnime(pages: 1),
+        AniListService.getUpcomingAnime(pages: 1),
+      ]);
+
+      final airingData = results[0];
+      final popularData = results[1];
+      final upcomingData = results[2];
 
       if (!mounted) return;
 
@@ -190,6 +266,12 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_airingAnimeList.isNotEmpty) {
             _bgColorNotifier.value = _getProcessedColor(0);
             _pageIndexNotifier.value = 0;
+            // Reset page controller to middle for infinite scrolling
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_pageController.hasClients) {
+                _pageController.jumpToPage(5000);
+              }
+            });
             _startAutoScroll();
           }
         });
@@ -229,11 +311,10 @@ class _HomeScreenState extends State<HomeScreen> {
     _timer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (!_pageController.hasClients || _airingAnimeList.isEmpty) return;
 
-      final current = _pageIndexNotifier.value;
-      final next = (current + 1) % _airingAnimeList.length;
+      final currentPage = _pageController.page?.round() ?? 0;
 
       _pageController.animateToPage(
-        next,
+        currentPage + 1,
         duration: const Duration(milliseconds: 800),
         curve: Curves.easeInOut,
       );
@@ -257,7 +338,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 ValueListenableBuilder<Color>(
                   valueListenable: _bgColorNotifier,
-                  builder: (_, color, _) {
+                  builder: (_, color, child) {
+                    final scaffoldBg = Theme.of(
+                      context,
+                    ).scaffoldBackgroundColor;
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 600),
                       curve: Curves.easeOutCubic,
@@ -268,8 +352,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             color,
-                            Color.lerp(color, Colors.white, 0.35)!,
-                            Colors.white,
+                            Color.lerp(color, scaffoldBg, 0.35)!,
+                            scaffoldBg,
                           ],
                           stops: const [0.0, 0.6, 1.0],
                         ),
@@ -277,7 +361,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                Expanded(child: Container(color: Colors.white)),
+                Expanded(
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                ),
               ],
             ),
           ),
@@ -335,14 +423,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   child: PageView.builder(
                                     controller: _pageController,
-                                    itemCount: _airingAnimeList.length,
+                                    itemCount: _airingAnimeList.length * 10000,
                                     onPageChanged: (index) {
-                                      _pageIndexNotifier.value = index;
+                                      final realIndex =
+                                          index % _airingAnimeList.length;
+                                      _pageIndexNotifier.value = realIndex;
                                       _bgColorNotifier.value =
-                                          _getProcessedColor(index);
+                                          _getProcessedColor(realIndex);
                                     },
                                     itemBuilder: (context, index) {
-                                      final anime = _airingAnimeList[index];
+                                      final realIndex =
+                                          index % _airingAnimeList.length;
+                                      final anime = _airingAnimeList[realIndex];
                                       return _AnimeCard(anime: anime);
                                     },
                                   ),
@@ -435,7 +527,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             20,
                                           ),
                                         ),
-                                        color: Colors.white,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
                                         elevation: 12,
                                         onSelected: (value) {
                                           setState(() {
@@ -565,7 +659,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? AppTheme.primary : Colors.black87,
+                  color: isSelected
+                      ? AppTheme.primary
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -598,11 +694,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
             child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[800]!
+                  : Colors.grey[300]!,
+              highlightColor: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[700]!
+                  : Colors.grey[100]!,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
@@ -655,9 +755,14 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 220,
       margin: const EdgeInsets.symmetric(horizontal: _cardHorizontalMargin),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade700
+              : Colors.grey.shade300,
+          width: 1,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
@@ -757,6 +862,37 @@ class MyAnimeList extends StatefulWidget {
 class _MyAnimeListState extends State<MyAnimeList> {
   List<QueryDocumentSnapshot>? _cachedSortedList;
   String? _lastSortKey;
+  Stream<QuerySnapshot>? _stream;
+
+  @override
+  void initState() {
+    super.initState();
+    _initStream();
+  }
+
+  @override
+  void didUpdateWidget(covariant MyAnimeList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.status != widget.status) {
+      _initStream();
+      _cachedSortedList = null;
+      _lastSortKey = null;
+    }
+  }
+
+  void _initStream() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _stream = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('anime')
+          .where('status', isEqualTo: widget.status)
+          .snapshots();
+    } else {
+      _stream = null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -773,7 +909,7 @@ class _MyAnimeListState extends State<MyAnimeList> {
               const Icon(Icons.lock_outline, size: 48, color: Colors.grey),
               const SizedBox(height: 16),
               const Text(
-                "Login to track your anime",
+                "Login to track your anime journey",
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
@@ -787,14 +923,10 @@ class _MyAnimeListState extends State<MyAnimeList> {
     }
 
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .collection('anime')
-          .where('status', isEqualTo: widget.status)
-          .snapshots(),
+      stream: _stream,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            !snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -904,6 +1036,8 @@ class _MyAnimeListState extends State<MyAnimeList> {
                 'coverImage': {'large': data['coverImage']},
                 'averageScore': data['averageScore'],
                 'episodes': data['totalEpisodes'],
+                'status':
+                    data['releaseStatus'], // 🔥 Pass AniList release status
               };
 
               return GestureDetector(
@@ -1005,6 +1139,7 @@ class _MyAnimeListState extends State<MyAnimeList> {
               'coverImage': {'large': data['coverImage']},
               'averageScore': data['averageScore'],
               'episodes': data['totalEpisodes'],
+              'status': data['releaseStatus'], // 🔥 Pass AniList release status
             };
 
             return AnimatedSwitcher(
@@ -1027,11 +1162,13 @@ class _MyAnimeListState extends State<MyAnimeList> {
                 key: ValueKey('${doc.id}_${data['status']}_$progress'),
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withValues(alpha: 0.3)
+                          : Colors.black.withValues(alpha: 0.08),
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
@@ -1120,7 +1257,11 @@ class _MyAnimeListState extends State<MyAnimeList> {
                                           ? 0
                                           : progress / totalEpisodes,
                                       minHeight: 3,
-                                      backgroundColor: Colors.grey.shade200,
+                                      backgroundColor:
+                                          Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.grey.shade800
+                                          : Colors.grey.shade200,
                                       valueColor: AlwaysStoppedAnimation(
                                         AppTheme.primary,
                                       ),
@@ -1153,14 +1294,21 @@ class _MyAnimeListState extends State<MyAnimeList> {
                                   )
                                 : IconButton(
                                     key: const ValueKey('add'),
-                                    icon: const Icon(
-                                      Icons.add_circle_outline_rounded,
+                                    icon: Icon(
+                                      data['releaseStatus'] ==
+                                              'NOT_YET_RELEASED'
+                                          ? Icons.upcoming_rounded
+                                          : Icons.add_circle_outline_rounded,
                                       size: 28,
                                     ),
                                     padding: EdgeInsets.zero, // 🔥 important
                                     constraints:
                                         const BoxConstraints(), // 🔥 important
-                                    color: AppTheme.primary,
+                                    color:
+                                        data['releaseStatus'] ==
+                                            'NOT_YET_RELEASED'
+                                        ? Colors.grey.shade400
+                                        : AppTheme.primary,
                                     onPressed: () {
                                       HapticFeedback.lightImpact();
                                       _onAddEpisode(
@@ -1182,16 +1330,6 @@ class _MyAnimeListState extends State<MyAnimeList> {
         );
       },
     );
-  }
-
-  @override
-  void didUpdateWidget(covariant MyAnimeList oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.status != widget.status) {
-      _cachedSortedList = null;
-      _lastSortKey = null;
-    }
   }
 
   List<QueryDocumentSnapshot> _sortAnimeList(
@@ -1268,6 +1406,49 @@ Future<void> _onAddEpisode({
   final int currentWatchMinutes = data['watchMinutes'] ?? 0;
 
   if (totalEpisodes != 0 && progress >= totalEpisodes) return;
+
+  // 🔥 Block increment for upcoming anime
+  if (data['releaseStatus'] == 'NOT_YET_RELEASED') {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.info_outline_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                "This anime hasn't been released yet!",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        elevation: 8,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
 
   final Map<String, dynamic> updateData = {};
 
@@ -1423,14 +1604,20 @@ class _StatusChip extends StatelessWidget {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary : Colors.grey.shade300,
+          color: isSelected
+              ? AppTheme.primary
+              : Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade800
+              : Colors.grey.shade300,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 14,
-            color: isSelected ? Colors.white : Colors.black87,
+            color: isSelected
+                ? Colors.white
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -1446,9 +1633,14 @@ class _AnimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final coverImage = anime['coverImage']?['large'] ?? "";
+    final bannerImage =
+        anime['bannerImage'] ?? anime['coverImage']?['large'] ?? "";
     final title = anime['title']?['english'] ?? anime['title']?['romaji'] ?? "";
     final score = ((anime['averageScore'] ?? 0) as num) / 10;
+
+    final status = anime['status'] ?? "";
+    final isAiring = status == 'RELEASING';
+    final isUpcoming = status == 'NOT_YET_RELEASED';
 
     return GestureDetector(
       onTap: () {
@@ -1477,8 +1669,10 @@ class _AnimeCard extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               CachedNetworkImage(
-                imageUrl: coverImage,
+                imageUrl: bannerImage,
                 fit: BoxFit.cover,
+                fadeInDuration: const Duration(milliseconds: 300),
+                fadeOutDuration: const Duration(milliseconds: 300),
                 placeholder: (context, url) => Container(
                   color: Colors.grey[300],
                   child: const Center(child: CircularProgressIndicator()),
@@ -1526,45 +1720,70 @@ class _AnimeCard extends StatelessWidget {
                     color: Colors.black.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: score > 0
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.star_rounded,
-                              color: Colors.amber,
-                              size: 16,
+                  child: () {
+                    if (isUpcoming) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.upcoming_rounded,
+                            color: Colors.lightBlueAccent,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            "Upcoming",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              score.toStringAsFixed(1),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                        ],
+                      );
+                    } else if (isAiring) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.sensors_rounded,
+                            color: Colors.greenAccent,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            "Airing",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.upcoming_rounded,
-                              color: Colors.lightBlueAccent,
-                              size: 16,
+                          ),
+                        ],
+                      );
+                    } else if (score > 0) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            score.toStringAsFixed(1),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const SizedBox(width: 4),
-                            const Text(
-                              "Upcoming",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }(),
                 ),
               ),
             ],

@@ -55,3 +55,12 @@ android/app/google-services.json
 
 android/key.properties
 android/app/*.keystore
+
+
+
+# ----------------------
+# Graphify
+# ----------------------
+graphify-out/cache/
+graphify-out/manifest.json
+graphify-out/cost.json

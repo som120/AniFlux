@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:ainme_vault/providers/theme_provider.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,11 +39,18 @@ class AnimeVaultApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'AniFlux',
-      theme: AppTheme.lightTheme,
-      home: const MainScreen(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeProvider.instance,
+      builder: (context, themeMode, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'AniFlux',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
+          home: const MainScreen(),
+        );
+      },
     );
   }
 }
@@ -197,7 +205,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     return WillPopScope(
       onWillPop: _handleBackPress,
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
           children: [
             Positioned.fill(
@@ -215,20 +223,26 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
               height: 80,
               child: IgnorePointer(
                 ignoring: true,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.transparent,
-                        Colors.white12,
-                        Colors.white60,
-                        Colors.white,
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [0.0, 0.3, 0.7, 1.0],
-                    ),
-                  ),
+                child: Builder(
+                  builder: (context) {
+                    final scaffoldColor =
+                        Theme.of(context).scaffoldBackgroundColor;
+                    return Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+                            scaffoldColor.withValues(alpha: 0.12),
+                            scaffoldColor.withValues(alpha: 0.6),
+                            scaffoldColor,
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: const [0.0, 0.3, 0.7, 1.0],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -244,10 +258,14 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                     filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.18),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withValues(alpha: 0.4)
+                            : Colors.white.withValues(alpha: 0.18),
                         borderRadius: BorderRadius.circular(40),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white.withValues(alpha: 0.15)
+                              : Colors.white.withValues(alpha: 0.5),
                           width: 1.2,
                         ),
                         boxShadow: [
@@ -373,7 +391,11 @@ class _NavItem extends StatelessWidget {
                 Icon(
                   icon,
                   size: active ? 22 : 24,
-                  color: active ? const Color(0xFF714FDC) : Colors.white,
+                  color: active
+                      ? const Color(0xFF714FDC)
+                      : Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade400
+                          : Colors.white,
                 ),
                 if (active) ...[
                   const SizedBox(height: 2),

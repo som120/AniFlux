@@ -1,3 +1,4 @@
+import 'package:ainme_vault/providers/theme_provider.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:ainme_vault/utils/transitions.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class ProfileScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F3FF),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
@@ -63,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
@@ -94,21 +95,21 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 "Welcome to AniFlux!",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 "Login to track your anime, save your progress, and sync across devices.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.black54,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   height: 1.5,
                 ),
               ),
@@ -245,10 +246,10 @@ class ProfileScreen extends StatelessWidget {
 
               return Text(
                 displayName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               );
             },
@@ -296,7 +297,7 @@ class ProfileScreen extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -309,9 +310,9 @@ class ProfileScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildStatItem(watchTime["value"]!, watchTime["label"]!),
-                      _buildStatItem(completedCount.toString(), "Completed"),
-                      _buildStatItem(totalAnimes.toString(), "Anime"),
+                      _buildStatItem(context, watchTime["value"]!, watchTime["label"]!),
+                      _buildStatItem(context, completedCount.toString(), "Completed"),
+                      _buildStatItem(context, totalAnimes.toString(), "Anime"),
                     ],
                   ),
                 ),
@@ -329,7 +330,7 @@ class ProfileScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -355,12 +356,8 @@ class ProfileScreen extends StatelessWidget {
                     false,
                   ),
                   const SizedBox(height: 20),
-                  _buildSettingsTile(
-                    Icons.dark_mode,
-                    "Change Theme",
-                    context,
-                    false,
-                  ),
+                  // Theme toggle — simple switch
+                  _buildThemeToggle(context),
                   const SizedBox(height: 20),
                   _buildSettingsTile(
                     Icons.settings,
@@ -391,7 +388,7 @@ class ProfileScreen extends StatelessWidget {
   // ---------------------------
   // STAT ITEM WIDGET
   // ---------------------------
-  Widget _buildStatItem(String value, String label) {
+  Widget _buildStatItem(BuildContext context, String value, String label) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -406,9 +403,72 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(fontSize: 13, color: Colors.black54),
+          style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
         ),
       ],
+    );
+  }
+
+  // ---------------------------
+  // THEME TOGGLE WIDGET
+  // ---------------------------
+  Widget _buildThemeToggle(BuildContext context) {
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeProvider.instance,
+      builder: (context, themeMode, _) {
+        final isDark = ThemeProvider.instance.isDark(context);
+        return Container(
+          color: Colors.transparent,
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8A5CF6).withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isDark ? Icons.dark_mode : Icons.light_mode,
+                  color: const Color(0xFF8A5CF6),
+                  size: 25,
+                ),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Text(
+                  isDark ? "Dark Mode" : "Light Mode",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 45,
+                child: Transform.scale(
+                  scale: 0.8,
+                  child: Switch(
+                    value: isDark,
+                    onChanged: (value) {
+                      ThemeProvider.instance.setThemeMode(
+                        value ? ThemeMode.dark : ThemeMode.light,
+                      );
+                    },
+                    activeThumbColor: AppTheme.primary,
+                    activeTrackColor: AppTheme.primary.withValues(alpha: 0.3),
+                    inactiveThumbColor: Colors.white,
+                    inactiveTrackColor: Colors.grey.shade300,
+                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -452,22 +512,22 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     // Title
-                    const Text(
+                    Text(
                       'Logout',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
                     // Subtitle
-                    const Text(
+                    Text(
                       'Are you sure you want to logout?\nYou can always log back in.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.black54,
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                         height: 1.5,
                       ),
                     ),
@@ -483,14 +543,14 @@ class ProfileScreen extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
-                              side: BorderSide(color: Colors.grey.shade300),
+                              side: BorderSide(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.25)),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Cancel',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black87,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ),
@@ -541,6 +601,9 @@ class ProfileScreen extends StatelessWidget {
               if (await googleSignIn.isSignedIn()) {
                 await googleSignIn.signOut();
               }
+
+              // Revert theme to light mode for guests
+              await ThemeProvider.instance.resetToDefault();
 
               // Sign out from Firebase
               await auth.signOut();
@@ -695,17 +758,17 @@ class ProfileScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Colors.black26,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
             ),
           ],
         ),

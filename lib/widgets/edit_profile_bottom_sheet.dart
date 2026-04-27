@@ -114,9 +114,9 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
       ),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.5,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(24),
             topRight: Radius.circular(24),
           ),
@@ -187,17 +187,21 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                             decoration: InputDecoration(
                               hintText: "Enter your username",
                               filled: true,
-                              fillColor: Colors.grey.shade50,
+                              fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: Colors.grey.shade200,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.grey.shade700
+                                      : Colors.grey.shade200,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: Colors.grey.shade200,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.grey.shade700
+                                      : Colors.grey.shade200,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(

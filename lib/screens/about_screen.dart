@@ -306,17 +306,23 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F3FF),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "About",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -332,11 +338,13 @@ class _AboutScreenState extends State<AboutScreen> {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withValues(alpha: 0.3)
+                            : Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -357,18 +365,21 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     "AniFlux",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     "Version $_version (Build $_buildNumber)",
-                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                 ],
               ),
@@ -380,11 +391,13 @@ class _AboutScreenState extends State<AboutScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12.withValues(alpha: 0.05),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withValues(alpha: 0.2)
+                          : Colors.black12.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -432,11 +445,13 @@ class _AboutScreenState extends State<AboutScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12.withValues(alpha: 0.05),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withValues(alpha: 0.2)
+                          : Colors.black12.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -482,9 +497,12 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
             ),
             const SizedBox(height: 40),
-            const Text(
+            Text(
               "Made with ❤️ by Somnath",
-              style: TextStyle(color: Colors.black45, fontSize: 12),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.45),
+                fontSize: 12,
+              ),
             ),
             const SizedBox(height: 8),
             IconButton(
@@ -496,7 +514,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 "https://cdn-icons-png.flaticon.com/512/25/25231.png",
                 width: 24,
                 height: 24,
-                color: Colors.black45,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.45),
               ),
               tooltip: 'GitHub Repository',
             ),
@@ -530,10 +548,10 @@ class _AboutScreenState extends State<AboutScreen> {
         title,
         style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
       ),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.arrow_forward_ios,
         size: 16,
-        color: Colors.grey,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       onTap: onTap,
@@ -578,20 +596,20 @@ class _AboutScreenState extends State<AboutScreen> {
                         width: 48,
                         height: 48,
                         errorBuilder: (context, error, stackTrace) =>
-                            const Icon(
+                            Icon(
                               Icons.movie_filter,
                               size: 48,
-                              color: Color(0xFF8A5CF6),
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
+                    Text(
                       "AniFlux",
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -632,39 +650,39 @@ class _AboutScreenState extends State<AboutScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         "Copyright (c) 2026 Somnath Paul",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
                         style: TextStyle(
                           fontSize: 13,
                           height: 1.6,
-                          color: Colors.black87,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
                         style: TextStyle(
                           fontSize: 13,
                           height: 1.6,
-                          color: Colors.black87,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
                         style: TextStyle(
                           fontSize: 12,
                           height: 1.6,
-                          color: Colors.black54,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -807,7 +825,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -816,7 +834,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             Icon(
                               Icons.info_outline,
                               size: 16,
-                              color: Colors.grey.shade600,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -825,7 +843,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   height: 1.4,
-                                  color: Colors.grey.shade600,
+                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                                   fontStyle: FontStyle.italic,
                                 ),
                               ),
@@ -921,10 +939,10 @@ class _AboutScreenState extends State<AboutScreen> {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -932,10 +950,10 @@ class _AboutScreenState extends State<AboutScreen> {
           const SizedBox(height: 8),
           Text(
             content,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               height: 1.5,
-              color: Colors.black54,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -962,12 +980,12 @@ class _AboutScreenState extends State<AboutScreen> {
                 color: Color(0xFF8A5CF6),
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 "Contact",
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -975,10 +993,10 @@ class _AboutScreenState extends State<AboutScreen> {
           const SizedBox(height: 8),
           Text.rich(
             TextSpan(
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 height: 1.5,
-                color: Colors.black54,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               children: [
                 const TextSpan(
@@ -1181,7 +1199,7 @@ class _AboutScreenState extends State<AboutScreen> {
                               ),
                               child: CircleAvatar(
                                 radius: 22,
-                                backgroundColor: Colors.grey[200],
+                              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                                 backgroundImage: NetworkImage(
                                   contributor['avatar_url'],
                                 ),
@@ -1195,17 +1213,17 @@ class _AboutScreenState extends State<AboutScreen> {
                                 children: [
                                   Text(
                                     contributor['login'],
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15,
-                                      color: Colors.black87,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     "${contributor['contributions']} contributions",
                                     style: TextStyle(
-                                      color: Colors.grey[600],
+                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                                       fontSize: 13,
                                     ),
                                   ),
@@ -1442,7 +1460,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   fontSize: 16,
                   color: isLatest
                       ? AppTheme.green
-                      : (isCurrent ? AppTheme.primary : Colors.black),
+                      : (isCurrent ? AppTheme.primary : Theme.of(context).colorScheme.onSurface),
                 ),
               ),
               if (isLatest)
