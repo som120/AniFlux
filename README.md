@@ -53,7 +53,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 
 ---
 
-## 📱 Screenshots
+##  Screenshots
 
 |                            Home Screen                            |                             Anime Details                              |                                Search                                 |                                 Profile                                 |
 | :---------------------------------------------------------------: | :--------------------------------------------------------------------: | :-------------------------------------------------------------------: | :---------------------------------------------------------------------: |
@@ -72,7 +72,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 
 ---
 
-## 📈 Project Growth
+##  Project Growth
 
 <p align="center">
   <a href="https://star-history.com/#som120/AniFlux&Date">
@@ -98,7 +98,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
   - Airing
   - Movies
 
-### 🎨 Modern UI
+###  Modern UI
 
 - Custom anime cards
 - Rounded corners & soft shadows
@@ -114,7 +114,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 - Rating & episode count
 - Direct link to AniList page
 
-### ☁️ Firebase Integration
+###  Firebase Integration
 
 - Firebase Core configured
 - Firestore database connected
@@ -130,7 +130,7 @@ It allows users to **search, browse, and track anime**, with **cloud sync using 
 
 ---
 
-## 🏗️ Tech Stack
+##  Tech Stack
 
 | Technology    |                                        Icon                                         | Purpose                     |
 | ------------- | :---------------------------------------------------------------------------------: | --------------------------- |
@@ -198,7 +198,7 @@ AniFlux/
 
 ## 🔧 Setup Instructions
 
-### 1️⃣ Clone the repository
+###  Clone the repository
 
 ```bash
 git clone https://github.com/<your-username>/AniFlux.git
@@ -219,7 +219,7 @@ flutter run
 
 ---
 
-🌐 API Used
+ API Used
 AniList GraphQL API
 
 ---
@@ -228,25 +228,25 @@ AniList GraphQL API
 
 https://anilist.gitbook.io/anilist-apiv2-docs/
 
-🛠️ Planned Features
+ Planned Features
 
-🔐 Google Sign-In (Firebase Auth)
+ Google Sign-In (Firebase Auth)
 
-⭐ User ratings
+ User ratings
 
-❤️ Favorites list
+ Favorites list
 
-📌 Watchlist system (Watching / Completed / Dropped)
+ Watchlist system (Watching / Completed / Dropped)
 
-📊 User statistics
+ User statistics
 
-🌙 Dark mode
+ Dark mode
 
-🔄 Offline support
+ Offline support
 
-🎴 Seasonal anime page
+ Seasonal anime page
 
-✨ Hero animations & advanced transitions
+ Hero animations & advanced transitions
 
 ---
 
