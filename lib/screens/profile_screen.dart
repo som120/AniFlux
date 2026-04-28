@@ -413,60 +413,117 @@ class ProfileScreen extends StatelessWidget {
   // THEME TOGGLE WIDGET
   // ---------------------------
   Widget _buildThemeToggle(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: ThemeProvider.instance,
-      builder: (context, themeMode, _) {
+    return ListenableBuilder(
+      listenable: ThemeProvider.instance,
+      builder: (context, _) {
         final isDark = ThemeProvider.instance.isDark(context);
-        return Container(
-          color: Colors.transparent,
-          child: Row(
-            children: [
+        final isAmoled = ThemeProvider.instance.isAmoled;
+        return Column(
+          children: [
+            Container(
+              color: Colors.transparent,
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8A5CF6).withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isDark ? Icons.dark_mode : Icons.light_mode,
+                      color: const Color(0xFF8A5CF6),
+                      size: 25,
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: Text(
+                      isDark ? "Dark Mode" : "Light Mode",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 45,
+                    child: Transform.scale(
+                      scale: 0.8,
+                      child: Switch(
+                        value: isDark,
+                        onChanged: (value) {
+                          ThemeProvider.instance.setThemeMode(
+                            value ? ThemeMode.dark : ThemeMode.light,
+                          );
+                        },
+                        activeThumbColor: AppTheme.primary,
+                        activeTrackColor: AppTheme.primary.withValues(alpha: 0.3),
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor: Colors.grey.shade300,
+                        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isDark) ...[
+              const SizedBox(height: 15),
               Container(
-                width: 42,
-                height: 42,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF8A5CF6).withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isDark ? Icons.dark_mode : Icons.light_mode,
-                  color: const Color(0xFF8A5CF6),
-                  size: 25,
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Text(
-                  isDark ? "Dark Mode" : "Light Mode",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 45,
-                child: Transform.scale(
-                  scale: 0.8,
-                  child: Switch(
-                    value: isDark,
-                    onChanged: (value) {
-                      ThemeProvider.instance.setThemeMode(
-                        value ? ThemeMode.dark : ThemeMode.light,
-                      );
-                    },
-                    activeThumbColor: AppTheme.primary,
-                    activeTrackColor: AppTheme.primary.withValues(alpha: 0.3),
-                    inactiveThumbColor: Colors.white,
-                    inactiveTrackColor: Colors.grey.shade300,
-                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
+                color: Colors.transparent,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF8A5CF6).withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.contrast,
+                        color: Color(0xFF8A5CF6),
+                        size: 25,
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    const Expanded(
+                      child: Text(
+                        "AMOLED Dark Mode",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 45,
+                      child: Transform.scale(
+                        scale: 0.8,
+                        child: Switch(
+                          value: isAmoled,
+                          onChanged: (value) {
+                            ThemeProvider.instance.toggleAmoled(value);
+                          },
+                          activeThumbColor: AppTheme.primary,
+                          activeTrackColor: AppTheme.primary.withValues(alpha: 0.3),
+                          inactiveThumbColor: Colors.white,
+                          inactiveTrackColor: Colors.grey.shade600,
+                          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
+          ],
         );
       },
     );

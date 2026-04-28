@@ -58,61 +58,65 @@ class AppTheme {
   );
 
   // ──────────── DARK THEME ────────────
-  static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    primaryColor: primary,
-    scaffoldBackgroundColor: const Color(0xFF121212),
+  static ThemeData getDarkTheme({bool isAmoled = false}) {
+    final scaffoldColor = isAmoled ? Colors.black : const Color(0xFF121212);
+    
+    return ThemeData(
+      brightness: Brightness.dark,
+      primaryColor: primary,
+      scaffoldBackgroundColor: scaffoldColor,
 
-    colorScheme: ColorScheme.dark(
-      primary: primary,
-      secondary: accent,
-      surface: const Color(0xFF1E1E1E),
-      onSurface: const Color(0xFFE0E0E0),
-      surfaceContainerHighest: const Color(0xFF2C2C2C),
-    ),
-
-    appBarTheme: AppBarTheme(
-      backgroundColor: const Color(0xFF1E1E1E),
-      elevation: 0,
-      foregroundColor: Colors.white,
-      titleTextStyle: const TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
+      colorScheme: ColorScheme.dark(
+        primary: primary,
+        secondary: accent,
+        surface: const Color(0xFF1E1E1E),
+        onSurface: const Color(0xFFE0E0E0),
+        surfaceContainerHighest: const Color(0xFF2C2C2C),
       ),
-    ),
 
-    textTheme: const TextTheme(
-      titleLarge: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
-      titleMedium: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: Colors.white,
-      ),
-      bodyMedium: TextStyle(fontSize: 15, color: Color(0xFFE0E0E0)),
-    ),
-
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: primary,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF1E1E1E),
+        elevation: 0,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
       ),
-    ),
 
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: const Color(0xFF2C2C2C),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        titleMedium: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+        bodyMedium: TextStyle(fontSize: 15, color: Color(0xFFE0E0E0)),
       ),
-      hintStyle: const TextStyle(color: Colors.grey),
-    ),
-  );
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF2C2C2C),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        hintStyle: const TextStyle(color: Colors.grey),
+      ),
+    );
+  }
 }

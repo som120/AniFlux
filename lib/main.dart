@@ -39,15 +39,15 @@ class AnimeVaultApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: ThemeProvider.instance,
-      builder: (context, themeMode, _) {
+    return ListenableBuilder(
+      listenable: ThemeProvider.instance,
+      builder: (context, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'AniFlux',
           theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
+          darkTheme: AppTheme.getDarkTheme(isAmoled: ThemeProvider.instance.isAmoled),
+          themeMode: ThemeProvider.instance.themeMode,
           home: const MainScreen(),
         );
       },

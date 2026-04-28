@@ -620,7 +620,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
           margin: const EdgeInsets.symmetric(horizontal: 20),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
@@ -713,7 +713,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -1811,7 +1811,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
         // Increased padding to narrow text width and add breathing room
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 18),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -1894,7 +1894,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: Stack(
