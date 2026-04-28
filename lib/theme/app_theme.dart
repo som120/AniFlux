@@ -14,6 +14,7 @@ class AppTheme {
 
     colorScheme: ColorScheme.light(
       primary: primary,
+      onPrimary: Colors.white,
       secondary: accent,
       surface: Colors.white,
       onSurface: Colors.black87,
@@ -65,6 +66,7 @@ class AppTheme {
 
     colorScheme: ColorScheme.dark(
       primary: primary,
+      onPrimary: Colors.white,
       secondary: accent,
       surface: const Color(0xFF1E1E1E),
       onSurface: const Color(0xFFE0E0E0),
