@@ -11,7 +11,8 @@ import 'package:flutter_displaymode/flutter_displaymode.dart';
 // Screens
 import 'screens/home_screen.dart';
 import 'screens/search_screen.dart';
-import 'screens/profile_screen.dart';
+import 'package:ainme_vault/screens/profile_screen.dart';
+import 'package:ainme_vault/services/review_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -31,6 +32,7 @@ void main() async {
     yield LicenseEntryWithLineBreaks(['AniFlux'], licenseText);
   });
 
+  await ReviewService.init();
   runApp(const AnimeVaultApp());
 }
 
@@ -67,7 +69,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   DateTime? _lastBackPressTime;
   late SharedPreferences _prefs;
 
-  final GlobalKey<SearchScreenState> _searchScreenKey = GlobalKey<SearchScreenState>();
+  final GlobalKey<SearchScreenState> _searchScreenKey =
+      GlobalKey<SearchScreenState>();
 
   /// Tracks the last time the search tab was tapped while already active.
   /// Used to detect a genuine double-tap (two taps within 300ms).
@@ -225,8 +228,9 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 ignoring: true,
                 child: Builder(
                   builder: (context) {
-                    final scaffoldColor =
-                        Theme.of(context).scaffoldBackgroundColor;
+                    final scaffoldColor = Theme.of(
+                      context,
+                    ).scaffoldBackgroundColor;
                     return Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -307,14 +311,16 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                                   // Genuine double-tap: focus the search field
                                   _searchScreenKey.currentState
                                       ?.focusSearchField();
-                                  _lastSearchTabTap = null; // Reset after triggering
+                                  _lastSearchTabTap =
+                                      null; // Reset after triggering
                                 } else {
                                   // First tap — record timestamp, don't focus yet
                                   _lastSearchTabTap = now;
                                 }
                               } else {
                                 // Not on search tab — navigate to it
-                                _lastSearchTabTap = null; // Reset on fresh navigation
+                                _lastSearchTabTap =
+                                    null; // Reset on fresh navigation
                                 setState(() => _currentIndex = idx);
                               }
                             },
@@ -394,8 +400,8 @@ class _NavItem extends StatelessWidget {
                   color: active
                       ? const Color(0xFF714FDC)
                       : Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey.shade400
-                          : Colors.white,
+                      ? Colors.grey.shade400
+                      : Colors.white,
                 ),
                 if (active) ...[
                   const SizedBox(height: 2),

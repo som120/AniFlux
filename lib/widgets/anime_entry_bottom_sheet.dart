@@ -1,4 +1,5 @@
 import 'package:ainme_vault/services/anilist_service.dart';
+import 'package:ainme_vault/services/review_service.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -174,6 +175,22 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
       return;
     }
 
+    // Track old progress to detect if episodes were watched
+    int oldProgress = 0;
+    if (!_isNewEntry) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('anime')
+            .doc(widget.anime['id'].toString())
+            .get();
+        if (doc.exists) {
+          oldProgress = doc.data()?['progress'] ?? 0;
+        }
+      } catch (_) {}
+    }
+
     try {
       final animeId = widget.anime['id'].toString();
       final title =
@@ -235,6 +252,13 @@ class _AnimeEntryBottomSheetState extends State<AnimeEntryBottomSheet> {
           .collection('anime')
           .doc(animeId)
           .set(data, SetOptions(merge: true));
+
+      // Trigger Review Request Logic
+      if (_isNewEntry) {
+        ReviewService.incrementAnimeAddedCount();
+      } else if (_progress > oldProgress) {
+        ReviewService.incrementEpisodesWatchedCount(_progress - oldProgress);
+      }
     } catch (e) {
       if (mounted) {
         showErrorSnackbar(context, 'Error saving: $e');

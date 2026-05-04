@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:ainme_vault/theme/app_theme.dart';
+import 'package:ainme_vault/services/review_service.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -108,9 +109,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
       await remoteConfig.fetchAndActivate();
 
-      final latestVersion = Platform.isAndroid
-          ? remoteConfig.getString('latest_version_android')
-          : remoteConfig.getString('latest_version_ios');
+      final latestVersion = remoteConfig.getString('latest_version_android');
 
       if (latestVersion.isEmpty || latestVersion == '0.0.0') {
         throw Exception('Could not fetch latest version');
@@ -287,9 +286,7 @@ class _AboutScreenState extends State<AboutScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              final storeUrl = Platform.isAndroid
-                  ? 'https://play.google.com/store/apps/details?id=com.aniflux.app'
-                  : 'https://apps.apple.com/app/idYOUR_APP_ID';
+              const storeUrl = 'https://play.google.com/store/apps/details?id=com.aniflux.app';
               _launchUrl(storeUrl);
             },
             style: ElevatedButton.styleFrom(
@@ -431,6 +428,15 @@ class _AboutScreenState extends State<AboutScreen> {
                       onTap: () {
                         HapticFeedback.lightImpact();
                         _launchUrl("https://github.com/som120/AniFlux/issues");
+                      },
+                    ),
+                    _buildListTile(
+                      icon: Icons.star_rate_rounded,
+                      title: "Rate this app",
+                      iconColor: Colors.amber,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        ReviewService.openStoreListing();
                       },
                     ),
                   ],
