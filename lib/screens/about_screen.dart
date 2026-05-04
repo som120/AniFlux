@@ -606,10 +606,10 @@ class _AboutScreenState extends State<AboutScreen> {
                     const SizedBox(height: 12),
                     Text(
                       "AniFlux",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),
