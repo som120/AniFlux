@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
-
+import 'package:ainme_vault/providers/theme_provider.dart';
 class EditProfileBottomSheet extends StatefulWidget {
   const EditProfileBottomSheet({super.key});
 
@@ -115,7 +115,9 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
       child: Container(
         height: MediaQuery.of(context).size.height * 0.5,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: ThemeProvider.instance.isAmoled && ThemeProvider.instance.isDark(context)
+              ? const Color.fromARGB(255, 18, 18, 18)
+              : Theme.of(context).colorScheme.surface,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(24),
             topRight: Radius.circular(24),

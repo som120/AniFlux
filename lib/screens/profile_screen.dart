@@ -64,7 +64,9 @@ class ProfileScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: ThemeProvider.instance.isAmoled && ThemeProvider.instance.isDark(context)
+                ? const Color.fromARGB(255, 18, 18, 18)
+                : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
@@ -297,7 +299,9 @@ class ProfileScreen extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
+                    color: ThemeProvider.instance.isAmoled && ThemeProvider.instance.isDark(context)
+                        ? const Color.fromARGB(255, 18, 18, 18)
+                        : Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -330,7 +334,9 @@ class ProfileScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
+                color: ThemeProvider.instance.isAmoled && ThemeProvider.instance.isDark(context)
+                    ? const Color.fromARGB(255, 18, 18, 18)
+                    : Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(

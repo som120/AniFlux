@@ -1162,7 +1162,11 @@ class _MyAnimeListState extends State<MyAnimeList> {
                 key: ValueKey('${doc.id}_${data['status']}_$progress'),
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color:
+                      ThemeProvider.instance.isAmoled &&
+                          ThemeProvider.instance.isDark(context)
+                      ? const Color.fromARGB(255, 18, 18, 18)
+                      : Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
@@ -1606,9 +1610,9 @@ class _StatusChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? AppTheme.primary
-              : Theme.of(context).brightness == Brightness.dark
-              ? Colors.grey.shade800
-              : Colors.grey.shade300,
+              : ThemeProvider.instance.isAmoled && ThemeProvider.instance.isDark(context)
+                  ? const Color.fromARGB(255, 18, 18, 18)
+                  : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Text(

@@ -609,7 +609,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),

@@ -1,4 +1,5 @@
 import 'package:ainme_vault/theme/app_theme.dart';
+import 'package:ainme_vault/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -245,7 +246,9 @@ class _SeasonalViewState extends State<SeasonalView> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? const Color(0xFF714FDC)
-                                : Theme.of(context).colorScheme.surface,
+                                : ThemeProvider.instance.isAmoled && ThemeProvider.instance.isDark(context)
+                                    ? const Color.fromARGB(255, 18, 18, 18)
+                                    : Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(22),
                             border: Border.all(
                               color: isSelected
