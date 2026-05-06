@@ -57,6 +57,7 @@ dependencies:
   package_info_plus: ^9.0.0
   flutter_launcher_icons: ^0.14.4
   flutter_markdown: ^0.6.18
+  in_app_review: ^2.0.9
 
 flutter_launcher_icons:
   android: true

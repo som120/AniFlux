@@ -36,9 +36,7 @@ class AppUpdateService {
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = packageInfo.version;
 
-    final latestVersion = Platform.isAndroid
-        ? remoteConfig.getString('latest_version_android')
-        : remoteConfig.getString('latest_version_ios');
+    final latestVersion = remoteConfig.getString('latest_version_android');
 
     final forceUpdate = remoteConfig.getBool('force_update');
 
@@ -179,11 +177,9 @@ class AppUpdateService {
   }
 
   static Future<void> _launchStore() async {
-    final url = Platform.isAndroid
-        ? Uri.parse(
-            'https://play.google.com/store/apps/details?id=com.aniflux.app',
-          )
-        : Uri.parse('https://apps.apple.com/app/idYOUR_APP_ID');
+    final url = Uri.parse(
+      'https://play.google.com/store/apps/details?id=com.aniflux.app',
+    );
 
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);

@@ -9,7 +9,7 @@
       "source_file": "macos/RunnerTests/RunnerTests.swift",
       "source_location": "L1",
       "id": "macos_runnertests_runnertests_swift",
-      "community": 16,
+      "community": 17,
       "norm_label": "runnertests.swift"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "ios/RunnerTests/RunnerTests.swift",
       "source_location": "L5",
       "id": "runnertests_runnertests",
-      "community": 16,
+      "community": 17,
       "norm_label": "runnertests"
     },
     {
@@ -27,7 +27,7 @@
       "source_file": "",
       "source_location": "",
       "id": "xctestcase",
-      "community": 16,
+      "community": 17,
       "norm_label": "xctestcase"
     },
     {
@@ -36,7 +36,7 @@
       "source_file": "ios/RunnerTests/RunnerTests.swift",
       "source_location": "L7",
       "id": "runnertests_runnertests_testexample",
-      "community": 16,
+      "community": 17,
       "norm_label": ".testexample()"
     },
     {
@@ -45,7 +45,7 @@
       "source_file": "macos/Runner/MainFlutterWindow.swift",
       "source_location": "L1",
       "id": "macos_runner_mainflutterwindow_swift",
-      "community": 15,
+      "community": 16,
       "norm_label": "mainflutterwindow.swift"
     },
     {
@@ -54,7 +54,7 @@
       "source_file": "macos/Runner/MainFlutterWindow.swift",
       "source_location": "L4",
       "id": "mainflutterwindow_mainflutterwindow",
-      "community": 15,
+      "community": 16,
       "norm_label": "mainflutterwindow"
     },
     {
@@ -63,7 +63,7 @@
       "source_file": "",
       "source_location": "",
       "id": "nswindow",
-      "community": 15,
+      "community": 16,
       "norm_label": "nswindow"
     },
     {
@@ -72,7 +72,7 @@
       "source_file": "macos/Runner/MainFlutterWindow.swift",
       "source_location": "L5",
       "id": "mainflutterwindow_mainflutterwindow_awakefromnib",
-      "community": 15,
+      "community": 16,
       "norm_label": ".awakefromnib()"
     },
     {
@@ -81,7 +81,7 @@
       "source_file": "macos/Runner/AppDelegate.swift",
       "source_location": "L1",
       "id": "macos_runner_appdelegate_swift",
-      "community": 14,
+      "community": 15,
       "norm_label": "appdelegate.swift"
     },
     {
@@ -90,7 +90,7 @@
       "source_file": "ios/Runner/AppDelegate.swift",
       "source_location": "L4",
       "id": "appdelegate_appdelegate",
-      "community": 14,
+      "community": 15,
       "norm_label": "appdelegate"
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "",
       "source_location": "",
       "id": "flutterappdelegate",
-      "community": 14,
+      "community": 15,
       "norm_label": "flutterappdelegate"
     },
     {
@@ -108,7 +108,7 @@
       "source_file": "macos/Runner/AppDelegate.swift",
       "source_location": "L6",
       "id": "appdelegate_appdelegate_applicationshouldterminateafterlastwindowclosed",
-      "community": 14,
+      "community": 15,
       "norm_label": ".applicationshouldterminateafterlastwindowclosed()"
     },
     {
@@ -117,7 +117,7 @@
       "source_file": "macos/Runner/AppDelegate.swift",
       "source_location": "L10",
       "id": "appdelegate_appdelegate_applicationsupportssecurerestorablestate",
-      "community": 14,
+      "community": 15,
       "norm_label": ".applicationsupportssecurerestorablestate()"
     },
     {
@@ -126,7 +126,7 @@
       "source_file": "macos/Flutter/GeneratedPluginRegistrant.swift",
       "source_location": "L1",
       "id": "macos_flutter_generatedpluginregistrant_swift",
-      "community": 15,
+      "community": 16,
       "norm_label": "generatedpluginregistrant.swift"
     },
     {
@@ -135,7 +135,7 @@
       "source_file": "macos/Flutter/GeneratedPluginRegistrant.swift",
       "source_location": "L21",
       "id": "generatedpluginregistrant_registergeneratedplugins",
-      "community": 15,
+      "community": 16,
       "norm_label": "registergeneratedplugins()"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "backend/functions/sendPush/src/main.js",
       "source_location": "L1",
       "id": "backend_functions_sendpush_src_main_js",
-      "community": 20,
+      "community": 21,
       "norm_label": "main.js"
     },
     {
@@ -153,7 +153,7 @@
       "source_file": "ios/RunnerTests/RunnerTests.swift",
       "source_location": "L1",
       "id": "ios_runnertests_runnertests_swift",
-      "community": 16,
+      "community": 17,
       "norm_label": "runnertests.swift"
     },
     {
@@ -162,7 +162,7 @@
       "source_file": "ios/Runner/Runner-Bridging-Header.h",
       "source_location": "L1",
       "id": "ios_runner_runner_bridging_header_h",
-      "community": 21,
+      "community": 22,
       "norm_label": "runner-bridging-header.h"
     },
     {
@@ -171,7 +171,7 @@
       "source_file": "ios/Runner/GeneratedPluginRegistrant.h",
       "source_location": "L1",
       "id": "ios_runner_generatedpluginregistrant_h",
-      "community": 22,
+      "community": 23,
       "norm_label": "generatedpluginregistrant.h"
     },
     {
@@ -180,7 +180,7 @@
       "source_file": "ios/Runner/AppDelegate.swift",
       "source_location": "L1",
       "id": "ios_runner_appdelegate_swift",
-      "community": 14,
+      "community": 15,
       "norm_label": "appdelegate.swift"
     },
     {
@@ -189,7 +189,7 @@
       "source_file": "ios/Runner/AppDelegate.swift",
       "source_location": "L6",
       "id": "appdelegate_appdelegate_application",
-      "community": 14,
+      "community": 15,
       "norm_label": ".application()"
     },
     {
@@ -198,7 +198,7 @@
       "source_file": "ios/Runner/GeneratedPluginRegistrant.m",
       "source_location": "L1",
       "id": "ios_runner_generatedpluginregistrant_m",
-      "community": 17,
+      "community": 18,
       "norm_label": "generatedpluginregistrant.m"
     },
     {
@@ -207,7 +207,7 @@
       "source_file": "android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
       "source_location": "L14",
       "id": "generatedpluginregistrant_generatedpluginregistrant",
-      "community": 17,
+      "community": 18,
       "norm_label": "generatedpluginregistrant"
     },
     {
@@ -216,7 +216,7 @@
       "source_file": "ios/Runner/GeneratedPluginRegistrant.m",
       "source_location": "L83",
       "id": "generatedpluginregistrant_generatedpluginregistrant_registerwithregistry",
-      "community": 17,
+      "community": 18,
       "norm_label": "-registerwithregistry"
     },
     {
@@ -225,7 +225,7 @@
       "source_file": "ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L1",
       "id": "ios_flutter_ephemeral_flutter_lldb_helper_py",
-      "community": 18,
+      "community": 19,
       "norm_label": "flutter_lldb_helper.py"
     },
     {
@@ -234,7 +234,7 @@
       "source_file": "ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L7",
       "id": "flutter_lldb_helper_handle_new_rx_page",
-      "community": 18,
+      "community": 19,
       "norm_label": "handle_new_rx_page()"
     },
     {
@@ -243,7 +243,7 @@
       "source_file": "ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L24",
       "id": "flutter_lldb_helper_lldb_init_module",
-      "community": 18,
+      "community": 19,
       "norm_label": "__lldb_init_module()"
     },
     {
@@ -251,9 +251,9 @@
       "file_type": "rationale",
       "source_file": "ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L8",
-      "id": "flutter_lldb_helper_rationale_8",
-      "community": 18,
-      "norm_label": "intercept notify_debugger_about_rx_pages and touch the pages."
+      "community": 19,
+      "norm_label": "intercept notify_debugger_about_rx_pages and touch the pages.",
+      "id": "flutter_lldb_helper_rationale_8"
     },
     {
       "label": "main.cc",
@@ -261,7 +261,7 @@
       "source_file": "linux/runner/main.cc",
       "source_location": "L1",
       "id": "linux_runner_main_cc",
-      "community": 7,
+      "community": 14,
       "norm_label": "main.cc"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "linux/runner/main.cc",
       "source_location": "L3",
       "id": "main_main",
-      "community": 7,
+      "community": 14,
       "norm_label": "main()"
     },
     {
@@ -279,7 +279,7 @@
       "source_file": "linux/runner/my_application.h",
       "source_location": "L1",
       "id": "linux_runner_my_application_h",
-      "community": 23,
+      "community": 24,
       "norm_label": "my_application.h"
     },
     {
@@ -288,7 +288,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L1",
       "id": "linux_runner_my_application_cc",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application.cc"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L18",
       "id": "my_application_first_frame_cb",
-      "community": 7,
+      "community": 14,
       "norm_label": "first_frame_cb()"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L24",
       "id": "my_application_my_application_activate",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application_activate()"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L80",
       "id": "my_application_my_application_local_command_line",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application_local_command_line()"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L99",
       "id": "my_application_my_application_startup",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application_startup()"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L108",
       "id": "my_application_my_application_shutdown",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application_shutdown()"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L117",
       "id": "my_application_my_application_dispose",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application_dispose()"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L123",
       "id": "my_application_my_application_class_init",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application_class_init()"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L131",
       "id": "my_application_my_application_init",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application_init()"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "linux/runner/my_application.cc",
       "source_location": "L133",
       "id": "my_application_my_application_new",
-      "community": 7,
+      "community": 14,
       "norm_label": "my_application_new()"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "linux/flutter/generated_plugin_registrant.cc",
       "source_location": "L1",
       "id": "linux_flutter_generated_plugin_registrant_cc",
-      "community": 7,
+      "community": 14,
       "norm_label": "generated_plugin_registrant.cc"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "linux/flutter/generated_plugin_registrant.cc",
       "source_location": "L11",
       "id": "generated_plugin_registrant_fl_register_plugins",
-      "community": 7,
+      "community": 14,
       "norm_label": "fl_register_plugins()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "linux/flutter/generated_plugin_registrant.h",
       "source_location": "L1",
       "id": "linux_flutter_generated_plugin_registrant_h",
-      "community": 24,
+      "community": 25,
       "norm_label": "generated_plugin_registrant.h"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "android/build.gradle.kts",
       "source_location": "L1",
       "id": "android_build_gradle_kts",
-      "community": 25,
+      "community": 26,
       "norm_label": "build.gradle.kts"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "android/settings.gradle.kts",
       "source_location": "L1",
       "id": "android_settings_gradle_kts",
-      "community": 26,
+      "community": 27,
       "norm_label": "settings.gradle.kts"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "android/app/build.gradle.kts",
       "source_location": "L1",
       "id": "android_app_build_gradle_kts",
-      "community": 27,
+      "community": 28,
       "norm_label": "build.gradle.kts"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
       "source_location": "L1",
       "id": "android_app_src_main_java_io_flutter_plugins_generatedpluginregistrant_java",
-      "community": 17,
+      "community": 18,
       "norm_label": "generatedpluginregistrant.java"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
       "source_location": "L17",
       "id": "generatedpluginregistrant_generatedpluginregistrant_registerwith",
-      "community": 17,
+      "community": 18,
       "norm_label": ".registerwith()"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "android/app/src/main/kotlin/com/aniflux/app/MainActivity.kt",
       "source_location": "L1",
       "id": "android_app_src_main_kotlin_com_aniflux_app_mainactivity_kt",
-      "community": 19,
+      "community": 20,
       "norm_label": "mainactivity.kt"
     },
     {
@@ -459,7 +459,7 @@
       "source_file": "android/app/src/main/kotlin/com/aniflux/app/MainActivity.kt",
       "source_location": "L5",
       "id": "mainactivity_mainactivity",
-      "community": 19,
+      "community": 20,
       "norm_label": "mainactivity"
     },
     {
@@ -708,10 +708,10 @@
     {
       "label": "package:ainme_vault/providers/theme_provider.dart",
       "file_type": "code",
-      "source_file": "lib/screens/profile_screen.dart",
+      "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "package_ainme_vault_providers_theme_provider_dart",
-      "community": 9,
+      "community": 8,
       "norm_label": "package:ainme_vault/providers/theme_provider.dart"
     },
     {
@@ -738,7 +738,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "package_flutter_services_dart",
-      "community": 3,
+      "community": 7,
       "norm_label": "package:flutter/services.dart"
     },
     {
@@ -792,7 +792,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "package_shared_preferences_shared_preferences_dart",
-      "community": 2,
+      "community": 8,
       "norm_label": "package:shared_preferences/shared_preferences.dart"
     },
     {
@@ -855,7 +855,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "package_firebase_auth_firebase_auth_dart",
-      "community": 3,
+      "community": 2,
       "norm_label": "package:firebase_auth/firebase_auth.dart"
     },
     {
@@ -893,6 +893,24 @@
       "id": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_themeprovider",
       "community": 2,
       "norm_label": "themeprovider"
+    },
+    {
+      "label": "_loadFromPrefs",
+      "file_type": "code",
+      "source_file": "lib/providers/theme_provider.dart",
+      "source_location": null,
+      "id": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_loadfromprefs",
+      "community": 2,
+      "norm_label": "_loadfromprefs"
+    },
+    {
+      "label": "setThemeMode",
+      "file_type": "code",
+      "source_file": "lib/providers/theme_provider.dart",
+      "source_location": null,
+      "id": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_setthememode",
+      "community": 2,
+      "norm_label": "setthememode"
     },
     {
       "label": "isDark",
@@ -1314,7 +1332,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "package_ainme_vault_services_anilist_service_dart",
-      "community": 7,
+      "community": 13,
       "norm_label": "package:ainme_vault/services/anilist_service.dart"
     },
     {
@@ -1701,7 +1719,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "package_cloud_firestore_cloud_firestore_dart",
-      "community": 3,
+      "community": 7,
       "norm_label": "package:cloud_firestore/cloud_firestore.dart"
     },
     {
@@ -2007,7 +2025,7 @@
       "source_file": "lib/services/app_update_service.dart",
       "source_location": null,
       "id": "dart_io",
-      "community": 3,
+      "community": 7,
       "norm_label": "dart:io"
     },
     {
@@ -2214,7 +2232,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "lib_screens_avatar_picker_screen_dart",
-      "community": 3,
+      "community": 2,
       "norm_label": "avatar_picker_screen.dart"
     },
     {
@@ -2223,7 +2241,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_avatar_picker_screen_dart_avatarpickerscreen",
-      "community": 3,
+      "community": 2,
       "norm_label": "avatarpickerscreen"
     },
     {
@@ -2232,7 +2250,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_avatar_picker_screen_dart_avatarpickerscreenstate",
-      "community": 3,
+      "community": 2,
       "norm_label": "_avatarpickerscreenstate"
     },
     {
@@ -2241,7 +2259,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_avatar_picker_screen_dart_initstate",
-      "community": 3,
+      "community": 2,
       "norm_label": "initstate"
     },
     {
@@ -2250,7 +2268,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_avatar_picker_screen_dart_snackbar",
-      "community": 3,
+      "community": 2,
       "norm_label": "snackbar"
     },
     {
@@ -2259,7 +2277,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_avatar_picker_screen_dart_build",
-      "community": 3,
+      "community": 2,
       "norm_label": "build"
     },
     {
@@ -2268,7 +2286,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_avatar_picker_screen_dart_scaffold",
-      "community": 3,
+      "community": 2,
       "norm_label": "scaffold"
     },
     {
@@ -2277,7 +2295,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_avatar_picker_screen_dart_slivergriddelegatewithfixedcrossaxiscount",
-      "community": 3,
+      "community": 2,
       "norm_label": "slivergriddelegatewithfixedcrossaxiscount"
     },
     {
@@ -2286,7 +2304,7 @@
       "source_file": "lib/screens/avatar_picker_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_avatar_picker_screen_dart_gesturedetector",
-      "community": 3,
+      "community": 2,
       "norm_label": "gesturedetector"
     },
     {
@@ -2295,7 +2313,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "lib_screens_search_screen_dart",
-      "community": 6,
+      "community": 5,
       "norm_label": "search_screen.dart"
     },
     {
@@ -2304,7 +2322,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_searchscreen",
-      "community": 6,
+      "community": 5,
       "norm_label": "searchscreen"
     },
     {
@@ -2313,7 +2331,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_searchscreenstate",
-      "community": 6,
+      "community": 5,
       "norm_label": "searchscreenstate"
     },
     {
@@ -2322,7 +2340,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_animelistcard",
-      "community": 6,
+      "community": 5,
       "norm_label": "animelistcard"
     },
     {
@@ -2331,7 +2349,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_animelistshimmer",
-      "community": 6,
+      "community": 5,
       "norm_label": "animelistshimmer"
     },
     {
@@ -2340,7 +2358,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_fadeinimagewidget",
-      "community": 6,
+      "community": 5,
       "norm_label": "fadeinimagewidget"
     },
     {
@@ -2349,7 +2367,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_createstate",
-      "community": 6,
+      "community": 5,
       "norm_label": "createstate"
     },
     {
@@ -2358,7 +2376,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_focussearchfield",
-      "community": 6,
+      "community": 5,
       "norm_label": "focussearchfield"
     },
     {
@@ -2367,7 +2385,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_unfocussearchfield",
-      "community": 6,
+      "community": 5,
       "norm_label": "unfocussearchfield"
     },
     {
@@ -2376,7 +2394,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_initstate",
-      "community": 6,
+      "community": 5,
       "norm_label": "initstate"
     },
     {
@@ -2385,7 +2403,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_subscribetouserlist",
-      "community": 6,
+      "community": 5,
       "norm_label": "_subscribetouserlist"
     },
     {
@@ -2394,7 +2412,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_updateconnectionstatus",
-      "community": 6,
+      "community": 5,
       "norm_label": "_updateconnectionstatus"
     },
     {
@@ -2403,7 +2421,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_performsearch",
-      "community": 6,
+      "community": 5,
       "norm_label": "_performsearch"
     },
     {
@@ -2412,7 +2430,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_fetchanimebycategory",
-      "community": 6,
+      "community": 5,
       "norm_label": "_fetchanimebycategory"
     },
     {
@@ -2421,7 +2439,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_onfocuschange",
-      "community": 6,
+      "community": 5,
       "norm_label": "_onfocuschange"
     },
     {
@@ -2430,7 +2448,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_onscroll",
-      "community": 6,
+      "community": 5,
       "norm_label": "_onscroll"
     },
     {
@@ -2439,7 +2457,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_loadsearchhistory",
-      "community": 6,
+      "community": 5,
       "norm_label": "_loadsearchhistory"
     },
     {
@@ -2448,7 +2466,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_savesearchhistory",
-      "community": 6,
+      "community": 5,
       "norm_label": "_savesearchhistory"
     },
     {
@@ -2457,7 +2475,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_addtohistory",
-      "community": 6,
+      "community": 5,
       "norm_label": "_addtohistory"
     },
     {
@@ -2466,7 +2484,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_searchanimesubmit",
-      "community": 6,
+      "community": 5,
       "norm_label": "searchanimesubmit"
     },
     {
@@ -2475,7 +2493,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_buildfilterbutton",
-      "community": 6,
+      "community": 5,
       "norm_label": "buildfilterbutton"
     },
     {
@@ -2484,7 +2502,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_padding",
-      "community": 6,
+      "community": 5,
       "norm_label": "padding"
     },
     {
@@ -2493,7 +2511,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_buildanimatedsearchbar",
-      "community": 6,
+      "community": 5,
       "norm_label": "buildanimatedsearchbar"
     },
     {
@@ -2502,7 +2520,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_animatedcontainer",
-      "community": 6,
+      "community": 5,
       "norm_label": "animatedcontainer"
     },
     {
@@ -2511,7 +2529,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_sizedbox",
-      "community": 6,
+      "community": 5,
       "norm_label": "sizedbox"
     },
     {
@@ -2520,7 +2538,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_buildsearchhistory",
-      "community": 6,
+      "community": 5,
       "norm_label": "buildsearchhistory"
     },
     {
@@ -2529,7 +2547,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_column",
-      "community": 6,
+      "community": 5,
       "norm_label": "column"
     },
     {
@@ -2538,7 +2556,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_listtile",
-      "community": 6,
+      "community": 5,
       "norm_label": "listtile"
     },
     {
@@ -2547,7 +2565,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_buildnoresultswidget",
-      "community": 6,
+      "community": 5,
       "norm_label": "_buildnoresultswidget"
     },
     {
@@ -2556,7 +2574,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_center",
-      "community": 6,
+      "community": 5,
       "norm_label": "center"
     },
     {
@@ -2565,7 +2583,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_builderrorwidget",
-      "community": 6,
+      "community": 5,
       "norm_label": "_builderrorwidget"
     },
     {
@@ -2574,7 +2592,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_build",
-      "community": 6,
+      "community": 5,
       "norm_label": "build"
     },
     {
@@ -2583,7 +2601,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_scaffold",
-      "community": 6,
+      "community": 5,
       "norm_label": "scaffold"
     },
     {
@@ -2592,7 +2610,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_dispose",
-      "community": 6,
+      "community": 5,
       "norm_label": "dispose"
     },
     {
@@ -2601,7 +2619,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_gesturedetector",
-      "community": 6,
+      "community": 5,
       "norm_label": "gesturedetector"
     },
     {
@@ -2610,7 +2628,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_icon",
-      "community": 6,
+      "community": 5,
       "norm_label": "icon"
     },
     {
@@ -2619,7 +2637,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_search_screen_dart_cliprrect",
-      "community": 6,
+      "community": 5,
       "norm_label": "cliprrect"
     },
     {
@@ -2628,7 +2646,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "services_anilist_service_dart",
-      "community": 5,
+      "community": 4,
       "norm_label": "../services/anilist_service.dart"
     },
     {
@@ -2637,7 +2655,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "widgets_calendar_view_dart",
-      "community": 6,
+      "community": 5,
       "norm_label": "../widgets/calendar_view.dart"
     },
     {
@@ -2646,7 +2664,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "widgets_retry_button_dart",
-      "community": 5,
+      "community": 4,
       "norm_label": "../widgets/retry_button.dart"
     },
     {
@@ -2655,7 +2673,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "widgets_seasonal_view_dart",
-      "community": 6,
+      "community": 5,
       "norm_label": "../widgets/seasonal_view.dart"
     },
     {
@@ -2664,7 +2682,7 @@
       "source_file": "lib/screens/search_screen.dart",
       "source_location": null,
       "id": "anime_detail_screen_dart",
-      "community": 6,
+      "community": 5,
       "norm_label": "anime_detail_screen.dart"
     },
     {
@@ -2673,7 +2691,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "package_shimmer_shimmer_dart",
-      "community": 6,
+      "community": 5,
       "norm_label": "package:shimmer/shimmer.dart"
     },
     {
@@ -3195,7 +3213,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "lib_screens_home_screen_dart",
-      "community": 4,
+      "community": 3,
       "norm_label": "home_screen.dart"
     },
     {
@@ -3204,7 +3222,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_homescreen",
-      "community": 4,
+      "community": 3,
       "norm_label": "homescreen"
     },
     {
@@ -3213,7 +3231,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_homescreenstate",
-      "community": 4,
+      "community": 3,
       "norm_label": "_homescreenstate"
     },
     {
@@ -3222,7 +3240,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_myanimelist",
-      "community": 4,
+      "community": 3,
       "norm_label": "myanimelist"
     },
     {
@@ -3231,7 +3249,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_myanimeliststate",
-      "community": 4,
+      "community": 3,
       "norm_label": "_myanimeliststate"
     },
     {
@@ -3240,7 +3258,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_greetingsection",
-      "community": 4,
+      "community": 3,
       "norm_label": "greetingsection"
     },
     {
@@ -3249,7 +3267,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_statuschip",
-      "community": 4,
+      "community": 3,
       "norm_label": "_statuschip"
     },
     {
@@ -3258,7 +3276,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_animecard",
-      "community": 4,
+      "community": 3,
       "norm_label": "_animecard"
     },
     {
@@ -3267,7 +3285,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_isdark",
-      "community": 4,
+      "community": 3,
       "norm_label": "_isdark"
     },
     {
@@ -3276,7 +3294,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_processcovercolor",
-      "community": 4,
+      "community": 3,
       "norm_label": "_processcovercolor"
     },
     {
@@ -3285,7 +3303,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_getprocessedcolor",
-      "community": 4,
+      "community": 3,
       "norm_label": "_getprocessedcolor"
     },
     {
@@ -3294,7 +3312,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_color",
-      "community": 4,
+      "community": 3,
       "norm_label": "color"
     },
     {
@@ -3303,7 +3321,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_initstate",
-      "community": 4,
+      "community": 3,
       "norm_label": "initstate"
     },
     {
@@ -3312,7 +3330,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_dispose",
-      "community": 4,
+      "community": 3,
       "norm_label": "dispose"
     },
     {
@@ -3321,7 +3339,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_fetchairinganime",
-      "community": 4,
+      "community": 3,
       "norm_label": "_fetchairinganime"
     },
     {
@@ -3330,7 +3348,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_hextocolor",
-      "community": 4,
+      "community": 3,
       "norm_label": "_hextocolor"
     },
     {
@@ -3339,7 +3357,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_startautoscroll",
-      "community": 4,
+      "community": 3,
       "norm_label": "_startautoscroll"
     },
     {
@@ -3348,7 +3366,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_build",
-      "community": 4,
+      "community": 3,
       "norm_label": "build"
     },
     {
@@ -3357,7 +3375,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_scaffold",
-      "community": 4,
+      "community": 3,
       "norm_label": "scaffold"
     },
     {
@@ -3366,7 +3384,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_animatedcontainer",
-      "community": 4,
+      "community": 3,
       "norm_label": "animatedcontainer"
     },
     {
@@ -3375,7 +3393,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_singlechildscrollview",
-      "community": 4,
+      "community": 3,
       "norm_label": "singlechildscrollview"
     },
     {
@@ -3384,7 +3402,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_sizedbox",
-      "community": 4,
+      "community": 3,
       "norm_label": "sizedbox"
     },
     {
@@ -3393,7 +3411,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_repaintboundary",
-      "community": 4,
+      "community": 3,
       "norm_label": "repaintboundary"
     },
     {
@@ -3402,7 +3420,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_column",
-      "community": 4,
+      "community": 3,
       "norm_label": "column"
     },
     {
@@ -3411,7 +3429,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_row",
-      "community": 4,
+      "community": 3,
       "norm_label": "row"
     },
     {
@@ -3420,7 +3438,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_text",
-      "community": 4,
+      "community": 3,
       "norm_label": "text"
     },
     {
@@ -3429,7 +3447,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_buildloadingshimmer",
-      "community": 4,
+      "community": 3,
       "norm_label": "_buildloadingshimmer"
     },
     {
@@ -3438,7 +3456,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_container",
-      "community": 4,
+      "community": 3,
       "norm_label": "container"
     },
     {
@@ -3447,7 +3465,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_startcarouselretrycountdown",
-      "community": 4,
+      "community": 3,
       "norm_label": "_startcarouselretrycountdown"
     },
     {
@@ -3456,7 +3474,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_retrycarouselfetch",
-      "community": 4,
+      "community": 3,
       "norm_label": "_retrycarouselfetch"
     },
     {
@@ -3465,7 +3483,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_buildcarouselerror",
-      "community": 4,
+      "community": 3,
       "norm_label": "_buildcarouselerror"
     },
     {
@@ -3474,7 +3492,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_didupdatewidget",
-      "community": 4,
+      "community": 3,
       "norm_label": "didupdatewidget"
     },
     {
@@ -3483,7 +3501,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_initstream",
-      "community": 4,
+      "community": 3,
       "norm_label": "_initstream"
     },
     {
@@ -3492,7 +3510,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_icon",
-      "community": 4,
+      "community": 3,
       "norm_label": "icon"
     },
     {
@@ -3501,7 +3519,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_center",
-      "community": 4,
+      "community": 3,
       "norm_label": "center"
     },
     {
@@ -3510,7 +3528,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_gesturedetector",
-      "community": 4,
+      "community": 3,
       "norm_label": "gesturedetector"
     },
     {
@@ -3519,7 +3537,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_animatedswitcher",
-      "community": 4,
+      "community": 3,
       "norm_label": "animatedswitcher"
     },
     {
@@ -3528,7 +3546,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_fadetransition",
-      "community": 4,
+      "community": 3,
       "norm_label": "fadetransition"
     },
     {
@@ -3537,8 +3555,17 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_boxconstraints",
-      "community": 4,
+      "community": 3,
       "norm_label": "boxconstraints"
+    },
+    {
+      "label": "Expanded",
+      "file_type": "code",
+      "source_file": "lib/screens/home_screen.dart",
+      "source_location": null,
+      "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_expanded",
+      "community": 3,
+      "norm_label": "expanded"
     },
     {
       "label": "_getGreeting",
@@ -3546,7 +3573,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_getgreeting",
-      "community": 4,
+      "community": 3,
       "norm_label": "_getgreeting"
     },
     {
@@ -3555,7 +3582,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_padding",
-      "community": 4,
+      "community": 3,
       "norm_label": "padding"
     },
     {
@@ -3564,7 +3591,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "dart_math",
-      "community": 4,
+      "community": 3,
       "norm_label": "dart:math"
     },
     {
@@ -3573,7 +3600,7 @@
       "source_file": "lib/screens/home_screen.dart",
       "source_location": null,
       "id": "package_ainme_vault_services_app_update_service_dart",
-      "community": 4,
+      "community": 3,
       "norm_label": "package:ainme_vault/services/app_update_service.dart"
     },
     {
@@ -3618,7 +3645,7 @@
       "source_file": "lib/services/notification_service.dart",
       "source_location": null,
       "id": "lib_services_notification_service_dart",
-      "community": 3,
+      "community": 7,
       "norm_label": "notification_service.dart"
     },
     {
@@ -3627,7 +3654,7 @@
       "source_file": "lib/services/notification_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_notification_service_dart_notificationservice",
-      "community": 3,
+      "community": 7,
       "norm_label": "notificationservice"
     },
     {
@@ -3636,7 +3663,7 @@
       "source_file": "lib/services/notification_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_notification_service_dart_requestpermission",
-      "community": 3,
+      "community": 7,
       "norm_label": "_requestpermission"
     },
     {
@@ -3645,7 +3672,7 @@
       "source_file": "lib/services/notification_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_notification_service_dart_savetoken",
-      "community": 3,
+      "community": 7,
       "norm_label": "_savetoken"
     },
     {
@@ -3654,7 +3681,7 @@
       "source_file": "lib/services/notification_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_notification_service_dart_listenfortokenrefresh",
-      "community": 3,
+      "community": 7,
       "norm_label": "_listenfortokenrefresh"
     },
     {
@@ -3663,7 +3690,7 @@
       "source_file": "lib/services/notification_service.dart",
       "source_location": null,
       "id": "package_firebase_messaging_firebase_messaging_dart",
-      "community": 3,
+      "community": 7,
       "norm_label": "package:firebase_messaging/firebase_messaging.dart"
     },
     {
@@ -3762,7 +3789,7 @@
       "source_file": "lib/services/anilist_service.dart",
       "source_location": null,
       "id": "lib_services_anilist_service_dart",
-      "community": 2,
+      "community": 8,
       "norm_label": "anilist_service.dart"
     },
     {
@@ -3771,7 +3798,7 @@
       "source_file": "lib/services/anilist_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_anilist_service_dart_anilistservice",
-      "community": 2,
+      "community": 8,
       "norm_label": "anilistservice"
     },
     {
@@ -3780,7 +3807,7 @@
       "source_file": "lib/services/anilist_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_anilist_service_dart_invalidateadultcontentcache",
-      "community": 2,
+      "community": 8,
       "norm_label": "invalidateadultcontentcache"
     },
     {
@@ -3789,7 +3816,7 @@
       "source_file": "lib/services/anilist_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_anilist_service_dart_client",
-      "community": 2,
+      "community": 8,
       "norm_label": "client"
     },
     {
@@ -3798,7 +3825,7 @@
       "source_file": "lib/services/anilist_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_anilist_service_dart_description",
-      "community": 2,
+      "community": 8,
       "norm_label": "description"
     },
     {
@@ -3807,7 +3834,7 @@
       "source_file": "lib/services/anilist_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_anilist_service_dart_characters",
-      "community": 2,
+      "community": 8,
       "norm_label": "characters"
     },
     {
@@ -3816,7 +3843,7 @@
       "source_file": "lib/services/anilist_service.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_services_anilist_service_dart_media",
-      "community": 2,
+      "community": 8,
       "norm_label": "media"
     },
     {
@@ -3825,7 +3852,7 @@
       "source_file": "lib/services/anilist_service.dart",
       "source_location": null,
       "id": "package_graphql_flutter_graphql_flutter_dart",
-      "community": 2,
+      "community": 8,
       "norm_label": "package:graphql_flutter/graphql_flutter.dart"
     },
     {
@@ -3834,7 +3861,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "lib_widgets_seasonal_view_dart",
-      "community": 5,
+      "community": 4,
       "norm_label": "seasonal_view.dart"
     },
     {
@@ -3843,7 +3870,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_seasonalview",
-      "community": 5,
+      "community": 4,
       "norm_label": "seasonalview"
     },
     {
@@ -3852,7 +3879,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_seasonalviewstate",
-      "community": 5,
+      "community": 4,
       "norm_label": "_seasonalviewstate"
     },
     {
@@ -3861,7 +3888,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_initstate",
-      "community": 5,
+      "community": 4,
       "norm_label": "initstate"
     },
     {
@@ -3870,7 +3897,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_determinecurrentseason",
-      "community": 5,
+      "community": 4,
       "norm_label": "_determinecurrentseason"
     },
     {
@@ -3879,7 +3906,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_showyearpicker",
-      "community": 5,
+      "community": 4,
       "norm_label": "_showyearpicker"
     },
     {
@@ -3888,7 +3915,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_statefulbuilder",
-      "community": 5,
+      "community": 4,
       "norm_label": "statefulbuilder"
     },
     {
@@ -3897,7 +3924,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_sizedbox",
-      "community": 5,
+      "community": 4,
       "norm_label": "sizedbox"
     },
     {
@@ -3906,7 +3933,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_text",
-      "community": 5,
+      "community": 4,
       "norm_label": "text"
     },
     {
@@ -3915,7 +3942,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_center",
-      "community": 5,
+      "community": 4,
       "norm_label": "center"
     },
     {
@@ -3924,7 +3951,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_build",
-      "community": 5,
+      "community": 4,
       "norm_label": "build"
     },
     {
@@ -3933,7 +3960,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_column",
-      "community": 5,
+      "community": 4,
       "norm_label": "column"
     },
     {
@@ -3942,7 +3969,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_lineargradient",
-      "community": 5,
+      "community": 4,
       "norm_label": "lineargradient"
     },
     {
@@ -3951,7 +3978,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_gesturedetector",
-      "community": 5,
+      "community": 4,
       "norm_label": "gesturedetector"
     },
     {
@@ -3960,7 +3987,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_icon",
-      "community": 5,
+      "community": 4,
       "norm_label": "icon"
     },
     {
@@ -3969,7 +3996,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_buildskeletoncard",
-      "community": 5,
+      "community": 4,
       "norm_label": "_buildskeletoncard"
     },
     {
@@ -3978,7 +4005,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_container",
-      "community": 5,
+      "community": 4,
       "norm_label": "container"
     },
     {
@@ -3987,7 +4014,7 @@
       "source_file": "lib/widgets/seasonal_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_seasonal_view_dart_buildseasonalanimecard",
-      "community": 5,
+      "community": 4,
       "norm_label": "_buildseasonalanimecard"
     },
     {
@@ -3996,7 +4023,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "screens_anime_detail_screen_dart",
-      "community": 5,
+      "community": 4,
       "norm_label": "../screens/anime_detail_screen.dart"
     },
     {
@@ -4005,7 +4032,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "lib_widgets_edit_profile_bottom_sheet_dart",
-      "community": 3,
+      "community": 7,
       "norm_label": "edit_profile_bottom_sheet.dart"
     },
     {
@@ -4014,7 +4041,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_editprofilebottomsheet",
-      "community": 3,
+      "community": 7,
       "norm_label": "editprofilebottomsheet"
     },
     {
@@ -4023,7 +4050,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_editprofilebottomsheetstate",
-      "community": 3,
+      "community": 7,
       "norm_label": "_editprofilebottomsheetstate"
     },
     {
@@ -4032,7 +4059,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_initstate",
-      "community": 3,
+      "community": 7,
       "norm_label": "initstate"
     },
     {
@@ -4041,7 +4068,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_dispose",
-      "community": 3,
+      "community": 7,
       "norm_label": "dispose"
     },
     {
@@ -4050,7 +4077,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_snackbar",
-      "community": 3,
+      "community": 7,
       "norm_label": "snackbar"
     },
     {
@@ -4059,7 +4086,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_build",
-      "community": 3,
+      "community": 7,
       "norm_label": "build"
     },
     {
@@ -4068,7 +4095,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_padding",
-      "community": 3,
+      "community": 7,
       "norm_label": "padding"
     },
     {
@@ -4077,7 +4104,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_saveprofile",
-      "community": 3,
+      "community": 7,
       "norm_label": "_saveprofile"
     },
     {
@@ -4086,7 +4113,7 @@
       "source_file": "lib/widgets/edit_profile_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_edit_profile_bottom_sheet_dart_sizedbox",
-      "community": 3,
+      "community": 7,
       "norm_label": "sizedbox"
     },
     {
@@ -4167,7 +4194,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "lib_widgets_account_settings_bottom_sheet_dart",
-      "community": 13,
+      "community": 8,
       "norm_label": "account_settings_bottom_sheet.dart"
     },
     {
@@ -4176,7 +4203,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_accountsettingsbottomsheet",
-      "community": 13,
+      "community": 8,
       "norm_label": "accountsettingsbottomsheet"
     },
     {
@@ -4185,7 +4212,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_accountsettingsbottomsheetstate",
-      "community": 13,
+      "community": 8,
       "norm_label": "_accountsettingsbottomsheetstate"
     },
     {
@@ -4194,7 +4221,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_initstate",
-      "community": 13,
+      "community": 8,
       "norm_label": "initstate"
     },
     {
@@ -4203,7 +4230,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_build",
-      "community": 13,
+      "community": 8,
       "norm_label": "build"
     },
     {
@@ -4212,7 +4239,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_container",
-      "community": 13,
+      "community": 8,
       "norm_label": "container"
     },
     {
@@ -4221,7 +4248,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_sizedbox",
-      "community": 13,
+      "community": 8,
       "norm_label": "sizedbox"
     },
     {
@@ -4230,7 +4257,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_expanded",
-      "community": 13,
+      "community": 8,
       "norm_label": "expanded"
     },
     {
@@ -4239,7 +4266,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_text",
-      "community": 13,
+      "community": 8,
       "norm_label": "text"
     },
     {
@@ -4248,7 +4275,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_sectionlabel",
-      "community": 13,
+      "community": 8,
       "norm_label": "_sectionlabel"
     },
     {
@@ -4257,7 +4284,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_infotile",
-      "community": 13,
+      "community": 8,
       "norm_label": "_infotile"
     },
     {
@@ -4266,7 +4293,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_actiontile",
-      "community": 13,
+      "community": 8,
       "norm_label": "_actiontile"
     },
     {
@@ -4275,7 +4302,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_inkwell",
-      "community": 13,
+      "community": 8,
       "norm_label": "inkwell"
     },
     {
@@ -4284,7 +4311,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_switchtile",
-      "community": 13,
+      "community": 8,
       "norm_label": "_switchtile"
     },
     {
@@ -4293,7 +4320,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_color",
-      "community": 13,
+      "community": 8,
       "norm_label": "color"
     },
     {
@@ -4302,7 +4329,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_dangertile",
-      "community": 13,
+      "community": 8,
       "norm_label": "_dangertile"
     },
     {
@@ -4311,7 +4338,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_iconcircle",
-      "community": 13,
+      "community": 8,
       "norm_label": "_iconcircle"
     },
     {
@@ -4320,7 +4347,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_showdeleteconfirmation",
-      "community": 13,
+      "community": 8,
       "norm_label": "_showdeleteconfirmation"
     },
     {
@@ -4329,7 +4356,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_deleteaccountwithuser",
-      "community": 13,
+      "community": 8,
       "norm_label": "_deleteaccountwithuser"
     },
     {
@@ -4338,7 +4365,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_deleteuserfirestoredatabyuid",
-      "community": 13,
+      "community": 8,
       "norm_label": "_deleteuserfirestoredatabyuid"
     },
     {
@@ -4347,7 +4374,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_reauthenticateuser",
-      "community": 13,
+      "community": 8,
       "norm_label": "_reauthenticateuser"
     },
     {
@@ -4356,7 +4383,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_showdeleteerror",
-      "community": 13,
+      "community": 8,
       "norm_label": "_showdeleteerror"
     },
     {
@@ -4365,7 +4392,7 @@
       "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_account_settings_bottom_sheet_dart_snackbar",
-      "community": 13,
+      "community": 8,
       "norm_label": "snackbar"
     },
     {
@@ -4374,7 +4401,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "lib_widgets_calendar_view_dart",
-      "community": 5,
+      "community": 4,
       "norm_label": "calendar_view.dart"
     },
     {
@@ -4383,7 +4410,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_calendarview",
-      "community": 5,
+      "community": 4,
       "norm_label": "calendarview"
     },
     {
@@ -4392,7 +4419,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_calendarviewstate",
-      "community": 5,
+      "community": 4,
       "norm_label": "_calendarviewstate"
     },
     {
@@ -4401,7 +4428,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_initstate",
-      "community": 5,
+      "community": 4,
       "norm_label": "initstate"
     },
     {
@@ -4410,7 +4437,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_dispose",
-      "community": 5,
+      "community": 4,
       "norm_label": "dispose"
     },
     {
@@ -4419,7 +4446,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_getshortdayname",
-      "community": 5,
+      "community": 4,
       "norm_label": "_getshortdayname"
     },
     {
@@ -4428,7 +4455,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_getfulldayname",
-      "community": 5,
+      "community": 4,
       "norm_label": "_getfulldayname"
     },
     {
@@ -4437,7 +4464,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_getmonthname",
-      "community": 5,
+      "community": 4,
       "norm_label": "_getmonthname"
     },
     {
@@ -4446,7 +4473,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_istoday",
-      "community": 5,
+      "community": 4,
       "norm_label": "_istoday"
     },
     {
@@ -4455,7 +4482,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_getdatelabel",
-      "community": 5,
+      "community": 4,
       "norm_label": "_getdatelabel"
     },
     {
@@ -4464,7 +4491,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_formattime",
-      "community": 5,
+      "community": 4,
       "norm_label": "_formattime"
     },
     {
@@ -4473,7 +4500,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_ondayselected",
-      "community": 5,
+      "community": 4,
       "norm_label": "_ondayselected"
     },
     {
@@ -4482,7 +4509,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_build",
-      "community": 5,
+      "community": 4,
       "norm_label": "build"
     },
     {
@@ -4491,7 +4518,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_column",
-      "community": 5,
+      "community": 4,
       "norm_label": "column"
     },
     {
@@ -4500,7 +4527,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_gesturedetector",
-      "community": 5,
+      "community": 4,
       "norm_label": "gesturedetector"
     },
     {
@@ -4509,7 +4536,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_sizedbox",
-      "community": 5,
+      "community": 4,
       "norm_label": "sizedbox"
     },
     {
@@ -4518,7 +4545,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_stack",
-      "community": 5,
+      "community": 4,
       "norm_label": "stack"
     },
     {
@@ -4527,7 +4554,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_fadetransition",
-      "community": 5,
+      "community": 4,
       "norm_label": "fadetransition"
     },
     {
@@ -4536,7 +4563,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_center",
-      "community": 5,
+      "community": 4,
       "norm_label": "center"
     },
     {
@@ -4545,7 +4572,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_buildskeletoncard",
-      "community": 5,
+      "community": 4,
       "norm_label": "_buildskeletoncard"
     },
     {
@@ -4554,7 +4581,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_container",
-      "community": 5,
+      "community": 4,
       "norm_label": "container"
     },
     {
@@ -4563,7 +4590,7 @@
       "source_file": "lib/widgets/calendar_view.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_calendar_view_dart_buildanimecard",
-      "community": 5,
+      "community": 4,
       "norm_label": "_buildanimecard"
     },
     {
@@ -4572,7 +4599,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "lib_widgets_avatar_picker_bottom_sheet_dart",
-      "community": 3,
+      "community": 7,
       "norm_label": "avatar_picker_bottom_sheet.dart"
     },
     {
@@ -4581,7 +4608,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_animecategory",
-      "community": 3,
+      "community": 7,
       "norm_label": "animecategory"
     },
     {
@@ -4590,7 +4617,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_avataritem",
-      "community": 3,
+      "community": 7,
       "norm_label": "avataritem"
     },
     {
@@ -4599,7 +4626,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_avatarpickerbottomsheet",
-      "community": 3,
+      "community": 7,
       "norm_label": "avatarpickerbottomsheet"
     },
     {
@@ -4608,7 +4635,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_avatarpickerbottomsheetstate",
-      "community": 3,
+      "community": 7,
       "norm_label": "_avatarpickerbottomsheetstate"
     },
     {
@@ -4617,7 +4644,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_initstate",
-      "community": 3,
+      "community": 7,
       "norm_label": "initstate"
     },
     {
@@ -4626,7 +4653,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_snackbar",
-      "community": 3,
+      "community": 7,
       "norm_label": "snackbar"
     },
     {
@@ -4635,7 +4662,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_build",
-      "community": 3,
+      "community": 7,
       "norm_label": "build"
     },
     {
@@ -4644,7 +4671,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_container",
-      "community": 3,
+      "community": 7,
       "norm_label": "container"
     },
     {
@@ -4653,7 +4680,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_sizedbox",
-      "community": 3,
+      "community": 7,
       "norm_label": "sizedbox"
     },
     {
@@ -4662,7 +4689,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_saveavatar",
-      "community": 3,
+      "community": 7,
       "norm_label": "_saveavatar"
     },
     {
@@ -4671,7 +4698,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_buildanimecategory",
-      "community": 3,
+      "community": 7,
       "norm_label": "_buildanimecategory"
     },
     {
@@ -4680,7 +4707,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_padding",
-      "community": 3,
+      "community": 7,
       "norm_label": "padding"
     },
     {
@@ -4689,7 +4716,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_buildavataritem",
-      "community": 3,
+      "community": 7,
       "norm_label": "_buildavataritem"
     },
     {
@@ -4698,7 +4725,7 @@
       "source_file": "lib/widgets/avatar_picker_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_avatar_picker_bottom_sheet_dart_gesturedetector",
-      "community": 3,
+      "community": 7,
       "norm_label": "gesturedetector"
     },
     {
@@ -4707,7 +4734,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "lib_widgets_anime_entry_bottom_sheet_dart",
-      "community": 7,
+      "community": 13,
       "norm_label": "anime_entry_bottom_sheet.dart"
     },
     {
@@ -4716,7 +4743,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_animeentrybottomsheet",
-      "community": 7,
+      "community": 13,
       "norm_label": "animeentrybottomsheet"
     },
     {
@@ -4725,7 +4752,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_animeentrybottomsheetstate",
-      "community": 7,
+      "community": 13,
       "norm_label": "_animeentrybottomsheetstate"
     },
     {
@@ -4734,7 +4761,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_initstate",
-      "community": 7,
+      "community": 13,
       "norm_label": "initstate"
     },
     {
@@ -4743,7 +4770,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_dispose",
-      "community": 7,
+      "community": 14,
       "norm_label": "dispose"
     },
     {
@@ -4752,7 +4779,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_scrolltoselectedepisode",
-      "community": 7,
+      "community": 13,
       "norm_label": "_scrolltoselectedepisode"
     },
     {
@@ -4761,7 +4788,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_snackbar",
-      "community": 7,
+      "community": 13,
       "norm_label": "snackbar"
     },
     {
@@ -4770,8 +4797,17 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_showerrorsnackbar",
-      "community": 7,
+      "community": 13,
       "norm_label": "showerrorsnackbar"
+    },
+    {
+      "label": "SizedBox",
+      "file_type": "code",
+      "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
+      "source_location": null,
+      "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_sizedbox",
+      "community": 13,
+      "norm_label": "sizedbox"
     },
     {
       "label": "build",
@@ -4779,7 +4815,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_build",
-      "community": 7,
+      "community": 13,
       "norm_label": "build"
     },
     {
@@ -4788,7 +4824,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_container",
-      "community": 7,
+      "community": 13,
       "norm_label": "container"
     },
     {
@@ -4797,17 +4833,8 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_saveentry",
-      "community": 7,
+      "community": 13,
       "norm_label": "_saveentry"
-    },
-    {
-      "label": "SizedBox",
-      "file_type": "code",
-      "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
-      "source_location": null,
-      "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_sizedbox",
-      "community": 7,
-      "norm_label": "sizedbox"
     },
     {
       "label": "Expanded",
@@ -4815,7 +4842,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_expanded",
-      "community": 7,
+      "community": 13,
       "norm_label": "expanded"
     },
     {
@@ -4824,7 +4851,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_gesturedetector",
-      "community": 7,
+      "community": 13,
       "norm_label": "gesturedetector"
     },
     {
@@ -4833,7 +4860,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_duration",
-      "community": 7,
+      "community": 13,
       "norm_label": "duration"
     },
     {
@@ -4842,7 +4869,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_icon",
-      "community": 7,
+      "community": 13,
       "norm_label": "icon"
     },
     {
@@ -4851,7 +4878,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_text",
-      "community": 7,
+      "community": 13,
       "norm_label": "text"
     },
     {
@@ -4860,7 +4887,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_buildsectiontitle",
-      "community": 7,
+      "community": 13,
       "norm_label": "_buildsectiontitle"
     },
     {
@@ -4869,7 +4896,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_builddateselector",
-      "community": 7,
+      "community": 13,
       "norm_label": "_builddateselector"
     },
     {
@@ -4878,7 +4905,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_function",
-      "community": 7,
+      "community": 13,
       "norm_label": "function"
     },
     {
@@ -4887,7 +4914,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_theme",
-      "community": 7,
+      "community": 13,
       "norm_label": "theme"
     },
     {
@@ -4896,7 +4923,7 @@
       "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
       "source_location": null,
       "id": "package_intl_intl_dart",
-      "community": 7,
+      "community": 13,
       "norm_label": "package:intl/intl.dart"
     },
     {
@@ -4905,7 +4932,7 @@
       "source_file": "functions/index.js",
       "source_location": "L1",
       "id": "functions_index_js",
-      "community": 28,
+      "community": 29,
       "norm_label": "index.js"
     },
     {
@@ -4914,7 +4941,7 @@
       "source_file": "windows/runner/flutter_window.cpp",
       "source_location": "L1",
       "id": "windows_runner_flutter_window_cpp",
-      "community": 8,
+      "community": 6,
       "norm_label": "flutter_window.cpp"
     },
     {
@@ -4923,7 +4950,7 @@
       "source_file": "windows/runner/flutter_window.h",
       "source_location": "L12",
       "id": "flutter_window_flutterwindow",
-      "community": 8,
+      "community": 6,
       "norm_label": "flutterwindow()"
     },
     {
@@ -4932,7 +4959,7 @@
       "source_file": "windows/runner/flutter_window.cpp",
       "source_location": "L12",
       "id": "flutter_window_oncreate",
-      "community": 8,
+      "community": 6,
       "norm_label": "oncreate()"
     },
     {
@@ -4941,7 +4968,7 @@
       "source_file": "windows/runner/flutter_window.cpp",
       "source_location": "L42",
       "id": "flutter_window_ondestroy",
-      "community": 8,
+      "community": 6,
       "norm_label": "ondestroy()"
     },
     {
@@ -4950,7 +4977,7 @@
       "source_file": "windows/runner/flutter_window.cpp",
       "source_location": "L50",
       "id": "flutter_window_messagehandler",
-      "community": 8,
+      "community": 6,
       "norm_label": "messagehandler()"
     },
     {
@@ -4959,7 +4986,7 @@
       "source_file": "windows/runner/utils.h",
       "source_location": "L1",
       "id": "windows_runner_utils_h",
-      "community": 29,
+      "community": 30,
       "norm_label": "utils.h"
     },
     {
@@ -4968,7 +4995,7 @@
       "source_file": "windows/runner/utils.cpp",
       "source_location": "L1",
       "id": "windows_runner_utils_cpp",
-      "community": 8,
+      "community": 6,
       "norm_label": "utils.cpp"
     },
     {
@@ -4977,7 +5004,7 @@
       "source_file": "windows/runner/utils.cpp",
       "source_location": "L10",
       "id": "utils_createandattachconsole",
-      "community": 8,
+      "community": 6,
       "norm_label": "createandattachconsole()"
     },
     {
@@ -4986,7 +5013,7 @@
       "source_file": "windows/runner/utils.cpp",
       "source_location": "L24",
       "id": "utils_getcommandlinearguments",
-      "community": 8,
+      "community": 6,
       "norm_label": "getcommandlinearguments()"
     },
     {
@@ -4995,7 +5022,7 @@
       "source_file": "windows/runner/utils.cpp",
       "source_location": "L44",
       "id": "utils_utf8fromutf16",
-      "community": 8,
+      "community": 6,
       "norm_label": "utf8fromutf16()"
     },
     {
@@ -5004,7 +5031,7 @@
       "source_file": "windows/runner/win32_window.h",
       "source_location": "L1",
       "id": "windows_runner_win32_window_h",
-      "community": 30,
+      "community": 31,
       "norm_label": "win32_window.h"
     },
     {
@@ -5013,7 +5040,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L1",
       "id": "windows_runner_win32_window_cpp",
-      "community": 8,
+      "community": 6,
       "norm_label": "win32_window.cpp"
     },
     {
@@ -5022,7 +5049,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L36",
       "id": "win32_window_scale",
-      "community": 8,
+      "community": 6,
       "norm_label": "scale()"
     },
     {
@@ -5031,7 +5058,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L42",
       "id": "win32_window_enablefulldpisupportifavailable",
-      "community": 8,
+      "community": 6,
       "norm_label": "enablefulldpisupportifavailable()"
     },
     {
@@ -5040,7 +5067,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L59",
       "id": "win32_window_windowclassregistrar",
-      "community": 8,
+      "community": 6,
       "norm_label": "windowclassregistrar"
     },
     {
@@ -5049,7 +5076,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L61",
       "id": "win32_window_windowclassregistrar_windowclassregistrar",
-      "community": 8,
+      "community": 6,
       "norm_label": ".windowclassregistrar()"
     },
     {
@@ -5058,7 +5085,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L89",
       "id": "win32_window_getwindowclass",
-      "community": 8,
+      "community": 6,
       "norm_label": "getwindowclass()"
     },
     {
@@ -5067,7 +5094,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L109",
       "id": "win32_window_unregisterwindowclass",
-      "community": 8,
+      "community": 6,
       "norm_label": "unregisterwindowclass()"
     },
     {
@@ -5076,7 +5103,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L114",
       "id": "win32_window_win32window",
-      "community": 8,
+      "community": 6,
       "norm_label": "win32window()"
     },
     {
@@ -5085,7 +5112,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L123",
       "id": "win32_window_create",
-      "community": 8,
+      "community": 6,
       "norm_label": "create()"
     },
     {
@@ -5094,7 +5121,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L152",
       "id": "win32_window_show",
-      "community": 8,
+      "community": 6,
       "norm_label": "show()"
     },
     {
@@ -5103,7 +5130,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L157",
       "id": "win32_window_wndproc",
-      "community": 8,
+      "community": 6,
       "norm_label": "wndproc()"
     },
     {
@@ -5112,7 +5139,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L176",
       "id": "win32_window_messagehandler",
-      "community": 8,
+      "community": 6,
       "norm_label": "messagehandler()"
     },
     {
@@ -5121,7 +5148,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L224",
       "id": "win32_window_destroy",
-      "community": 8,
+      "community": 6,
       "norm_label": "destroy()"
     },
     {
@@ -5130,7 +5157,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L236",
       "id": "win32_window_getthisfromhandle",
-      "community": 8,
+      "community": 6,
       "norm_label": "getthisfromhandle()"
     },
     {
@@ -5139,7 +5166,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L241",
       "id": "win32_window_setchildcontent",
-      "community": 8,
+      "community": 6,
       "norm_label": "setchildcontent()"
     },
     {
@@ -5148,7 +5175,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L252",
       "id": "win32_window_getclientarea",
-      "community": 8,
+      "community": 6,
       "norm_label": "getclientarea()"
     },
     {
@@ -5157,7 +5184,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L258",
       "id": "win32_window_gethandle",
-      "community": 8,
+      "community": 6,
       "norm_label": "gethandle()"
     },
     {
@@ -5166,7 +5193,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L262",
       "id": "win32_window_setquitonclose",
-      "community": 8,
+      "community": 6,
       "norm_label": "setquitonclose()"
     },
     {
@@ -5175,7 +5202,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L266",
       "id": "win32_window_oncreate",
-      "community": 8,
+      "community": 6,
       "norm_label": "oncreate()"
     },
     {
@@ -5184,7 +5211,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L271",
       "id": "win32_window_ondestroy",
-      "community": 8,
+      "community": 6,
       "norm_label": "ondestroy()"
     },
     {
@@ -5193,7 +5220,7 @@
       "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L275",
       "id": "win32_window_updatetheme",
-      "community": 8,
+      "community": 6,
       "norm_label": "updatetheme()"
     },
     {
@@ -5202,7 +5229,7 @@
       "source_file": "windows/runner/resource.h",
       "source_location": "L1",
       "id": "windows_runner_resource_h",
-      "community": 31,
+      "community": 32,
       "norm_label": "resource.h"
     },
     {
@@ -5211,7 +5238,7 @@
       "source_file": "windows/runner/main.cpp",
       "source_location": "L1",
       "id": "windows_runner_main_cpp",
-      "community": 8,
+      "community": 6,
       "norm_label": "main.cpp"
     },
     {
@@ -5220,7 +5247,7 @@
       "source_file": "windows/runner/main.cpp",
       "source_location": "L8",
       "id": "main_wwinmain",
-      "community": 8,
+      "community": 6,
       "norm_label": "wwinmain()"
     },
     {
@@ -5229,7 +5256,7 @@
       "source_file": "windows/runner/flutter_window.h",
       "source_location": "L1",
       "id": "windows_runner_flutter_window_h",
-      "community": 8,
+      "community": 6,
       "norm_label": "flutter_window.h"
     },
     {
@@ -5238,7 +5265,7 @@
       "source_file": "windows/flutter/generated_plugin_registrant.cc",
       "source_location": "L1",
       "id": "windows_flutter_generated_plugin_registrant_cc",
-      "community": 8,
+      "community": 6,
       "norm_label": "generated_plugin_registrant.cc"
     },
     {
@@ -5247,7 +5274,7 @@
       "source_file": "windows/flutter/generated_plugin_registrant.cc",
       "source_location": "L16",
       "id": "generated_plugin_registrant_registerplugins",
-      "community": 8,
+      "community": 6,
       "norm_label": "registerplugins()"
     },
     {
@@ -5256,7 +5283,7 @@
       "source_file": "windows/flutter/generated_plugin_registrant.h",
       "source_location": "L1",
       "id": "windows_flutter_generated_plugin_registrant_h",
-      "community": 32,
+      "community": 33,
       "norm_label": "generated_plugin_registrant.h"
     }
   ],
@@ -6189,6 +6216,30 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "lib/screens/home_screen.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "lib_screens_home_screen_dart",
+      "_tgt": "package_ainme_vault_providers_theme_provider_dart",
+      "source": "package_ainme_vault_providers_theme_provider_dart",
+      "target": "lib_screens_home_screen_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/widgets/account_settings_bottom_sheet.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "lib_widgets_account_settings_bottom_sheet_dart",
+      "_tgt": "package_ainme_vault_providers_theme_provider_dart",
+      "source": "package_ainme_vault_providers_theme_provider_dart",
+      "target": "lib_widgets_account_settings_bottom_sheet_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "lib/screens/character_detail_screen.dart",
       "source_location": null,
       "weight": 1.0,
@@ -6933,6 +6984,18 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "lib/providers/theme_provider.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "lib_providers_theme_provider_dart",
+      "_tgt": "package_firebase_auth_firebase_auth_dart",
+      "source": "package_firebase_auth_firebase_auth_dart",
+      "target": "lib_providers_theme_provider_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "lib/screens/signup_screen.dart",
       "source_location": null,
       "weight": 1.0,
@@ -7144,6 +7207,30 @@
       "_tgt": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_themeprovider",
       "source": "lib_providers_theme_provider_dart",
       "target": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_themeprovider"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/providers/theme_provider.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "lib_providers_theme_provider_dart",
+      "_tgt": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_loadfromprefs",
+      "source": "lib_providers_theme_provider_dart",
+      "target": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_loadfromprefs"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/providers/theme_provider.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "lib_providers_theme_provider_dart",
+      "_tgt": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_setthememode",
+      "source": "lib_providers_theme_provider_dart",
+      "target": "users_som_desktop_projects_aniflux_lib_providers_theme_provider_dart_setthememode"
     },
     {
       "relation": "defines",
@@ -11089,6 +11176,18 @@
       "source_location": null,
       "weight": 1.0,
       "_src": "lib_screens_home_screen_dart",
+      "_tgt": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_expanded",
+      "source": "lib_screens_home_screen_dart",
+      "target": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_expanded"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/screens/home_screen.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "lib_screens_home_screen_dart",
       "_tgt": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_getgreeting",
       "source": "lib_screens_home_screen_dart",
       "target": "users_som_desktop_projects_aniflux_lib_screens_home_screen_dart_getgreeting"
@@ -12601,6 +12700,18 @@
       "source_location": null,
       "weight": 1.0,
       "_src": "lib_widgets_anime_entry_bottom_sheet_dart",
+      "_tgt": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_sizedbox",
+      "source": "lib_widgets_anime_entry_bottom_sheet_dart",
+      "target": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_sizedbox"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "lib_widgets_anime_entry_bottom_sheet_dart",
       "_tgt": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_build",
       "source": "lib_widgets_anime_entry_bottom_sheet_dart",
       "target": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_build"
@@ -12628,18 +12739,6 @@
       "_tgt": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_saveentry",
       "source": "lib_widgets_anime_entry_bottom_sheet_dart",
       "target": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_saveentry"
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/widgets/anime_entry_bottom_sheet.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_src": "lib_widgets_anime_entry_bottom_sheet_dart",
-      "_tgt": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_sizedbox",
-      "source": "lib_widgets_anime_entry_bottom_sheet_dart",
-      "target": "users_som_desktop_projects_aniflux_lib_widgets_anime_entry_bottom_sheet_dart_sizedbox"
     },
     {
       "relation": "defines",
@@ -12912,8 +13011,8 @@
       "source_file": "windows/runner/main.cpp",
       "source_location": "L13",
       "weight": 1.0,
-      "_src": "main_wwinmain",
-      "_tgt": "utils_createandattachconsole",
+      "_src": "utils_createandattachconsole",
+      "_tgt": "main_wwinmain",
       "source": "utils_createandattachconsole",
       "target": "main_wwinmain"
     },
@@ -12936,8 +13035,8 @@
       "source_file": "windows/runner/main.cpp",
       "source_location": "L23",
       "weight": 1.0,
-      "_src": "main_wwinmain",
-      "_tgt": "utils_getcommandlinearguments",
+      "_src": "utils_getcommandlinearguments",
+      "_tgt": "main_wwinmain",
       "source": "utils_getcommandlinearguments",
       "target": "main_wwinmain"
     },
@@ -13284,8 +13383,8 @@
       "source_file": "windows/runner/main.cpp",
       "source_location": "L30",
       "weight": 1.0,
-      "_src": "main_wwinmain",
-      "_tgt": "win32_window_create",
+      "_src": "win32_window_create",
+      "_tgt": "main_wwinmain",
       "source": "win32_window_create",
       "target": "main_wwinmain"
     },
@@ -13380,8 +13479,8 @@
       "source_file": "windows/runner/main.cpp",
       "source_location": "L33",
       "weight": 1.0,
-      "_src": "main_wwinmain",
-      "_tgt": "win32_window_setquitonclose",
+      "_src": "win32_window_setquitonclose",
+      "_tgt": "main_wwinmain",
       "source": "win32_window_setquitonclose",
       "target": "main_wwinmain"
     },
