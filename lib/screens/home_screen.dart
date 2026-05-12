@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ainme_vault/services/app_update_service.dart';
+import 'package:ainme_vault/widgets/home_list_search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,14 +21,19 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   // ---------------- STATE VARIABLES ----------------
+  final ScrollController _mainScrollController = ScrollController();
+  final GlobalKey _searchBarKey = GlobalKey();
   final PageController _pageController = PageController(initialPage: 5000);
   List<dynamic> _airingAnimeList = [];
   bool _isLoading = true;
   bool _isDark(Color c) => c.computeLuminance() < 0.5;
   String _selectedStatus = 'Completed';
   bool _isGridView = false; // Track view mode
+  bool _isSearching = false; // Search state
+  String _searchQuery = ''; // Search query
+  bool _isKeyboardOpen = false; // Keyboard visibility state
 
   // Sort options
   String _sortBy = 'lastUpdated'; // title, progress, lastUpdated, score
@@ -83,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _bgColorNotifier = ValueNotifier(AppTheme.primary);
     _pageIndexNotifier = ValueNotifier(0);
     _carouselRetryCountdown = ValueNotifier(0);
@@ -125,7 +132,39 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageIndexNotifier.dispose();
     _carouselRetryCountdown.dispose();
     _pageController.dispose();
+    _mainScrollController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    final bottomInset =
+        WidgetsBinding.instance.platformDispatcher.views.first.viewInsets.bottom;
+
+    if (bottomInset > 0) {
+      _isKeyboardOpen = true;
+    } else if (_isKeyboardOpen && bottomInset == 0) {
+      _isKeyboardOpen = false;
+      if (_isSearching) {
+        // Keyboard was just dismissed, unfocus to allow re-focus scroll
+        FocusManager.instance.primaryFocus?.unfocus();
+      }
+    }
+  }
+
+  void _scrollToSearch() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_searchBarKey.currentContext != null) {
+        Scrollable.ensureVisible(
+          _searchBarKey.currentContext!,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOutCubic,
+          alignment: 0.0, // Scroll to the very top
+        );
+      }
+    });
   }
 
   List<T> pickWeightedRandom<T>(
@@ -375,7 +414,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 100), // nav bar height
+                  controller: _mainScrollController,
+                  padding: EdgeInsets.only(
+                    bottom: 100 + MediaQuery.viewInsetsOf(context).bottom,
+                  ), // nav bar height + keyboard
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight, // 🔥 KEY FIX
@@ -483,91 +525,142 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 20),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "My List",
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SizeTransition(
+                                  sizeFactor: animation,
+                                  axis: Axis.vertical,
+                                  child: child,
                                 ),
-                              ),
-                              // Only show controls when logged in
-                              if (_currentUser != null)
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        _isGridView
-                                            ? Icons.view_list_rounded
-                                            : Icons.grid_view_rounded,
-                                      ),
-                                      style: IconButton.styleFrom(
-                                        foregroundColor: AppTheme.primary,
-                                      ),
-                                      onPressed: () {
-                                        HapticFeedback.lightImpact();
-                                        setState(() {
-                                          _isGridView = !_isGridView;
-                                        });
-                                      },
-                                    ),
-                                    Listener(
-                                      onPointerDown: (_) =>
-                                          HapticFeedback.lightImpact(),
-                                      child: PopupMenuButton<String>(
-                                        icon: Icon(
-                                          Icons.tune_rounded,
-                                          color: AppTheme.primary,
+                              );
+                            },
+                            child: _isSearching
+                                ? HomeListSearchBar(
+                                    key: _searchBarKey,
+                                    initialQuery: _searchQuery,
+                                    onSearch: (query) {
+                                      setState(() => _searchQuery = query);
+                                    },
+                                    onFocus: _scrollToSearch,
+                                    onClose: () {
+                                      setState(() {
+                                        _isSearching = false;
+                                        _searchQuery = '';
+                                      });
+                                    },
+                                  )
+                                : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "My List",
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        offset: const Offset(0, 52),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                        ),
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.surface,
-                                        elevation: 12,
-                                        onSelected: (value) {
-                                          setState(() {
-                                            if (_sortBy == value) {
-                                              _sortAscending = !_sortAscending;
-                                            } else {
-                                              _sortBy = value;
-                                              _sortAscending = value == 'title';
-                                            }
-                                          });
-                                        },
-                                        itemBuilder: (context) => [
-                                          _filterItem(
-                                            value: 'title',
-                                            label: 'Title',
-                                            icon: Icons.sort_by_alpha_rounded,
-                                          ),
-                                          _filterItem(
-                                            value: 'score',
-                                            label: 'Score',
-                                            icon: Icons.star_rounded,
-                                          ),
-                                          _filterItem(
-                                            value: 'progress',
-                                            label: 'Progress',
-                                            icon: Icons.trending_up_rounded,
-                                          ),
-                                          _filterItem(
-                                            value: 'lastUpdated',
-                                            label: 'Updated',
-                                            icon: Icons.update_rounded,
-                                          ),
-                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                            ],
+                                      // Only show controls when logged in
+                                      if (_currentUser != null)
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.search_rounded,
+                                              ),
+                                              style: IconButton.styleFrom(
+                                                foregroundColor:
+                                                    AppTheme.primary,
+                                              ),
+                                              onPressed: () {
+                                                HapticFeedback.lightImpact();
+                                                setState(() {
+                                                  _isSearching = true;
+                                                });
+                                                _scrollToSearch();
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                _isGridView
+                                                    ? Icons.view_list_rounded
+                                                    : Icons.grid_view_rounded,
+                                              ),
+                                              style: IconButton.styleFrom(
+                                                foregroundColor:
+                                                    AppTheme.primary,
+                                              ),
+                                              onPressed: () {
+                                                HapticFeedback.lightImpact();
+                                                setState(() {
+                                                  _isGridView = !_isGridView;
+                                                });
+                                              },
+                                            ),
+                                            Listener(
+                                              onPointerDown: (_) =>
+                                                  HapticFeedback.lightImpact(),
+                                              child: PopupMenuButton<String>(
+                                                icon: Icon(
+                                                  Icons.tune_rounded,
+                                                  color: AppTheme.primary,
+                                                ),
+                                                offset: const Offset(0, 52),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    20,
+                                                  ),
+                                                ),
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.surface,
+                                                elevation: 12,
+                                                onSelected: (value) {
+                                                  setState(() {
+                                                    if (_sortBy == value) {
+                                                      _sortAscending =
+                                                          !_sortAscending;
+                                                    } else {
+                                                      _sortBy = value;
+                                                      _sortAscending =
+                                                          value == 'title';
+                                                    }
+                                                  });
+                                                },
+                                                itemBuilder: (context) => [
+                                                  _filterItem(
+                                                    value: 'title',
+                                                    label: 'Title',
+                                                    icon: Icons
+                                                        .sort_by_alpha_rounded,
+                                                  ),
+                                                  _filterItem(
+                                                    value: 'score',
+                                                    label: 'Score',
+                                                    icon: Icons.star_rounded,
+                                                  ),
+                                                  _filterItem(
+                                                    value: 'progress',
+                                                    label: 'Progress',
+                                                    icon: Icons
+                                                        .trending_up_rounded,
+                                                  ),
+                                                  _filterItem(
+                                                    value: 'lastUpdated',
+                                                    label: 'Updated',
+                                                    icon: Icons.update_rounded,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
                           ),
                         ),
                         // Only show status chips when logged in
@@ -611,6 +704,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           isGridView: _isGridView,
                           sortBy: _sortBy,
                           sortAscending: _sortAscending,
+                          searchQuery: _searchQuery,
                         ),
                       ],
                     ),
@@ -846,6 +940,7 @@ class MyAnimeList extends StatefulWidget {
   final bool isGridView;
   final String sortBy;
   final bool sortAscending;
+  final String searchQuery;
 
   const MyAnimeList({
     super.key,
@@ -853,6 +948,7 @@ class MyAnimeList extends StatefulWidget {
     this.isGridView = false,
     this.sortBy = 'lastUpdated',
     this.sortAscending = false,
+    this.searchQuery = '',
   });
 
   @override
@@ -873,7 +969,8 @@ class _MyAnimeListState extends State<MyAnimeList> {
   @override
   void didUpdateWidget(covariant MyAnimeList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.status != widget.status) {
+    if (oldWidget.status != widget.status ||
+        oldWidget.searchQuery != widget.searchQuery) {
       _initStream();
       _cachedSortedList = null;
       _lastSortKey = null;
@@ -993,15 +1090,56 @@ class _MyAnimeListState extends State<MyAnimeList> {
           _lastSortKey = sortKey;
         }
 
+        // Apply search filtering
+        final filteredList = widget.searchQuery.isEmpty
+            ? _cachedSortedList!
+            : _cachedSortedList!.where((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                final title = (data['title'] ?? '').toString().toLowerCase();
+                return title.contains(widget.searchQuery.toLowerCase());
+              }).toList();
+
         // 🔥 Keep order but refresh document data
         final Map<String, QueryDocumentSnapshot> latestDocsMap = {
           for (final doc in animeList) doc.id: doc,
         };
 
-        final sortedList = _cachedSortedList!
+        final sortedList = filteredList
             .where((doc) => latestDocsMap.containsKey(doc.id))
             .map((doc) => latestDocsMap[doc.id]!)
             .toList();
+
+        if (sortedList.isEmpty) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.35,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    widget.searchQuery.isNotEmpty
+                        ? Icons.search_off_rounded
+                        : Icons.inbox_rounded,
+                    size: 56,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    widget.searchQuery.isNotEmpty
+                        ? "No results for '${widget.searchQuery}'"
+                        : "No ${widget.status} anime found 😢",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
 
         // Grid View
         if (widget.isGridView) {
