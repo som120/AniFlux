@@ -458,7 +458,7 @@ class SearchScreenState extends State<SearchScreen> {
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(isFocused ? 30 : 24),
+        borderRadius: BorderRadius.circular(50),
         boxShadow: [
           if (isFocused)
             BoxShadow(
@@ -524,8 +524,7 @@ class SearchScreenState extends State<SearchScreen> {
                   fontSize: 16,
                 ),
                 border: InputBorder.none,
-                filled: true,
-                fillColor: Colors.transparent,
+                filled: false,
               ),
             ),
           ),
@@ -727,6 +726,7 @@ class SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -937,7 +937,9 @@ class SearchScreenState extends State<SearchScreen> {
                     : ListView.builder(
                         controller: _scrollController,
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.only(bottom: 100),
+                        padding: EdgeInsets.only(
+                          bottom: 100 + MediaQuery.viewInsetsOf(context).bottom,
+                        ),
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
                         // ====== INCREASED CACHE EXTENT ======
