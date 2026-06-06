@@ -2,6 +2,7 @@ import 'package:ainme_vault/services/anilist_service.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:ainme_vault/screens/anime_detail_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
@@ -581,9 +582,9 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                       SizedBox(
                         height: 200,
                         child: ListView.separated(
+                          scrollCacheExtent: const ScrollCacheExtent.pixels(300.0),
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
-                          cacheExtent: 300,
                           addRepaintBoundaries: true,
                           itemCount:
                               (character!['media']['nodes'] as List).length,

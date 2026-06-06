@@ -2,6 +2,7 @@
 //import 'package:ainme_vault/utils/transitions.dart';
 //import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import '../services/anilist_service.dart';
 import '../widgets/calendar_view.dart';
@@ -935,6 +936,7 @@ class SearchScreenState extends State<SearchScreen> {
                     : animeList.isEmpty && selectedFilter == "Search"
                     ? _buildNoResultsWidget()
                     : ListView.builder(
+                        scrollCacheExtent: const ScrollCacheExtent.pixels(500.0),
                         controller: _scrollController,
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.only(
@@ -942,11 +944,6 @@ class SearchScreenState extends State<SearchScreen> {
                         ),
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
-                        // ====== INCREASED CACHE EXTENT ======
-                        // Pre-renders ~5 extra items off-screen for smoother scrolling.
-                        // Before: 100px (~1 item) - caused visible pop-in on fast scroll
-                        // After: 500px (~5 items) - images pre-load before becoming visible
-                        cacheExtent: 500,
                         itemCount: animeList.length,
                         itemBuilder: (context, index) {
                           final anime = animeList[index];

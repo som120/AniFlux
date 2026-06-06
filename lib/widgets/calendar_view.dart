@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../services/anilist_service.dart';
@@ -336,10 +337,8 @@ class _CalendarViewState extends State<CalendarView> {
               }
 
               return GridView.builder(
+                scrollCacheExtent: const ScrollCacheExtent.pixels(400.0),
                 padding: const EdgeInsets.only(bottom: 100),
-                // ====== CACHE EXTENT FOR SMOOTH SCROLLING ======
-                // Pre-renders ~3-4 rows of grid items off-screen
-                cacheExtent: 400,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   childAspectRatio: 0.65,

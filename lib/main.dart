@@ -13,7 +13,10 @@ import 'screens/home_screen.dart';
 import 'screens/search_screen.dart';
 import 'package:ainme_vault/screens/profile_screen.dart';
 import 'package:ainme_vault/services/review_service.dart';
+import 'package:ainme_vault/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,6 +71,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   int _currentIndex = 0;
   DateTime? _lastBackPressTime;
   late SharedPreferences _prefs;
+  StreamSubscription<User?>? _authSubscription;
 
   final GlobalKey<SearchScreenState> _searchScreenKey =
       GlobalKey<SearchScreenState>();
@@ -87,6 +91,12 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _initPrefs();
+    AuthService.trackDailyActiveUser();
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user != null) {
+        AuthService.updateLastActive();
+      }
+    });
   }
 
   Future<void> _initPrefs() async {
@@ -105,7 +115,16 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
     if (state == AppLifecycleState.resumed) {
       setState(() {});
+      AuthService.updateLastActive();
+      AuthService.trackDailyActiveUser();
     }
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<bool> _handleBackPress() async {
@@ -344,12 +363,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
   }
 }
 

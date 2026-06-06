@@ -3,19 +3,46 @@ import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ainme_vault/theme/app_theme.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 class AnimeCategory {
   final String title;
   final List<AvatarItem> avatars;
+  final int order;
 
-  const AnimeCategory({required this.title, required this.avatars});
+  const AnimeCategory({
+    required this.title,
+    required this.avatars,
+    this.order = 0,
+  });
+
+  factory AnimeCategory.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final avatarsList = (data['avatars'] as List? ?? [])
+        .map((item) => AvatarItem.fromMap(Map<String, dynamic>.from(item)))
+        .toList();
+
+    return AnimeCategory(
+      title: data['title'] ?? '',
+      avatars: avatarsList,
+      order: data['order'] ?? 0,
+    );
+  }
 }
 
 class AvatarItem {
-  final String path;
+  final String url;
   final bool isAvailable;
 
-  const AvatarItem({required this.path, this.isAvailable = true});
+  const AvatarItem({required this.url, this.isAvailable = true});
+
+  factory AvatarItem.fromMap(Map<String, dynamic> map) {
+    return AvatarItem(
+      url: map['url'] ?? '',
+      isAvailable: map['isAvailable'] ?? true,
+    );
+  }
 }
 
 class AvatarPickerBottomSheet extends StatefulWidget {
@@ -27,147 +54,46 @@ class AvatarPickerBottomSheet extends StatefulWidget {
 }
 
 class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
-  // Categorized avatars by anime
-  final List<AnimeCategory> animeCategories = [
-    AnimeCategory(
-      title: "Default",
-      avatars: [
-        AvatarItem(path: 'assets/avatars/Default/avatar1.jpg'),
-        AvatarItem(path: 'assets/avatars/Default/avatar2.jpg'),
-        AvatarItem(path: 'assets/avatars/Default/avatar3.jpg'),
-        AvatarItem(path: 'assets/avatars/Default/avatar4.jpg'),
-        AvatarItem(path: 'assets/avatars/Default/avatar5.jpg'),
-        AvatarItem(path: 'assets/avatars/Default/avatar6.jpg'),
-        AvatarItem(path: 'assets/avatars/Default/avatar7.jpg'),
-      ],
-    ),
-    // Attack on Titan
-    AnimeCategory(
-      title: "Attack on Titan",
-      avatars: [
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_eren-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_mikasa-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_levi-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_armin-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_annie-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_hange-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_jean-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_reiner-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_sasha-avatar.png'),
-        AvatarItem(path: 'assets/avatars/AOT/aot_fc_conny-avatar.png'),
-      ],
-    ),
-    // Jujutsu Kaisen
-    AnimeCategory(
-      title: "Jujutsu Kaisen",
-      avatars: [
-        AvatarItem(
-          path: 'assets/avatars/jjk/1044-jujutsu-kaisen-satoru-gojo.png',
-        ),
-        AvatarItem(
-          path: 'assets/avatars/jjk/1041-jujutsu-kaisen-yuji-itadori.png',
-        ),
-        AvatarItem(
-          path: 'assets/avatars/jjk/1042-jujutsu-kaisen-megumi-fushigoro.png',
-        ),
-        AvatarItem(
-          path: 'assets/avatars/jjk/1043-jujutsu-kaisen-nobara-kugisaki.png',
-        ),
-        AvatarItem(
-          path: 'assets/avatars/jjk/1045-jujutsu-kaisen-ryomen-sukuna.png',
-        ),
-      ],
-    ),
-    // Solo Leveling
-    AnimeCategory(
-      title: "Solo Leveling",
-      avatars: [
-        AvatarItem(path: 'assets/avatars/solo leveling/solo_sungjinwoo.png'),
-        AvatarItem(path: 'assets/avatars/solo leveling/solo_chahaein.png'),
-        AvatarItem(path: 'assets/avatars/solo leveling/solo_yoojinho.png'),
-        AvatarItem(path: 'assets/avatars/solo leveling/solo_baekyoonho.png'),
-        AvatarItem(path: 'assets/avatars/solo leveling/solo_choijongin.png'),
-        AvatarItem(path: 'assets/avatars/solo leveling/solo_teaser_visual.png'),
-      ],
-    ),
-    // Re:Zero
-    AnimeCategory(
-      title: "Re:Zero",
-      avatars: [
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_01.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_02.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_04.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_05.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_06.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_07.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_09.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_11.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_12.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_13.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_14.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_17.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_18.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_19.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_20.jpg'),
-        AvatarItem(path: 'assets/avatars/reZero/rezero_s3_avatar_21.jpg'),
-      ],
-    ),
-    // Spy x Family
-    AnimeCategory(
-      title: "Spy x Family",
-      avatars: [
-        AvatarItem(
-          path: 'assets/avatars/spyXfamily/100006-spy-x-family-loid.png',
-        ),
-        AvatarItem(
-          path: 'assets/avatars/spyXfamily/100007-spy-x-family-yor.png',
-        ),
-        AvatarItem(
-          path: 'assets/avatars/spyXfamily/100008-spy-x-family-anya-1.png',
-        ),
-      ],
-    ),
-    // The Apothecary Diaries
-    AnimeCategory(
-      title: "The Apothecary Diaries",
-      avatars: [
-        AvatarItem(path: 'assets/avatars/apothecary/apothecary_maomao-1.png'),
-        AvatarItem(path: 'assets/avatars/apothecary/apothecary_jinshi-2.png'),
-        AvatarItem(path: 'assets/avatars/apothecary/apothecary_gyokuyou.png'),
-        AvatarItem(path: 'assets/avatars/apothecary/apothecary_gaoshun.png'),
-        AvatarItem(path: 'assets/avatars/apothecary/apothecary_lihaku.png'),
-        AvatarItem(path: 'assets/avatars/apothecary/apothecary_xiaolan.png'),
-      ],
-    ),
-    // Bocchi The Rock
-    AnimeCategory(
-      title: "Bocchi The Rock!",
-      avatars: [
-        AvatarItem(path: 'assets/avatars/bochitherock/bocchi-avatar.jpg'),
-        AvatarItem(path: 'assets/avatars/bochitherock/bocchi-kita-avatar.jpg'),
-        AvatarItem(path: 'assets/avatars/bochitherock/bocchi-ryo-avatar.jpg'),
-        AvatarItem(
-          path: 'assets/avatars/bochitherock/bochhi-nijika-avatar.jpg',
-        ),
-        AvatarItem(
-          path: 'assets/avatars/bochitherock/bocchi-nijika-kv-avatar.jpg',
-        ),
-        AvatarItem(path: 'assets/avatars/bochitherock/bocchi-kv-avatar.jpg'),
-      ],
-    ),
-
-    // Default Avatars
-  ];
-
   String? selectedAvatar;
   String? currentAvatar;
   bool isLoading = true;
   bool _hasChanges = false;
+  List<AnimeCategory> animeCategories = [];
 
   @override
   void initState() {
     super.initState();
-    _loadCurrentAvatar();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    setState(() => isLoading = true);
+    await Future.wait([
+      _loadCurrentAvatar(),
+      _loadAvatarCategories(),
+    ]);
+    if (mounted) {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _loadAvatarCategories() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('avatar_categories')
+          .orderBy('order')
+          .get();
+
+      if (mounted) {
+        setState(() {
+          animeCategories = snapshot.docs
+              .map((doc) => AnimeCategory.fromFirestore(doc))
+              .toList();
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading categories: ${e.toString()}');
+    }
   }
 
   Future<void> _loadCurrentAvatar() async {
@@ -185,19 +111,15 @@ class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
         setState(() {
           currentAvatar = data?['selectedAvatar'];
           selectedAvatar = currentAvatar;
-          isLoading = false;
         });
-      } else {
-        setState(() => isLoading = false);
       }
     } catch (e) {
-      debugPrint('Error loading avatar: $e');
-      setState(() => isLoading = false);
+      debugPrint('Error loading avatar: ${e.toString()}');
     }
   }
 
   Future<void> _saveAvatar() async {
-    if (selectedAvatar == null) return;
+    if (selectedAvatar == null || !_hasChanges) return;
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -370,7 +292,11 @@ class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
   }
 
   Widget _buildAvatarItem(AvatarItem avatar) {
-    final isSelected = selectedAvatar == avatar.path && avatar.isAvailable;
+    if (avatar.url.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final isSelected = selectedAvatar == avatar.url && avatar.isAvailable;
     final isAvailable = avatar.isAvailable;
 
     return GestureDetector(
@@ -378,7 +304,7 @@ class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
           ? () {
               HapticFeedback.lightImpact();
               setState(() {
-                selectedAvatar = avatar.path;
+                selectedAvatar = avatar.url;
                 _hasChanges = currentAvatar != selectedAvatar;
               });
             }
@@ -409,23 +335,30 @@ class _AvatarPickerBottomSheetState extends State<AvatarPickerBottomSheet> {
           children: [
             // Avatar image
             ClipOval(
-              child: ColorFiltered(
-                colorFilter: isAvailable
-                    ? const ColorFilter.mode(
-                        Colors.transparent,
-                        BlendMode.multiply,
-                      )
-                    : ColorFilter.mode(
-                        Colors.grey.shade400,
-                        BlendMode.saturation,
-                      ),
-                child: Image.asset(
-                  avatar.path,
-                  fit: BoxFit.cover,
+              child: CachedNetworkImage(
+              imageUrl: avatar.url,
+              fit: BoxFit.cover,
+              width: 80,
+              height: 80,
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: Colors.grey[300]!.withValues(alpha: 0.5),
+                highlightColor: Colors.grey[100]!.withValues(alpha: 0.5),
+                child: Container(
                   width: 80,
                   height: 80,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.grey[200],
+                child: const Icon(Icons.error_outline, size: 20),
+              ),
+              color: isAvailable ? null : Colors.grey,
+              colorBlendMode: isAvailable ? null : BlendMode.saturation,
+            ),
             ),
 
             // Lock overlay for unavailable
