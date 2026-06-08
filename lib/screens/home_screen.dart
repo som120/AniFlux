@@ -1631,21 +1631,77 @@ Future<void> _onAddEpisode({
       .update(updateData);
 }
 
-class GreetingSection extends StatelessWidget {
+class GreetingSection extends StatefulWidget {
   final Color textColor;
 
   const GreetingSection({super.key, required this.textColor});
 
-  String _getGreeting() {
+  @override
+  State<GreetingSection> createState() => _GreetingSectionState();
+}
+
+class _GreetingSectionState extends State<GreetingSection> {
+  int _currentGreetingIndex = 0;
+  Timer? _periodicTimer;
+
+  final List<List<String>> _greetings = [
+    // Morning (hour < 12)
+    ["Good Morning", "Ohayō", "おはよう"],
+    // Afternoon (hour < 17)
+    ["Good Afternoon", "Kon'nichiwa", "こんにちは"],
+    // Evening
+    ["Good Evening", "Konbanwa", "こんばんは"],
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startGreetingSequence();
+  }
+
+  void _startGreetingSequence() {
+    _periodicTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
+      if (mounted) {
+        setState(() {
+          _currentGreetingIndex = (_currentGreetingIndex + 1) % 3;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _periodicTimer?.cancel();
+    super.dispose();
+  }
+
+  int _getGreetingRowIndex() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
+    if (hour < 12) return 0;
+    if (hour < 17) return 1;
+    return 2;
+  }
+
+  String _getGreeting() {
+    final rowIndex = _getGreetingRowIndex();
+    return _greetings[rowIndex][_currentGreetingIndex];
   }
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+
+    Widget buildGreetingText(String text) {
+      return Text(
+        text,
+        key: ValueKey<String>(text), // Required for AnimatedSwitcher
+        style: TextStyle(
+          color: widget.textColor,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      );
+    }
 
     if (user == null) {
       return Padding(
@@ -1653,19 +1709,43 @@ class GreetingSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              _getGreeting(),
-              style: TextStyle(
-                color: textColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+            ClipRect(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 600),
+                switchInCurve: Curves.easeOutBack,
+                switchOutCurve: Curves.easeIn,
+                layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+                  return Stack(
+                    alignment: Alignment.centerLeft,
+                    children: <Widget>[
+                      ...previousChildren,
+                      // ignore: use_null_aware_elements
+                      if (currentChild != null) currentChild,
+                    ],
+                  );
+                },
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  final isEntering = child.key == ValueKey<String>(_getGreeting());
+                  final offsetTween = isEntering
+                      ? Tween<Offset>(begin: const Offset(0.0, 1.2), end: Offset.zero)
+                      : Tween<Offset>(begin: const Offset(0.0, -1.2), end: Offset.zero);
+
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: offsetTween.animate(animation),
+                      child: child,
+                    ),
+                  );
+                },
+                child: buildGreetingText(_getGreeting()),
               ),
             ),
             const SizedBox(height: 4),
             Text(
               "Anime Fan",
               style: TextStyle(
-                color: textColor,
+                color: widget.textColor,
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -1693,19 +1773,43 @@ class GreetingSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                _getGreeting(),
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+              ClipRect(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 600),
+                  switchInCurve: Curves.easeOutBack,
+                  switchOutCurve: Curves.easeIn,
+                  layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+                    return Stack(
+                      alignment: Alignment.centerLeft,
+                      children: <Widget>[
+                        ...previousChildren,
+                        // ignore: use_null_aware_elements
+                        if (currentChild != null) currentChild,
+                      ],
+                    );
+                  },
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    final isEntering = child.key == ValueKey<String>(_getGreeting());
+                    final offsetTween = isEntering
+                        ? Tween<Offset>(begin: const Offset(0.0, 1.2), end: Offset.zero)
+                        : Tween<Offset>(begin: const Offset(0.0, -1.2), end: Offset.zero);
+
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: offsetTween.animate(animation),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: buildGreetingText(_getGreeting()),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 displayName,
                 style: TextStyle(
-                  color: textColor,
+                  color: widget.textColor,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),

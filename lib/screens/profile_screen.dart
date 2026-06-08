@@ -160,6 +160,7 @@ class ProfileScreen extends StatelessWidget {
   // Authenticated view - Show full profile
   Widget _buildAuthenticatedView(BuildContext context, User user) {
     return SingleChildScrollView(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: Column(
         children: [
           // ---------------------------
@@ -215,12 +216,15 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       child: CircleAvatar(
                         radius: 60,
+                        backgroundColor: Colors.grey[200],
                         backgroundImage: selectedAvatar != null
-                            ? AssetImage(selectedAvatar) as ImageProvider
+                            ? (selectedAvatar.startsWith('http')
+                                ? CachedNetworkImageProvider(selectedAvatar)
+                                : AssetImage(selectedAvatar) as ImageProvider)
                             : (user.photoURL != null
-                                  ? NetworkImage(user.photoURL!)
-                                  : const AssetImage("assets/avatar.png")
-                                        as ImageProvider),
+                                ? CachedNetworkImageProvider(user.photoURL!)
+                                : const AssetImage("assets/avatar.png")
+                                    as ImageProvider),
                       ),
                     );
                   },

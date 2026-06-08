@@ -1,13 +1,12 @@
-import 'dart:io';
 import 'package:ainme_vault/theme/app_theme.dart';
 import 'package:ainme_vault/services/review_service.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter/services.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -93,30 +92,27 @@ class _AboutScreenState extends State<AboutScreen> {
     });
 
     try {
-      final remoteConfig = FirebaseRemoteConfig.instance;
+      final docSnapshot = await FirebaseFirestore.instance
+          .collection('AppSettings')
+          .doc('config')
+          .get();
 
-      await remoteConfig.setDefaults({
-        'latest_version_android': '0.0.0',
-        'latest_version_ios': '0.0.0',
-      });
+      if (!docSnapshot.exists) {
+        throw Exception('AppSettings/config document not found');
+      }
 
-      await remoteConfig.setConfigSettings(
-        RemoteConfigSettings(
-          fetchTimeout: const Duration(seconds: 10),
-          minimumFetchInterval: Duration.zero,
-        ),
-      );
+      final data = docSnapshot.data();
+      if (data == null) throw Exception('No data in config');
 
-      await remoteConfig.fetchAndActivate();
+      final latestVersion = data['latestVersion'] ?? '0.0.0';
+      final latestBuild = (data['latestBuild'] ?? 0).toString();
 
-      final latestVersion = remoteConfig.getString('latest_version_android');
-
-      if (latestVersion.isEmpty || latestVersion == '0.0.0') {
+      if (latestVersion == '0.0.0') {
         throw Exception('Could not fetch latest version');
       }
 
-      if (_isNewerVersion(latestVersion, _version)) {
-        _showUpdateDialog(latestVersion);
+      if (_isNewerVersion(latestVersion, _version, latestBuild: latestBuild, currentBuild: _buildNumber)) {
+        _showUpdateDialog(latestVersion, latestBuild);
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -226,7 +222,12 @@ class _AboutScreenState extends State<AboutScreen> {
     }
   }
 
-  bool _isNewerVersion(String latest, String current) {
+  bool _isNewerVersion(
+    String latest,
+    String current, {
+    required String latestBuild,
+    required String currentBuild,
+  }) {
     List<String> latestParts = latest.split('.');
     List<String> currentParts = current.split('.');
 
@@ -238,11 +239,16 @@ class _AboutScreenState extends State<AboutScreen> {
       if (latestPart < currentPart) return false;
     }
 
-    // If main parts are equal, check length (e.g., 1.0.1 > 1.0)
-    return latestParts.length > currentParts.length;
+    if (latestParts.length > currentParts.length) return true;
+    if (latestParts.length < currentParts.length) return false;
+
+    // If version strings are completely identical, check build number
+    final intLatBuild = int.tryParse(latestBuild) ?? 0;
+    final intCurBuild = int.tryParse(currentBuild) ?? 0;
+    return intLatBuild > intCurBuild;
   }
 
-  void _showUpdateDialog(String version) {
+  void _showUpdateDialog(String version, String latestBuild) {
     if (!mounted) return;
 
     showDialog(
@@ -257,7 +263,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              "v$version",
+              "v$version ($latestBuild)",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -273,7 +279,7 @@ class _AboutScreenState extends State<AboutScreen> {
             const Text("A new version of AniFlux is available!"),
             const SizedBox(height: 8),
             Text(
-              "$_version → $version",
+              "$_version ($_buildNumber) → $version ($latestBuild)",
               style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ],
@@ -400,46 +406,51 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    _buildListTile(
-                      icon: Icons.update,
-                      title: _isCheckingUpdate
-                          ? "Checking..."
-                          : "Check for Updates",
-                      onTap: _isCheckingUpdate
-                          ? () {}
-                          : () {
-                              HapticFeedback.lightImpact();
-                              _checkForUpdates();
-                            },
-                    ),
-                    _buildListTile(
-                      icon: Icons.history,
-                      title: "Changelog",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _showChangelog(context);
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.bug_report_outlined,
-                      title: "Report a Bug",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _launchUrl("https://github.com/som120/AniFlux/issues");
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.star_rate_rounded,
-                      title: "Rate this app",
-                      iconColor: Colors.amber,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        ReviewService.openStoreListing();
-                      },
-                    ),
-                  ],
+                child: Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      _buildListTile(
+                        icon: Icons.update,
+                        title: _isCheckingUpdate
+                            ? "Checking..."
+                            : "Check for Updates",
+                        onTap: _isCheckingUpdate
+                            ? () {}
+                            : () {
+                                HapticFeedback.lightImpact();
+                                _checkForUpdates();
+                              },
+                      ),
+                      _buildListTile(
+                        icon: Icons.history,
+                        title: "Changelog",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showChangelog(context);
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.bug_report_outlined,
+                        title: "Report a Bug",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _launchUrl("https://github.com/som120/AniFlux/issues");
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.star_rate_rounded,
+                        title: "Rate this app",
+                        iconColor: Colors.amber,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          ReviewService.openStoreListing();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -463,42 +474,47 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    _buildListTile(
-                      icon: Icons.people_outline,
-                      title: "Contributors",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _showContributorsDialog();
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.coffee,
-                      title: "Buy Me a Coffee",
-                      iconColor: Colors.orange,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _launchUrl("https://buymeacoffee.com/sompaul");
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.article_outlined,
-                      title: "License",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _showLicenseDialog();
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.privacy_tip_outlined,
-                      title: "Privacy Policy",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _showPrivacyPolicyDialog();
-                      },
-                    ),
-                  ],
+                child: Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      _buildListTile(
+                        icon: Icons.people_outline,
+                        title: "Contributors",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showContributorsDialog();
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.coffee,
+                        title: "Buy Me a Coffee",
+                        iconColor: Colors.orange,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _launchUrl("https://buymeacoffee.com/sompaul");
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.article_outlined,
+                        title: "License",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showLicenseDialog();
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.privacy_tip_outlined,
+                        title: "Privacy Policy",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showPrivacyPolicyDialog();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
