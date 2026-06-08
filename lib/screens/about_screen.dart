@@ -6,7 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter/services.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -406,46 +406,51 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    _buildListTile(
-                      icon: Icons.update,
-                      title: _isCheckingUpdate
-                          ? "Checking..."
-                          : "Check for Updates",
-                      onTap: _isCheckingUpdate
-                          ? () {}
-                          : () {
-                              HapticFeedback.lightImpact();
-                              _checkForUpdates();
-                            },
-                    ),
-                    _buildListTile(
-                      icon: Icons.history,
-                      title: "Changelog",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _showChangelog(context);
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.bug_report_outlined,
-                      title: "Report a Bug",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _launchUrl("https://github.com/som120/AniFlux/issues");
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.star_rate_rounded,
-                      title: "Rate this app",
-                      iconColor: Colors.amber,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        ReviewService.openStoreListing();
-                      },
-                    ),
-                  ],
+                child: Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      _buildListTile(
+                        icon: Icons.update,
+                        title: _isCheckingUpdate
+                            ? "Checking..."
+                            : "Check for Updates",
+                        onTap: _isCheckingUpdate
+                            ? () {}
+                            : () {
+                                HapticFeedback.lightImpact();
+                                _checkForUpdates();
+                              },
+                      ),
+                      _buildListTile(
+                        icon: Icons.history,
+                        title: "Changelog",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showChangelog(context);
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.bug_report_outlined,
+                        title: "Report a Bug",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _launchUrl("https://github.com/som120/AniFlux/issues");
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.star_rate_rounded,
+                        title: "Rate this app",
+                        iconColor: Colors.amber,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          ReviewService.openStoreListing();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -469,42 +474,47 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    _buildListTile(
-                      icon: Icons.people_outline,
-                      title: "Contributors",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _showContributorsDialog();
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.coffee,
-                      title: "Buy Me a Coffee",
-                      iconColor: Colors.orange,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _launchUrl("https://buymeacoffee.com/sompaul");
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.article_outlined,
-                      title: "License",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _showLicenseDialog();
-                      },
-                    ),
-                    _buildListTile(
-                      icon: Icons.privacy_tip_outlined,
-                      title: "Privacy Policy",
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        _showPrivacyPolicyDialog();
-                      },
-                    ),
-                  ],
+                child: Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      _buildListTile(
+                        icon: Icons.people_outline,
+                        title: "Contributors",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showContributorsDialog();
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.coffee,
+                        title: "Buy Me a Coffee",
+                        iconColor: Colors.orange,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _launchUrl("https://buymeacoffee.com/sompaul");
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.article_outlined,
+                        title: "License",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showLicenseDialog();
+                        },
+                      ),
+                      _buildListTile(
+                        icon: Icons.privacy_tip_outlined,
+                        title: "Privacy Policy",
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showPrivacyPolicyDialog();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
